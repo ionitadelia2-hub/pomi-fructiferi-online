@@ -192,39 +192,48 @@ function createProductPage(product) {
     <article class="product-page">
 
     <div class="product-gallery">
-  <img
-    src="${escapeHtml(product.image_1)}"
-    alt="${escapeHtml(product.name)} - imagine principală"
-    class="product-main-image"
-    width="900"
-    height="900"
-  >
+  ${
+    product.image_1
+      ? `<img
+          src="${escapeHtml(product.image_1)}"
+          alt="${escapeHtml(product.name)}"
+          class="product-main-image"
+          loading="eager"
+          width="900"
+          height="900"
+        >`
+      : ""
+  }
 
-  <div class="product-thumbnails">
-    ${
-      product.image_2
-        ? `<img
-            src="${escapeHtml(product.image_2)}"
-            alt="${escapeHtml(product.name)} - imagine 2"
-            loading="lazy"
-            width="300"
-            height="300"
-          >`
-        : ""
-    }
+  ${
+    product.image_2 || product.image_3
+      ? `<div class="product-thumbnails">
+          ${
+            product.image_2
+              ? `<img
+                  src="${escapeHtml(product.image_2)}"
+                  alt="${escapeHtml(product.name)} - imagine 2"
+                  loading="lazy"
+                  width="300"
+                  height="300"
+                >`
+              : ""
+          }
 
-    ${
-      product.image_3
-        ? `<img
-            src="${escapeHtml(product.image_3)}"
-            alt="${escapeHtml(product.name)} - imagine 3"
-            loading="lazy"
-            width="300"
-            height="300"
-          >`
-        : ""
-    }
-  </div>
+          ${
+            product.image_3
+              ? `<img
+                  src="${escapeHtml(product.image_3)}"
+                  alt="${escapeHtml(product.name)} - imagine 3"
+                  loading="lazy"
+                  width="300"
+                  height="300"
+                >`
+              : ""
+          }
+        </div>`
+      : ""
+  }
 </div>
       <p class="product-category">
         ${escapeHtml(categoryName)}
