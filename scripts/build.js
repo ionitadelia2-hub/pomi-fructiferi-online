@@ -86,6 +86,28 @@ function getCategoryName(slug) {
   return categoryNames[slug] || slug;
 }
 
+function formatValue(value = "") {
+  const map = {
+    "radacina-nuda": "Rădăcină nudă",
+    "toamna-primavara": "Toamnă – primăvară",
+    "bine-drenat": "Bine drenat",
+    "dulce-aromat": "Dulce și aromat",
+    "mediu-mare": "Mediu – mare",
+    "ridicata": "Ridicată",
+    "august-octombrie": "August – octombrie",
+    "septembrie-octombrie": "Septembrie – octombrie",
+    "august-septembrie": "August – septembrie",
+    "septembrie": "Septembrie",
+    "galben": "Galben",
+    "galben-verzui": "Galben-verzui",
+    "albastru-violet": "Albastru-violet",
+    "soare": "Soare",
+    "mare": "Mare"
+  };
+
+  return map[value] || value.replaceAll("-", " ");
+}
+
 function createProductCard(product) {
   return `
     <article class="product-card">
@@ -320,7 +342,7 @@ function createProductPage(product) {
                 ? `
                   <div>
                     <span>Tip rădăcină</span>
-                    <strong>${escapeHtml(product.root_type)}</strong>
+                    <strong>${escapeHtml(formatValue(product.root_type))}</strong>
                   </div>
                 `
                 : ""
@@ -370,7 +392,7 @@ function createProductPage(product) {
       </section>
 
 
-      <!-- CARACTERISTICI -->
+            <!-- CARACTERISTICI -->
       <section class="product-section">
 
         <h2>Caracteristici</h2>
@@ -382,7 +404,7 @@ function createProductPage(product) {
               ? `
                 <div>
                   <span>Perioadă plantare</span>
-                  <strong>${escapeHtml(product.planting_period)}</strong>
+                  <strong>${escapeHtml(formatValue(product.planting_period))}</strong>
                 </div>
               `
               : ""
@@ -393,7 +415,7 @@ function createProductPage(product) {
               ? `
                 <div>
                   <span>Perioadă recoltare</span>
-                  <strong>${escapeHtml(product.harvest_period)}</strong>
+                  <strong>${escapeHtml(formatValue(product.harvest_period))}</strong>
                 </div>
               `
               : ""
@@ -404,7 +426,7 @@ function createProductPage(product) {
               ? `
                 <div>
                   <span>Perioadă fructificare</span>
-                  <strong>${escapeHtml(product.fruiting_period)}</strong>
+                  <strong>${escapeHtml(formatValue(product.fruiting_period))}</strong>
                 </div>
               `
               : ""
@@ -415,7 +437,7 @@ function createProductPage(product) {
               ? `
                 <div>
                   <span>Expunere</span>
-                  <strong>${escapeHtml(product.sun_exposure)}</strong>
+                  <strong>${escapeHtml(formatValue(product.sun_exposure))}</strong>
                 </div>
               `
               : ""
@@ -426,7 +448,7 @@ function createProductPage(product) {
               ? `
                 <div>
                   <span>Tip sol</span>
-                  <strong>${escapeHtml(product.soil_type)}</strong>
+                  <strong>${escapeHtml(formatValue(product.soil_type))}</strong>
                 </div>
               `
               : ""
@@ -448,7 +470,7 @@ function createProductPage(product) {
               ? `
                 <div>
                   <span>Culoare fruct</span>
-                  <strong>${escapeHtml(product.fruit_color)}</strong>
+                  <strong>${escapeHtml(formatValue(product.fruit_color))}</strong>
                 </div>
               `
               : ""
@@ -459,7 +481,7 @@ function createProductPage(product) {
               ? `
                 <div>
                   <span>Gust</span>
-                  <strong>${escapeHtml(product.fruit_taste)}</strong>
+                  <strong>${escapeHtml(formatValue(product.fruit_taste))}</strong>
                 </div>
               `
               : ""
@@ -470,7 +492,7 @@ function createProductPage(product) {
               ? `
                 <div>
                   <span>Mărime fruct</span>
-                  <strong>${escapeHtml(product.fruit_size)}</strong>
+                  <strong>${escapeHtml(formatValue(product.fruit_size))}</strong>
                 </div>
               `
               : ""
@@ -481,7 +503,7 @@ function createProductPage(product) {
               ? `
                 <div>
                   <span>Productivitate</span>
-                  <strong>${escapeHtml(product.productivity)}</strong>
+                  <strong>${escapeHtml(formatValue(product.productivity))}</strong>
                 </div>
               `
               : ""
@@ -503,7 +525,6 @@ function createProductPage(product) {
         </div>
 
       </section>
-
 
       ${
         product.care_notes
