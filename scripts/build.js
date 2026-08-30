@@ -3,6 +3,7 @@ const path = require("path");
 
 const csvPath = path.join(__dirname, "..", "src", "data", "products.csv");
 const distPath = path.join(__dirname, "..", "dist");
+const cssSourcePath = path.join(__dirname, "..", "src", "css", "style.css");
 
 function parseCSVLine(line) {
   const values = [];
@@ -53,6 +54,7 @@ function createProductPage(product) {
   <meta name="description" content="${product.seo_description}">
 
   <link rel="canonical" href="https://pomifructiferionline.ro/produse/${product.slug}/">
+  <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
 
@@ -87,6 +89,15 @@ function build() {
   }
 
   fs.mkdirSync(distPath, { recursive: true });
+
+  const cssDistFolder = path.join(distPath, "assets", "css");
+
+fs.mkdirSync(cssDistFolder, { recursive: true });
+
+fs.copyFileSync(
+  cssSourcePath,
+  path.join(cssDistFolder, "style.css")
+);
 
   products.forEach((product) => {
     const productFolder = path.join(
