@@ -109,57 +109,99 @@ function formatValue(value = "") {
 }
 
 function createProductCard(product) {
+  const categoryName = getCategoryName(product.subcategory);
+  const inStock = Number(product.stock) > 0;
+
   return `
     <article class="product-card">
 
-    <a href="/produse/${escapeHtml(product.slug)}/" class="product-card-image-link">
-  <img
-    src="${escapeHtml(product.image_1)}"
-    alt="${escapeHtml(product.name)} - pom fructifer"
-    class="product-card-image"
-    loading="lazy"
-    width="600"
-    height="600"
-  >
-</a>
-      <h2 class="product-card-title">
-        <a href="/produse/${escapeHtml(product.slug)}/">
-          ${escapeHtml(product.name)}
-        </a>
-      </h2>
-
-      <p class="product-card-description">
-        ${escapeHtml(product.short_description)}
-      </p>
-
-      <p class="product-card-price">
-        <strong>${escapeHtml(product.price)} lei</strong>
-      </p>
-
-      <p class="product-card-stock">
+      <a
+        href="/produse/${escapeHtml(product.slug)}/"
+        class="product-card-image-link"
+        aria-label="Vezi ${escapeHtml(product.name)}"
+      >
         ${
-          Number(product.stock) > 0
-            ? `În stoc: ${escapeHtml(product.stock)}`
-            : "Stoc epuizat"
+          product.image_1
+            ? `
+              <img
+                src="${escapeHtml(product.image_1)}"
+                alt="${escapeHtml(product.name)}"
+                class="product-card-image"
+                loading="lazy"
+                width="600"
+                height="600"
+              >
+            `
+            : `
+              <div class="product-card-image-placeholder">
+                Imagine indisponibilă
+              </div>
+            `
         }
-      </p>
 
-      <div class="product-card-actions">
-        <a
-          class="product-link"
-          href="/produse/${escapeHtml(product.slug)}/"
-        >
-          Vezi produsul
-        </a>
+        ${
+          product.featured === "true"
+            ? `<span class="product-badge">Recomandat</span>`
+            : ""
+        }
+      </a>
 
-        <button
-          type="button"
-          class="add-to-cart"
-          data-product-id="${escapeHtml(product.id)}"
-        >
-          Adaugă în coș
-        </button>
+      <div class="product-card-content">
+
+        <p class="product-card-category">
+          ${escapeHtml(categoryName)}
+        </p>
+
+        <h2 class="product-card-title">
+          <a href="/produse/${escapeHtml(product.slug)}/">
+            ${escapeHtml(product.name)}
+          </a>
+        </h2>
+
+        <p class="product-card-description">
+          ${escapeHtml(product.short_description)}
+        </p>
+
+        <div class="product-card-price-row">
+
+          <div class="product-card-price">
+            ${
+              product.old_price
+                ? `<span class="product-card-old-price">${escapeHtml(product.old_price)} lei</span>`
+                : ""
+            }
+
+            <strong>${escapeHtml(product.price)} lei</strong>
+          </div>
+
+          <span class="product-card-stock ${inStock ? "in-stock" : "out-of-stock"}">
+            ${inStock ? "În stoc" : "Stoc epuizat"}
+          </span>
+
+        </div>
+
+        <div class="product-card-actions">
+
+          <a
+            class="product-link"
+            href="/produse/${escapeHtml(product.slug)}/"
+          >
+            Vezi detalii
+          </a>
+
+          <button
+            type="button"
+            class="add-to-cart product-card-cart"
+            data-product-id="${escapeHtml(product.id)}"
+            ${!inStock ? "disabled" : ""}
+          >
+            Adaugă în coș
+          </button>
+
+        </div>
+
       </div>
+
     </article>
   `;
 }
@@ -578,6 +620,27 @@ function createProductsPage(products) {
     .map((product) => createProductCard(product))
     .join("");
 
+  const categories = [
+    ...new Set(
+      products
+        .map((product) => product.subcategory)
+        .filter(Boolean)
+    )
+  ];
+
+  const categoryLinks = categories
+    .map(
+      (categorySlug) => `
+        <a
+          href="/categorii/${escapeHtml(categorySlug)}/"
+          class="catalog-category-link"
+        >
+          ${escapeHtml(getCategoryName(categorySlug))}
+        </a>
+      `
+    )
+    .join("");
+
   return `<!DOCTYPE html>
 <html lang="ro">
 <head>
@@ -588,7 +651,7 @@ function createProductsPage(products) {
 
   <meta
     name="description"
-    content="Descoperă pomi fructiferi de vânzare pentru grădină și livadă. Alege dintre meri, peri, pruni, cireși, caiși și numeroase alte soiuri."
+    content="Descoperă pomi fructiferi de vânzare pentru grădină și livadă. Alege dintre meri, peri, pruni și alte soiuri atent selecționate."
   >
 
   <link rel="canonical" href="${SITE_URL}/produse/">
@@ -597,21 +660,62 @@ function createProductsPage(products) {
 
 <body>
 
-  <main>
-    <section class="products-page">
+  <main class="catalog-main">
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="/">Acasă</a>
+      <span>›</span>
+      <span>Produse</span>
+    </nav>
+
+    <section class="catalog-hero">
+
+      <p class="catalog-eyebrow">
+        Pepinieră online
+      </p>
+
       <h1>Pomi fructiferi de vânzare</h1>
 
-      <p class="category-intro">
-        Descoperă soiurile disponibile de pomi fructiferi pentru
-        grădină și livadă. Alege soiul potrivit în funcție de
-        perioada de recoltare, caracteristicile fructelor și
-        condițiile de plantare.
+      <p class="catalog-intro">
+        Descoperă pomii fructiferi disponibili pentru grădină și livadă.
+        Compară soiurile, perioada de recoltare și caracteristicile fiecărui pom
+        și alege varianta potrivită pentru spațiul tău.
       </p>
+
+    </section>
+
+    <nav class="catalog-categories" aria-label="Categorii produse">
+      ${categoryLinks}
+    </nav>
+
+    <section class="catalog-products">
+
+      <div class="catalog-heading">
+        <div>
+          <h2>Produse disponibile</h2>
+          <p>${products.length} produse în catalog</p>
+        </div>
+      </div>
 
       <div class="products-grid">
         ${productCards}
       </div>
+
     </section>
+
+    <section class="catalog-seo-content">
+
+      <h2>Cum alegi pomii fructiferi potriviți?</h2>
+
+      <p>
+        Atunci când alegi un pom fructifer, ține cont de soi, perioada de
+        plantare, perioada de recoltare, rezistența la ger, tipul de sol și
+        spațiul disponibil. Pe pagina fiecărui produs găsești informațiile
+        necesare pentru plantare și îngrijire.
+      </p>
+
+    </section>
+
   </main>
 
 </body>
