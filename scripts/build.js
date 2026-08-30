@@ -89,6 +89,17 @@ function getCategoryName(slug) {
 function createProductCard(product) {
   return `
     <article class="product-card">
+
+    <a href="/produse/${escapeHtml(product.slug)}/" class="product-card-image-link">
+  <img
+    src="${escapeHtml(product.image_1)}"
+    alt="${escapeHtml(product.name)} - pom fructifer"
+    class="product-card-image"
+    loading="lazy"
+    width="600"
+    height="600"
+  >
+</a>
       <h2 class="product-card-title">
         <a href="/produse/${escapeHtml(product.slug)}/">
           ${escapeHtml(product.name)}
@@ -146,6 +157,12 @@ function createProductPage(product) {
     content="${escapeHtml(product.seo_description)}"
   >
 
+  <meta property="og:type" content="product">
+<meta property="og:title" content="${escapeHtml(product.seo_title)}">
+<meta property="og:description" content="${escapeHtml(product.seo_description)}">
+<meta property="og:image" content="${SITE_URL}${escapeHtml(product.image_1)}">
+<meta property="og:url" content="${SITE_URL}/produse/${escapeHtml(product.slug)}/">
+
   <link
     rel="canonical"
     href="${SITE_URL}/produse/${escapeHtml(product.slug)}/"
@@ -173,6 +190,42 @@ function createProductPage(product) {
     </nav>
 
     <article class="product-page">
+
+    <div class="product-gallery">
+  <img
+    src="${escapeHtml(product.image_1)}"
+    alt="${escapeHtml(product.name)} - imagine principală"
+    class="product-main-image"
+    width="900"
+    height="900"
+  >
+
+  <div class="product-thumbnails">
+    ${
+      product.image_2
+        ? `<img
+            src="${escapeHtml(product.image_2)}"
+            alt="${escapeHtml(product.name)} - imagine 2"
+            loading="lazy"
+            width="300"
+            height="300"
+          >`
+        : ""
+    }
+
+    ${
+      product.image_3
+        ? `<img
+            src="${escapeHtml(product.image_3)}"
+            alt="${escapeHtml(product.name)} - imagine 3"
+            loading="lazy"
+            width="300"
+            height="300"
+          >`
+        : ""
+    }
+  </div>
+</div>
       <p class="product-category">
         ${escapeHtml(categoryName)}
       </p>
