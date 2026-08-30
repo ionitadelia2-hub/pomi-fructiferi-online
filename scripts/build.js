@@ -234,13 +234,13 @@ function createProductCard(product) {
           </a>
 
           <button
-            type="button"
-            class="add-to-cart product-card-cart"
-            data-product-id="${escapeHtml(product.id)}"
-            ${!inStock ? "disabled" : ""}
-          >
-            Adaugă în coș
-          </button>
+  type="button"
+  class="add-to-cart product-card-cart"
+  data-product-slug="${escapeHtml(product.slug)}"
+  ${!inStock ? "disabled" : ""}
+>
+  Adaugă în coș
+</button>
 
         </div>
 
@@ -451,13 +451,13 @@ ${createHeader()}
 
 
           <button
-            type="button"
-            class="add-to-cart product-add-to-cart"
-            data-product-id="${escapeHtml(product.id)}"
-            ${Number(product.stock) <= 0 ? "disabled" : ""}
-          >
-            Adaugă în coș
-          </button>
+  type="button"
+  class="add-to-cart product-add-to-cart"
+  data-product-slug="${escapeHtml(product.slug)}"
+  ${Number(product.stock) <= 0 ? "disabled" : ""}
+>
+  Adaugă în coș
+</button>
 
           <p class="product-delivery-note">
             Pom pregătit pentru plantare și livrare în condiții corespunzătoare.
@@ -656,7 +656,7 @@ ${createHeader()}
 
     });
   </script>
-
+<script src="/assets/js/cart.js"></script>
 </body>
 </html>`;
 }
@@ -765,7 +765,7 @@ ${createHeader()}
     </section>
 
   </main>
-
+<script src="/assets/js/cart.js"></script>
 </body>
 </html>`;
 }
@@ -940,7 +940,7 @@ ${createHeader()}
     </section>
 
   </main>
-
+<script src="/assets/js/cart.js"></script>
 </body>
 
 </html>`;
@@ -972,9 +972,9 @@ function createHeader() {
         </nav>
 
         <a href="/cos/" class="site-cart">
-          Coș
-          <span class="cart-count">0</span>
-        </a>
+  Coș
+  <span class="cart-count" data-cart-count>0</span>
+</a>
 
       </div>
     </header>
@@ -1172,7 +1172,7 @@ ${createHeader()}
   </section>
 
 </main>
-
+<script src="/assets/js/cart.js"></script>
 </body>
 </html>`;
 }
@@ -1438,7 +1438,7 @@ ${createHeader()}
     </section>
 
   </main>
-
+<script src="/assets/js/cart.js"></script>
 </body>
 </html>`;
 }
@@ -1477,6 +1477,21 @@ function build() {
     cssSourcePath,
     path.join(cssDistFolder, "style.css")
   );
+
+  const jsDistFolder = path.join(
+  distPath,
+  "assets",
+  "js"
+);
+
+fs.mkdirSync(jsDistFolder, {
+  recursive: true
+});
+
+fs.copyFileSync(
+  path.join(__dirname, "..", "src", "js", "cart.js"),
+  path.join(jsDistFolder, "cart.js")
+);
 
   const imagesDistPath = path.join(distPath, "images");
 
