@@ -81,6 +81,63 @@ function createProductPage(product) {
 </html>`;
 }
 
+function createProductsPage(products) {
+  const productCards = products
+    .map(
+      (product) => `
+        <article class="product-card">
+          <h2>
+            <a href="/produse/${product.slug}/">${product.name}</a>
+          </h2>
+
+          <p>${product.short_description}</p>
+
+          <p><strong>Preț:</strong> ${product.price} lei</p>
+          <p><strong>Stoc:</strong> ${product.stock}</p>
+
+          <a class="product-link" href="/produse/${product.slug}/">
+            Vezi produsul
+          </a>
+        </article>
+      `
+    )
+    .join("");
+
+  return `<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Pomi fructiferi de vânzare | Pomi Fructiferi Online</title>
+  <meta
+    name="description"
+    content="Descoperă pomi fructiferi de vânzare pentru grădină și livadă: meri, peri, pruni și alte soiuri atent selecționate."
+  >
+
+  <link rel="canonical" href="https://pomifructiferionline.ro/produse/">
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+
+  <main>
+    <section class="products-page">
+      <h1>Pomi fructiferi</h1>
+
+      <p>
+        Descoperă pomii fructiferi disponibili pentru plantare în grădină sau livadă.
+      </p>
+
+      <div class="products-grid">
+        ${productCards}
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>`;
+}
+
 function build() {
   const products = readProducts();
 
@@ -118,6 +175,18 @@ fs.copyFileSync(
 
     console.log(`Generat: /produse/${product.slug}/`);
   });
+
+  const productsFolder = path.join(distPath, "produse");
+
+fs.mkdirSync(productsFolder, { recursive: true });
+
+fs.writeFileSync(
+  path.join(productsFolder, "index.html"),
+  createProductsPage(products),
+  "utf8"
+);
+
+console.log("Generat: /produse/");
 
   console.log(`\nBuild finalizat. Produse generate: ${products.length}`);
 }
