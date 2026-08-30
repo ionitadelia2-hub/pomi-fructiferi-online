@@ -948,6 +948,197 @@ function createHeader() {
   `;
 }
 
+function createFamilyPage(familySlug, products) {
+  const familyContent = {
+    "pomi-fructiferi": {
+      title: "Pomi fructiferi",
+      eyebrow: "Catalog",
+      intro:
+        "Descoperă pomii fructiferi disponibili pentru grădină, livadă și plantații. Alege specia și soiul potrivit pentru spațiul tău.",
+      seoTitle: "Pomi fructiferi de vânzare | Pomi Fructiferi Online",
+      seoDescription:
+        "Descoperă pomi fructiferi de vânzare: meri, peri, pruni, cireși, vișini, caiși, piersici, nectarini, gutui și alte specii."
+    },
+
+    "pomi-columnari": {
+      title: "Pomi columnari",
+      eyebrow: "Catalog",
+      intro:
+        "Descoperă soiurile de pomi columnari, potrivite pentru grădini mici, curți și spații unde dorești pomi productivi cu dezvoltare compactă.",
+      seoTitle: "Pomi columnari de vânzare | Pomi Fructiferi Online",
+      seoDescription:
+        "Descoperă pomi columnari de vânzare pentru grădini și spații mici. Alege dintre meri, peri, pruni, cireși și alte specii columnare."
+    },
+
+    "vita-de-vie": {
+      title: "Viță de vie",
+      eyebrow: "Catalog",
+      intro:
+        "Descoperă soiurile de viță de vie disponibile: soiuri de masă, soiuri pentru vin și soiuri hibride sau rezistente.",
+      seoTitle: "Viță de vie de vânzare | Pomi Fructiferi Online",
+      seoDescription:
+        "Descoperă soiuri de viță de vie de vânzare, altoite și atent selecționate pentru grădină și plantații."
+    },
+
+    "arbusti-fructiferi": {
+      title: "Arbuști fructiferi",
+      eyebrow: "Catalog",
+      intro:
+        "Descoperă arbuști fructiferi pentru grădină și plantații, soiuri productive și ușor de integrat în spații de diferite dimensiuni.",
+      seoTitle: "Arbuști fructiferi de vânzare | Pomi Fructiferi Online",
+      seoDescription:
+        "Descoperă arbuști fructiferi de vânzare pentru grădină și plantații."
+    }
+  };
+
+  const content = familyContent[familySlug] || {
+    title: familySlug.replaceAll("-", " "),
+    eyebrow: "Catalog",
+    intro: "Descoperă produsele disponibile în această categorie.",
+    seoTitle: `${familySlug.replaceAll("-", " ")} | Pomi Fructiferi Online`,
+    seoDescription: "Descoperă produsele disponibile în catalogul nostru."
+  };
+
+  const subcategories = groupProducts(products, "subcategory");
+
+  const categoryCards = Object.entries(subcategories)
+    .map(([subcategorySlug, categoryProducts]) => {
+      const categoryName = getCategoryName(subcategorySlug);
+
+      return `
+        <a
+          href="/categorii/${escapeHtml(subcategorySlug)}/"
+          class="home-category-card"
+        >
+          <span class="home-category-name">
+            ${escapeHtml(categoryName)}
+          </span>
+
+          <span class="home-category-link">
+            ${categoryProducts.length}
+            ${categoryProducts.length === 1 ? "produs" : "produse"}
+            →
+          </span>
+        </a>
+      `;
+    })
+    .join("");
+
+  const productCards = products
+    .map((product) => createProductCard(product))
+    .join("");
+
+  return `<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>${escapeHtml(content.seoTitle)}</title>
+
+  <meta
+    name="description"
+    content="${escapeHtml(content.seoDescription)}"
+  >
+
+  <link
+    rel="canonical"
+    href="${SITE_URL}/${escapeHtml(familySlug)}/"
+  >
+
+  <link
+    rel="stylesheet"
+    href="/assets/css/style.css"
+  >
+</head>
+
+<body>
+
+${createHeader()}
+
+<main class="catalog-main">
+
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a href="/">Acasă</a>
+    <span>›</span>
+    <span>${escapeHtml(content.title)}</span>
+  </nav>
+
+
+  <section class="catalog-hero">
+
+    <p class="catalog-eyebrow">
+      ${escapeHtml(content.eyebrow)}
+    </p>
+
+    <h1>
+      ${escapeHtml(content.title)}
+    </h1>
+
+    <p class="catalog-intro">
+      ${escapeHtml(content.intro)}
+    </p>
+
+  </section>
+
+
+  <section class="home-section">
+
+    <div class="home-section-heading">
+
+      <p class="home-eyebrow">
+        Categorii
+      </p>
+
+      <h2>
+        Alege după specie
+      </h2>
+
+      <p>
+        Găsește rapid produsele potrivite pentru grădina
+        sau livada ta.
+      </p>
+
+    </div>
+
+    <div class="home-category-grid">
+      ${categoryCards}
+    </div>
+
+  </section>
+
+
+  <section class="catalog-products">
+
+    <div class="catalog-heading">
+
+      <div>
+        <h2>Produse disponibile</h2>
+
+        <p>
+          ${products.length}
+          ${products.length === 1 ? "produs disponibil" : "produse disponibile"}
+        </p>
+      </div>
+
+    </div>
+
+    <div class="products-grid">
+      ${productCards}
+    </div>
+
+  </section>
+
+</main>
+
+</body>
+</html>`;
+}
+
 function createHomePage(products) {
   const featuredProducts = products
     .filter((product) => product.featured === "true")
@@ -1292,6 +1483,33 @@ Object.entries(subcategories).forEach(
   }
 );
 
+  // Familii de produse generate automat
+  Object.entries(families).forEach(
+    ([familySlug, familyProducts]) => {
+
+      const familyFolder = path.join(
+        distPath,
+        familySlug
+      );
+
+      fs.mkdirSync(familyFolder, {
+        recursive: true
+      });
+
+      fs.writeFileSync(
+        path.join(familyFolder, "index.html"),
+        createFamilyPage(
+          familySlug,
+          familyProducts
+        ),
+        "utf8"
+      );
+
+      console.log(
+        `Generat: /${familySlug}/ (${familyProducts.length} produse)`
+      );
+    }
+  );
 
   // Homepage
   fs.writeFileSync(
