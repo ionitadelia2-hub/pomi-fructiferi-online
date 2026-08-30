@@ -774,3 +774,16 @@ button:hover {
     grid-template-columns: 1fr;
   }
 }
+
+.category-back-link {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 24px;
+  color: #237a38;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.category-back-link:hover {
+  text-decoration: underline;
+}

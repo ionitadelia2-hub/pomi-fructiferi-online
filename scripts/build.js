@@ -729,19 +729,70 @@ function createCategoryPage(categorySlug, products) {
     .map((product) => createProductCard(product))
     .join("");
 
+  const categoryContent = {
+    mar: {
+      title: "Meri de vânzare",
+      intro:
+        "Descoperă soiurile de meri disponibile pentru grădină și livadă. Compară caracteristicile, perioada de recoltare și alege mărul potrivit pentru spațiul tău.",
+      seoTitle: "Meri de vânzare | Pomi Fructiferi Online",
+      seoDescription:
+        "Descoperă meri de vânzare pentru grădină și livadă. Alege soiuri de măr atent selecționate și găsește pomul potrivit pentru plantare.",
+      seoHeading: "Cum alegi soiul de măr potrivit?",
+      seoText:
+        "Atunci când alegi un măr, ține cont de perioada de recoltare, rezistența la ger, tipul de sol, productivitate și caracteristicile fructelor. Pe pagina fiecărui soi găsești informații detaliate despre plantare și îngrijire."
+    },
+
+    par: {
+      title: "Peri de vânzare",
+      intro:
+        "Descoperă soiurile de peri disponibile pentru grădină și livadă. Compară perioada de recoltare, caracteristicile fructelor și condițiile de plantare.",
+      seoTitle: "Peri de vânzare | Pomi Fructiferi Online",
+      seoDescription:
+        "Descoperă peri de vânzare pentru grădină și livadă. Compară soiurile disponibile și alege părul potrivit pentru plantare.",
+      seoHeading: "Cum alegi soiul de păr potrivit?",
+      seoText:
+        "Alegerea unui păr depinde de soi, perioada de recoltare, rezistența la temperaturi scăzute și condițiile din grădină sau livadă. Consultă caracteristicile fiecărui produs înainte de plantare."
+    },
+
+    prun: {
+      title: "Pruni de vânzare",
+      intro:
+        "Descoperă soiurile de pruni disponibile pentru grădină și livadă. Compară productivitatea, perioada de recoltare și caracteristicile fructelor.",
+      seoTitle: "Pruni de vânzare | Pomi Fructiferi Online",
+      seoDescription:
+        "Descoperă pruni de vânzare pentru grădină și livadă. Alege dintre soiurile disponibile și găsește prunul potrivit pentru plantare.",
+      seoHeading: "Cum alegi soiul de prun potrivit?",
+      seoText:
+        "Pentru alegerea unui prun potrivit, verifică perioada de fructificare și recoltare, rezistența la ger, productivitatea și cerințele față de sol și expunere."
+    }
+  };
+
+  const content = categoryContent[categorySlug] || {
+    title: `${categoryName} de vânzare`,
+    intro: `Descoperă soiurile de ${categoryName.toLowerCase()} disponibile pentru grădină și livadă. Compară caracteristicile și alege pomii potriviți pentru spațiul tău.`,
+    seoTitle: `${categoryName} de vânzare | Pomi Fructiferi Online`,
+    seoDescription: `Descoperă ${categoryName.toLowerCase()} de vânzare pentru grădină și livadă. Compară soiurile disponibile și alege pomii potriviți pentru plantare.`,
+    seoHeading: `Cum alegi ${categoryName.toLowerCase()} pentru plantare?`,
+    seoText:
+      "Atunci când alegi un pom fructifer, ține cont de soi, perioada de recoltare, rezistența la ger, tipul de sol și spațiul disponibil. Pe pagina fiecărui produs găsești informații detaliate despre plantare și îngrijire."
+  };
+
   return `<!DOCTYPE html>
 <html lang="ro">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>${escapeHtml(categoryName)} de vânzare | Pomi Fructiferi Online</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>${escapeHtml(content.seoTitle)}</title>
 
   <meta
     name="description"
-    content="Descoperă soiurile de ${escapeHtml(
-      categoryName.toLowerCase()
-    )} disponibile pentru grădină și livadă. Comandă online pomi fructiferi sănătoși și atent selecționați."
+    content="${escapeHtml(content.seoDescription)}"
   >
 
   <link
@@ -749,52 +800,99 @@ function createCategoryPage(categorySlug, products) {
     href="${SITE_URL}/categorii/${escapeHtml(categorySlug)}/"
   >
 
-  <link rel="stylesheet" href="/assets/css/style.css">
+  <link
+    rel="stylesheet"
+    href="/assets/css/style.css"
+  >
 </head>
 
 <body>
 
-  <main>
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <main class="catalog-main">
+
+    <nav
+      class="breadcrumbs"
+      aria-label="Breadcrumb"
+    >
       <a href="/">Acasă</a>
+
       <span>›</span>
 
       <a href="/produse/">Produse</a>
+
       <span>›</span>
 
       <span>${escapeHtml(categoryName)}</span>
     </nav>
 
-    <section class="category-page">
-      <h1>${escapeHtml(categoryName)} de vânzare</h1>
 
-      <p class="category-intro">
-        Descoperă soiurile de ${escapeHtml(
-          categoryName.toLowerCase()
-        )} disponibile în pepiniera noastră.
-        Compară soiurile și alege pomii potriviți pentru grădina
-        sau livada ta.
+    <section class="catalog-hero">
+
+      <p class="catalog-eyebrow">
+        Pomi fructiferi
       </p>
+
+      <h1>
+        ${escapeHtml(content.title)}
+      </h1>
+
+      <p class="catalog-intro">
+        ${escapeHtml(content.intro)}
+      </p>
+
+      <a
+        href="/produse/"
+        class="category-back-link"
+      >
+        ← Vezi toți pomii fructiferi
+      </a>
+
+    </section>
+
+
+    <section class="catalog-products">
+
+      <div class="catalog-heading">
+
+        <div>
+
+          <h2>
+            ${escapeHtml(categoryName)} disponibili
+          </h2>
+
+          <p>
+            ${products.length}
+            ${products.length === 1 ? "produs disponibil" : "produse disponibile"}
+          </p>
+
+        </div>
+
+      </div>
+
 
       <div class="products-grid">
         ${productCards}
       </div>
 
-      <section class="category-seo-content">
-        <h2>Cum alegi ${escapeHtml(categoryName.toLowerCase())} pentru plantare?</h2>
-
-        <p>
-          Alegerea unui pom fructifer trebuie făcută în funcție de
-          soi, perioada de coacere, condițiile de climă și spațiul
-          disponibil. Pe pagina fiecărui produs vei găsi informații
-          despre plantare, recoltare, dimensiuni și particularitățile
-          soiului.
-        </p>
-      </section>
     </section>
+
+
+    <section class="catalog-seo-content">
+
+      <h2>
+        ${escapeHtml(content.seoHeading)}
+      </h2>
+
+      <p>
+        ${escapeHtml(content.seoText)}
+      </p>
+
+    </section>
+
   </main>
 
 </body>
+
 </html>`;
 }
 
