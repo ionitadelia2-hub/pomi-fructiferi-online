@@ -1,12 +1,12 @@
 const CHECKOUT_API_URL =
   "https://pomi-fructiferi-api.rodromanesc.workers.dev/api/orders";
 
-const CART_KEY = "pomi-fructiferi-cart";
+const CHECKOUT_CART_KEY = "pomi-fructiferi-cart";
 
 function getCheckoutCart() {
   try {
     return JSON.parse(
-      localStorage.getItem(CART_KEY)
+      localStorage.getItem(CHECKOUT_CART_KEY)
     ) || [];
   } catch {
     return [];
@@ -258,7 +258,7 @@ async function submitOrder(form) {
       );
     }
 
-    localStorage.removeItem(CART_KEY);
+    localStorage.removeItem(CHECKOUT_CART_KEY);
 
     if (
       typeof updateCartBadge ===
