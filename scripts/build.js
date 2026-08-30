@@ -1443,6 +1443,98 @@ ${createHeader()}
 </html>`;
 }
 
+function createCartPage(products) {
+  const productsJson = JSON.stringify(
+    products.map((product) => ({
+      slug: product.slug,
+      name: product.name,
+      price: Number(product.price),
+      image_1: product.image_1,
+      stock: Number(product.stock),
+    }))
+  ).replace(/</g, "\\u003c");
+
+  return `<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Coș de cumpărături | Pomi Fructiferi Online</title>
+  <meta
+    name="description"
+    content="Vezi produsele adăugate în coș și modifică cantitățile."
+  >
+
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<body>
+
+  ${createHeader()}
+
+  <main class="cart-page">
+    <div class="container">
+
+      <nav class="breadcrumb">
+        <a href="/">Acasă</a>
+        <span>›</span>
+        <span>Coș</span>
+      </nav>
+
+      <section class="cart-header">
+        <span class="eyebrow">COMANDA TA</span>
+
+        <h1>Coș de cumpărături</h1>
+
+        <p>
+          Verifică produsele și modifică numărul de bucăți înainte de comandă.
+        </p>
+      </section>
+
+      <section class="cart-layout">
+
+        <div>
+          <div id="cart-items"></div>
+        </div>
+
+        <aside class="cart-summary">
+          <h2>Sumar comandă</h2>
+
+          <div class="cart-summary-row">
+            <span>Produse</span>
+            <strong id="cart-summary-count">0 buc.</strong>
+          </div>
+
+          <div class="cart-summary-row cart-summary-total">
+            <span>Total</span>
+            <strong id="cart-total">0.00 lei</strong>
+          </div>
+
+          <button
+            type="button"
+            class="cart-checkout-button"
+            id="cart-checkout-button"
+          >
+            Continuă comanda
+          </button>
+        </aside>
+
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    window.PRODUCTS = ${productsJson};
+  </script>
+
+  <script src="/assets/js/cart.js"></script>
+
+</body>
+</html>`;
+}
+
 function build() {
    const products = readProducts();
 
@@ -1600,6 +1692,24 @@ Object.entries(subcategories).forEach(
       );
     }
   );
+
+  // Cart
+const cartFolder = path.join(
+  distPath,
+  "cos"
+);
+
+fs.mkdirSync(cartFolder, {
+  recursive: true
+});
+
+fs.writeFileSync(
+  path.join(cartFolder, "index.html"),
+  createCartPage(products),
+  "utf8"
+);
+
+console.log("Generat: /cos/");
 
   // Homepage
   fs.writeFileSync(

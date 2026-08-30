@@ -16,7 +16,7 @@ function updateCartBadge() {
   const cart = getCart();
 
   const count = cart.reduce((total, item) => {
-    return total + item.quantity;
+    return total + Number(item.quantity || 0);
   }, 0);
 
   document.querySelectorAll("[data-cart-count]").forEach((badge) => {
@@ -27,7 +27,9 @@ function updateCartBadge() {
 function addToCart(slug) {
   const cart = getCart();
 
-  const existingItem = cart.find((item) => item.slug === slug);
+  const existingItem = cart.find((item) => {
+    return item.slug === slug;
+  });
 
   if (existingItem) {
     existingItem.quantity += 1;
@@ -40,50 +42,353 @@ function addToCart(slug) {
 
   saveCart(cart);
   updateCartBadge();
+
+  if (document.getElementById("cart-items")) {
+    renderCart();
+  }
 }
 
-function changeQuantity(slug, change) {
+function setQuantity(slug, quantity) {
   const cart = getCart();
 
-  const item = cart.find((item) => item.slug === slug);
+  const item = cart.find((item) => {
+    return item.slug === slug;
+  });
 
   if (!item) {
     return;
   }
 
-  item.quantity += change;
+  const product = getProduct(slug);
 
-  const updatedCart = cart.filter((item) => item.quantity > 0);
+  let newQuantity = Number(quantity);
 
-  saveCart(updatedCart);
+  if (!Number.isFinite(newQuantity)) {
+    newQuantity = 1;
+  }
+
+  newQuantity = Math.floor(newQuantity);
+
+  if (product && Number(product.stock) > 0) {
+    newQuantity = Math.min(
+      newQuantity,
+      Number(product.stock)
+    );
+  }
+
+  if (newQuantity <= 0) {
+    removeFromCart(slug);
+    return;
+  }
+
+  item.quantity = newQuantity;
+
+  saveCart(cart);
   updateCartBadge();
+  renderCart();
+}
 
-  // Îl activăm când construim pagina /cos/
-  // renderCart();
+function changeQuantity(slug, change) {
+  const cart = getCart();
+
+  const item = cart.find((item) => {
+    return item.slug === slug;
+  });
+
+  if (!item) {
+    return;
+  }
+
+  setQuantity(
+    slug,
+    Number(item.quantity) + change
+  );
+}
+
+function removeFromCart(slug) {
+  const cart = getCart().filter((item) => {
+    return item.slug !== slug;
+  });
+
+  saveCart(cart);
+  updateCartBadge();
+  renderCart();
+}
+
+function getProduct(slug) {
+  if (!Array.isArray(window.PRODUCTS)) {
+    return null;
+  }
+
+  return window.PRODUCTS.find((product) => {
+    return product.slug === slug;
+  });
+}
+
+function formatPrice(value) {
+  return `${Number(value).toFixed(2)} lei`;
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function renderCart() {
+  const container = document.getElementById("cart-items");
+
+  if (!container) {
+    return;
+  }
+
+  const cart = getCart();
+
+  const validItems = cart
+    .map((cartItem) => {
+      const product = getProduct(cartItem.slug);
+
+      if (!product) {
+        return null;
+      }
+
+      return {
+        cartItem,
+        product,
+      };
+    })
+    .filter(Boolean);
+
+  if (validItems.length === 0) {
+    container.innerHTML = `
+      <div class="cart-empty">
+        <h2>Coșul tău este gol</h2>
+        <p>
+          Adaugă produse din catalog pentru a începe o comandă.
+        </p>
+
+        <a href="/produse/" class="cart-empty-button">
+          Vezi produsele
+        </a>
+      </div>
+    `;
+
+    updateCartSummary([]);
+    return;
+  }
+
+  container.innerHTML = validItems
+    .map(({ cartItem, product }) => {
+      const quantity = Number(cartItem.quantity);
+      const subtotal =
+        Number(product.price) * quantity;
+
+      return `
+        <article
+          class="cart-item"
+          data-cart-item="${escapeHtml(product.slug)}"
+        >
+
+          <a
+            href="/produse/${escapeHtml(product.slug)}/"
+            class="cart-item-image-link"
+          >
+            <img
+              src="${escapeHtml(product.image_1)}"
+              alt="${escapeHtml(product.name)}"
+              class="cart-item-image"
+            >
+          </a>
+
+          <div class="cart-item-info">
+            <a
+              href="/produse/${escapeHtml(product.slug)}/"
+              class="cart-item-title"
+            >
+              ${escapeHtml(product.name)}
+            </a>
+
+            <span class="cart-item-unit-price">
+              ${formatPrice(product.price)} / buc.
+            </span>
+
+            <button
+              type="button"
+              class="cart-remove-button"
+              data-cart-remove="${escapeHtml(product.slug)}"
+            >
+              Elimină
+            </button>
+          </div>
+
+          <div class="cart-quantity">
+            <button
+              type="button"
+              class="cart-quantity-button"
+              data-cart-minus="${escapeHtml(product.slug)}"
+              aria-label="Scade cantitatea"
+            >
+              −
+            </button>
+
+            <input
+              type="number"
+              class="cart-quantity-input"
+              value="${quantity}"
+              min="1"
+              max="${Number(product.stock) || 999}"
+              data-cart-quantity="${escapeHtml(product.slug)}"
+              aria-label="Cantitate ${escapeHtml(product.name)}"
+            >
+
+            <button
+              type="button"
+              class="cart-quantity-button"
+              data-cart-plus="${escapeHtml(product.slug)}"
+              aria-label="Crește cantitatea"
+            >
+              +
+            </button>
+          </div>
+
+          <div class="cart-item-subtotal">
+            <span>Subtotal</span>
+
+            <strong>
+              ${formatPrice(subtotal)}
+            </strong>
+          </div>
+
+        </article>
+      `;
+    })
+    .join("");
+
+  updateCartSummary(validItems);
+}
+
+function updateCartSummary(items) {
+  const countElement =
+    document.getElementById("cart-summary-count");
+
+  const totalElement =
+    document.getElementById("cart-total");
+
+  const checkoutButton =
+    document.getElementById("cart-checkout-button");
+
+  const totalQuantity = items.reduce(
+    (total, { cartItem }) => {
+      return total + Number(cartItem.quantity);
+    },
+    0
+  );
+
+  const totalPrice = items.reduce(
+    (total, { cartItem, product }) => {
+      return (
+        total +
+        Number(product.price) *
+          Number(cartItem.quantity)
+      );
+    },
+    0
+  );
+
+  if (countElement) {
+    countElement.textContent =
+      `${totalQuantity} buc.`;
+  }
+
+  if (totalElement) {
+    totalElement.textContent =
+      formatPrice(totalPrice);
+  }
+
+  if (checkoutButton) {
+    checkoutButton.disabled =
+      totalQuantity === 0;
+  }
 }
 
 document.addEventListener("click", (event) => {
-  const button = event.target.closest(".add-to-cart");
+  const addButton =
+    event.target.closest(".add-to-cart");
 
-  if (!button) {
+  if (addButton) {
+    const slug =
+      addButton.dataset.productSlug;
+
+    if (!slug) {
+      return;
+    }
+
+    addToCart(slug);
+
+    const originalText =
+      addButton.textContent;
+
+    addButton.textContent =
+      "Adăugat ✓";
+
+    setTimeout(() => {
+      addButton.textContent =
+        originalText;
+    }, 900);
+
     return;
   }
 
-  const slug = button.dataset.productSlug;
+  const plusButton =
+    event.target.closest("[data-cart-plus]");
 
-  if (!slug) {
+  if (plusButton) {
+    changeQuantity(
+      plusButton.dataset.cartPlus,
+      1
+    );
+
     return;
   }
 
-  addToCart(slug);
+  const minusButton =
+    event.target.closest("[data-cart-minus]");
 
-  const originalText = button.textContent;
+  if (minusButton) {
+    changeQuantity(
+      minusButton.dataset.cartMinus,
+      -1
+    );
 
-  button.textContent = "Adăugat ✓";
+    return;
+  }
 
-  setTimeout(() => {
-    button.textContent = originalText;
-  }, 900);
+  const removeButton =
+    event.target.closest("[data-cart-remove]");
+
+  if (removeButton) {
+    removeFromCart(
+      removeButton.dataset.cartRemove
+    );
+  }
+});
+
+document.addEventListener("change", (event) => {
+  const input =
+    event.target.closest("[data-cart-quantity]");
+
+  if (!input) {
+    return;
+  }
+
+  setQuantity(
+    input.dataset.cartQuantity,
+    input.value
+  );
 });
 
 updateCartBadge();
+renderCart();
