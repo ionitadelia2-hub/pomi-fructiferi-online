@@ -145,6 +145,33 @@ function createProductCard(product) {
 function createProductPage(product) {
   const categoryName = getCategoryName(product.subcategory);
 
+  const images = [
+    product.image_1,
+    product.image_2,
+    product.image_3
+  ].filter(Boolean);
+
+  const thumbnails = images
+    .map(
+      (image, index) => `
+        <button
+          type="button"
+          class="product-thumbnail ${index === 0 ? "active" : ""}"
+          data-image="${escapeHtml(image)}"
+          aria-label="Vezi imaginea ${index + 1} pentru ${escapeHtml(product.name)}"
+        >
+          <img
+            src="${escapeHtml(image)}"
+            alt="${escapeHtml(product.name)} - imagine ${index + 1}"
+            loading="${index === 0 ? "eager" : "lazy"}"
+            width="160"
+            height="160"
+          >
+        </button>
+      `
+    )
+    .join("");
+
   return `<!DOCTYPE html>
 <html lang="ro">
 <head>
@@ -152,16 +179,17 @@ function createProductPage(product) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>${escapeHtml(product.seo_title)}</title>
+
   <meta
     name="description"
     content="${escapeHtml(product.seo_description)}"
   >
 
   <meta property="og:type" content="product">
-<meta property="og:title" content="${escapeHtml(product.seo_title)}">
-<meta property="og:description" content="${escapeHtml(product.seo_description)}">
-<meta property="og:image" content="${SITE_URL}${escapeHtml(product.image_1)}">
-<meta property="og:url" content="${SITE_URL}/produse/${escapeHtml(product.slug)}/">
+  <meta property="og:title" content="${escapeHtml(product.seo_title)}">
+  <meta property="og:description" content="${escapeHtml(product.seo_description)}">
+  <meta property="og:image" content="${SITE_URL}${escapeHtml(product.image_1)}">
+  <meta property="og:url" content="${SITE_URL}/produse/${escapeHtml(product.slug)}/">
 
   <link
     rel="canonical"
@@ -173,7 +201,8 @@ function createProductPage(product) {
 
 <body>
 
-  <main>
+  <main class="product-main">
+
     <nav class="breadcrumbs" aria-label="Breadcrumb">
       <a href="/">Acasă</a>
       <span>›</span>
@@ -189,126 +218,335 @@ function createProductPage(product) {
       <span>${escapeHtml(product.name)}</span>
     </nav>
 
+
     <article class="product-page">
 
-    <div class="product-gallery">
-  ${
-    product.image_1
-      ? `<img
-          src="${escapeHtml(product.image_1)}"
-          alt="${escapeHtml(product.name)}"
-          class="product-main-image"
-          loading="eager"
-          width="900"
-          height="900"
-        >`
-      : ""
-  }
+      <div class="product-top">
 
-  ${
-    product.image_2 || product.image_3
-      ? `<div class="product-thumbnails">
+        <!-- GALERIE -->
+        <section class="product-gallery">
+
           ${
-            product.image_2
-              ? `<img
-                  src="${escapeHtml(product.image_2)}"
-                  alt="${escapeHtml(product.name)} - imagine 2"
-                  loading="lazy"
-                  width="300"
-                  height="300"
-                >`
+            product.image_1
+              ? `
+                <div class="product-main-image-wrapper">
+                  <img
+                    id="product-main-image"
+                    src="${escapeHtml(product.image_1)}"
+                    alt="${escapeHtml(product.name)}"
+                    class="product-main-image"
+                    loading="eager"
+                    width="900"
+                    height="900"
+                  >
+                </div>
+              `
               : ""
           }
 
           ${
-            product.image_3
-              ? `<img
-                  src="${escapeHtml(product.image_3)}"
-                  alt="${escapeHtml(product.name)} - imagine 3"
-                  loading="lazy"
-                  width="300"
-                  height="300"
-                >`
+            thumbnails
+              ? `
+                <div class="product-thumbnails">
+                  ${thumbnails}
+                </div>
+              `
               : ""
           }
-        </div>`
-      : ""
-  }
-</div>
-      <p class="product-category">
-        ${escapeHtml(categoryName)}
-      </p>
 
-      <h1>${escapeHtml(product.name)}</h1>
+        </section>
 
-      <p class="product-short-description">
-        ${escapeHtml(product.short_description)}
-      </p>
 
-      <div class="product-details">
-        <p>
-          <strong>Preț:</strong>
-          ${escapeHtml(product.price)} lei
-        </p>
+        <!-- INFORMATII PRODUS -->
+        <section class="product-info">
 
-        <p>
-          <strong>Stoc:</strong>
-          ${escapeHtml(product.stock)}
-        </p>
+          <p class="product-category">
+            ${escapeHtml(categoryName)}
+          </p>
 
-        <p>
-          <strong>Înălțime:</strong>
-          ${escapeHtml(product.height_cm)} cm
-        </p>
+          <h1>${escapeHtml(product.name)}</h1>
 
-        <p>
-          <strong>Vârstă:</strong>
-          ${escapeHtml(product.age_years)} ani
-        </p>
+          <p class="product-short-description">
+            ${escapeHtml(product.short_description)}
+          </p>
 
-        <p>
-          <strong>Tip rădăcină:</strong>
-          ${escapeHtml(product.root_type)}
-        </p>
+          <div class="product-price">
+            ${
+              product.old_price
+                ? `<span class="old-price">${escapeHtml(product.old_price)} lei</span>`
+                : ""
+            }
 
-        <p>
-          <strong>Perioadă plantare:</strong>
-          ${escapeHtml(product.planting_period)}
-        </p>
+            <strong>${escapeHtml(product.price)} lei</strong>
+          </div>
 
-        <p>
-          <strong>Perioadă recoltare:</strong>
-          ${escapeHtml(product.harvest_period)}
-        </p>
+          <p class="product-stock ${
+            Number(product.stock) > 0 ? "in-stock" : "out-of-stock"
+          }">
+            ${
+              Number(product.stock) > 0
+                ? `✓ În stoc (${escapeHtml(product.stock)} buc.)`
+                : "Stoc epuizat"
+            }
+          </p>
 
-        <p>
-          <strong>Expunere:</strong>
-          ${escapeHtml(product.sun_exposure)}
-        </p>
 
-        <p>
-          <strong>Rezistență la ger:</strong>
-          ${escapeHtml(product.frost_resistance)}°C
-        </p>
+          <div class="product-quick-details">
+
+            ${
+              product.height_cm
+                ? `
+                  <div>
+                    <span>Înălțime</span>
+                    <strong>${escapeHtml(product.height_cm)} cm</strong>
+                  </div>
+                `
+                : ""
+            }
+
+            ${
+              product.age_years
+                ? `
+                  <div>
+                    <span>Vârstă</span>
+                    <strong>${escapeHtml(product.age_years)} ani</strong>
+                  </div>
+                `
+                : ""
+            }
+
+            ${
+              product.root_type
+                ? `
+                  <div>
+                    <span>Tip rădăcină</span>
+                    <strong>${escapeHtml(product.root_type)}</strong>
+                  </div>
+                `
+                : ""
+            }
+
+            ${
+              product.variety
+                ? `
+                  <div>
+                    <span>Soi</span>
+                    <strong>${escapeHtml(product.variety)}</strong>
+                  </div>
+                `
+                : ""
+            }
+
+          </div>
+
+
+          <button
+            type="button"
+            class="add-to-cart product-add-to-cart"
+            data-product-id="${escapeHtml(product.id)}"
+            ${Number(product.stock) <= 0 ? "disabled" : ""}
+          >
+            Adaugă în coș
+          </button>
+
+          <p class="product-delivery-note">
+            Pom pregătit pentru plantare și livrare în condiții corespunzătoare.
+          </p>
+
+        </section>
+
       </div>
 
-      <button
-        type="button"
-        class="add-to-cart"
-        data-product-id="${escapeHtml(product.id)}"
-      >
-        Adaugă în coș
-      </button>
 
-      <section class="product-description">
+      <!-- DESCRIERE -->
+      <section class="product-description product-section">
+
         <h2>Descriere</h2>
 
         <p>
           ${escapeHtml(product.description)}
         </p>
+
       </section>
+
+
+      <!-- CARACTERISTICI -->
+      <section class="product-section">
+
+        <h2>Caracteristici</h2>
+
+        <div class="product-specifications">
+
+          ${
+            product.planting_period
+              ? `
+                <div>
+                  <span>Perioadă plantare</span>
+                  <strong>${escapeHtml(product.planting_period)}</strong>
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            product.harvest_period
+              ? `
+                <div>
+                  <span>Perioadă recoltare</span>
+                  <strong>${escapeHtml(product.harvest_period)}</strong>
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            product.fruiting_period
+              ? `
+                <div>
+                  <span>Perioadă fructificare</span>
+                  <strong>${escapeHtml(product.fruiting_period)}</strong>
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            product.sun_exposure
+              ? `
+                <div>
+                  <span>Expunere</span>
+                  <strong>${escapeHtml(product.sun_exposure)}</strong>
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            product.soil_type
+              ? `
+                <div>
+                  <span>Tip sol</span>
+                  <strong>${escapeHtml(product.soil_type)}</strong>
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            product.frost_resistance
+              ? `
+                <div>
+                  <span>Rezistență la ger</span>
+                  <strong>${escapeHtml(product.frost_resistance)}°C</strong>
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            product.fruit_color
+              ? `
+                <div>
+                  <span>Culoare fruct</span>
+                  <strong>${escapeHtml(product.fruit_color)}</strong>
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            product.fruit_taste
+              ? `
+                <div>
+                  <span>Gust</span>
+                  <strong>${escapeHtml(product.fruit_taste)}</strong>
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            product.fruit_size
+              ? `
+                <div>
+                  <span>Mărime fruct</span>
+                  <strong>${escapeHtml(product.fruit_size)}</strong>
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            product.productivity
+              ? `
+                <div>
+                  <span>Productivitate</span>
+                  <strong>${escapeHtml(product.productivity)}</strong>
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            product.self_fertile
+              ? `
+                <div>
+                  <span>Autofertil</span>
+                  <strong>
+                    ${product.self_fertile === "true" ? "Da" : "Nu"}
+                  </strong>
+                </div>
+              `
+              : ""
+          }
+
+        </div>
+
+      </section>
+
+
+      ${
+        product.care_notes
+          ? `
+            <section class="product-section product-care">
+              <h2>Plantare și îngrijire</h2>
+
+              <p>
+                ${escapeHtml(product.care_notes)}
+              </p>
+            </section>
+          `
+          : ""
+      }
+
     </article>
+
   </main>
+
+
+  <script>
+    document.querySelectorAll(".product-thumbnail").forEach(function(button) {
+
+      button.addEventListener("click", function() {
+
+        const mainImage = document.getElementById("product-main-image");
+
+        if (!mainImage) {
+          return;
+        }
+
+        mainImage.src = this.dataset.image;
+
+        document.querySelectorAll(".product-thumbnail").forEach(function(item) {
+          item.classList.remove("active");
+        });
+
+        this.classList.add("active");
+
+      });
+
+    });
+  </script>
 
 </body>
 </html>`;
