@@ -59,6 +59,26 @@ function readProducts() {
     .filter((product) => product.status === "active");
 }
 
+
+// ADAUGĂ FUNCȚIA AICI
+function groupProducts(products, field) {
+  return products.reduce((groups, product) => {
+    const key = product[field];
+
+    if (!key) {
+      return groups;
+    }
+
+    if (!groups[key]) {
+      groups[key] = [];
+    }
+
+    groups[key].push(product);
+
+    return groups;
+  }, {});
+}
+
 function escapeHtml(value = "") {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -1158,7 +1178,12 @@ ${createHeader()}
 }
 
 function build() {
-  const products = readProducts();
+   const products = readProducts();
+
+  const families = groupProducts(products, "family");
+  const productTypes = groupProducts(products, "product_type");
+  const categories = groupProducts(products, "category");
+  const subcategories = groupProducts(products, "subcategory");
 
   if (fs.existsSync(distPath)) {
     fs.rmSync(distPath, {
@@ -1239,19 +1264,8 @@ if (fs.existsSync(imagesSourcePath)) {
   console.log("Generat: /produse/");
 
   // Categorii generate automat
-  const categories = [
-    ...new Set(
-      products
-        .map((product) => product.subcategory)
-        .filter(Boolean)
-    )
-  ];
-
-  categories.forEach((categorySlug) => {
-    const categoryProducts = products.filter(
-      (product) =>
-        product.subcategory === categorySlug
-    );
+Object.entries(subcategories).forEach(
+  ([categorySlug, categoryProducts]) => {
 
     const categoryFolder = path.join(
       distPath,
@@ -1272,10 +1286,11 @@ if (fs.existsSync(imagesSourcePath)) {
       "utf8"
     );
 
-        console.log(
+    console.log(
       `Generat: /categorii/${categorySlug}/ (${categoryProducts.length} produse)`
     );
-  });
+  }
+);
 
 
   // Homepage
@@ -1291,7 +1306,21 @@ if (fs.existsSync(imagesSourcePath)) {
   console.log("");
   console.log("Build finalizat.");
   console.log(`Produse generate: ${products.length}`);
-  console.log(`Categorii generate: ${categories.length}`);
+  console.log(
+  `Categorii principale: ${Object.keys(categories).length}`
+);
+
+console.log(
+  `Subcategorii generate: ${Object.keys(subcategories).length}`
+);
+
+console.log(
+  `Familii produse: ${Object.keys(families).length}`
+);
+
+console.log(
+  `Tipuri produse: ${Object.keys(productTypes).length}`
+);
 }
 
 build();
