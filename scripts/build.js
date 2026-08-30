@@ -1177,6 +1177,57 @@ function createHomePage(products) {
     .map((product) => createProductCard(product))
     .join("");
 
+    const familyCards = [
+  {
+    slug: "pomi-fructiferi",
+    name: "Pomi fructiferi",
+    description: "Meri, peri, pruni și alte specii pentru grădină și livadă."
+  },
+  {
+    slug: "pomi-columnari",
+    name: "Pomi columnari",
+    description: "Pomi compacți și productivi, potriviți pentru spații mai mici."
+  },
+  {
+    slug: "vita-de-vie",
+    name: "Viță de vie",
+    description: "Soiuri de masă și soiuri pentru vin."
+  },
+  {
+    slug: "arbusti-fructiferi",
+    name: "Arbuști fructiferi",
+    description: "Zmeur, afin, mur și alte specii pentru grădină."
+  }
+];
+
+const familyCardsHtml = familyCards
+  .map((family) => {
+    const familyProducts = products.filter(
+      (product) => product.family === family.slug
+    );
+
+    return `
+      <a href="/${family.slug}/" class="home-category-card">
+
+        <span class="home-category-name">
+          ${family.name}
+        </span>
+
+        <span class="home-category-description">
+          ${family.description}
+        </span>
+
+        <span class="home-category-link">
+          ${familyProducts.length}
+          ${familyProducts.length === 1 ? "produs" : "produse"}
+          →
+        </span>
+
+      </a>
+    `;
+  })
+  .join("");
+
   return `<!DOCTYPE html>
 <html lang="ro">
 <head>
@@ -1235,37 +1286,23 @@ ${createHeader()}
       <div class="home-section-heading">
 
         <p class="home-eyebrow">
-          Categorii
-        </p>
+  Catalog
+</p>
 
-        <h2>
-          Alege pomii după specie
-        </h2>
+<h2>
+  Alege categoria potrivită
+</h2>
 
-        <p>
-          Găsește rapid soiurile potrivite pentru grădina sau livada ta.
-        </p>
-
-      </div>
-
-      <div class="home-category-grid">
-
-        <a href="/categorii/mar/" class="home-category-card">
-          <span class="home-category-name">Meri</span>
-          <span class="home-category-link">Vezi soiurile →</span>
-        </a>
-
-        <a href="/categorii/par/" class="home-category-card">
-          <span class="home-category-name">Peri</span>
-          <span class="home-category-link">Vezi soiurile →</span>
-        </a>
-
-        <a href="/categorii/prun/" class="home-category-card">
-          <span class="home-category-name">Pruni</span>
-          <span class="home-category-link">Vezi soiurile →</span>
-        </a>
+<p>
+  Descoperă plantele disponibile pentru grădină, livadă sau plantație.
+</p>
 
       </div>
+
+        <div class="home-category-grid">
+  ${familyCardsHtml}
+</div>
+
     </section>
 
 
