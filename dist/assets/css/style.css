@@ -1059,3 +1059,136 @@ button:hover {
     width: 100%;
   }
 }
+
+/* =========================================
+   HEADER
+========================================= */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom: 1px solid #e1e8e1;
+  backdrop-filter: blur(10px);
+}
+
+.site-header-inner {
+  max-width: 1280px;
+  min-height: 76px;
+
+  margin: 0 auto;
+  padding: 0 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.site-logo {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+
+  color: #15341e;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-logo-main {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.site-logo-sub {
+  color: #2f7d3e;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.site-nav a {
+  color: #293a2e;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.site-nav a:hover {
+  color: #2f7d3e;
+}
+
+.site-cart {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 16px;
+
+  border: 1px solid #2f7d3e;
+  border-radius: 10px;
+
+  color: #2f7d3e;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.site-cart:hover {
+  background: #f0f7f1;
+}
+
+.cart-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+
+  border-radius: 999px;
+  background: #2f7d3e;
+
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+@media (max-width: 760px) {
+  .site-header-inner {
+    min-height: auto;
+    padding: 14px 18px;
+
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .site-logo {
+    flex: 1;
+  }
+
+  .site-nav {
+    order: 3;
+    width: 100%;
+
+    justify-content: center;
+    gap: 20px;
+
+    padding-top: 10px;
+    border-top: 1px solid #e5ebe5;
+  }
+
+  .site-logo-main {
+    font-size: 19px;
+  }
+
+  .site-logo-sub {
+    font-size: 17px;
+  }
+}

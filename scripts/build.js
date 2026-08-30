@@ -265,6 +265,8 @@ function createProductPage(product) {
 
 <body>
 
+${createHeader()}
+
   <main class="product-main">
 
     <nav class="breadcrumbs" aria-label="Breadcrumb">
@@ -660,6 +662,8 @@ function createProductsPage(products) {
 
 <body>
 
+${createHeader()}
+
   <main class="catalog-main">
 
     <nav class="breadcrumbs" aria-label="Breadcrumb">
@@ -808,6 +812,8 @@ function createCategoryPage(categorySlug, products) {
 
 <body>
 
+${createHeader()}
+
   <main class="catalog-main">
 
     <nav
@@ -896,6 +902,32 @@ function createCategoryPage(categorySlug, products) {
 </html>`;
 }
 
+function createHeader() {
+  return `
+    <header class="site-header">
+      <div class="site-header-inner">
+
+        <a href="/" class="site-logo">
+          <span class="site-logo-main">Pomi Fructiferi</span>
+          <span class="site-logo-sub">online.ro</span>
+        </a>
+
+        <nav class="site-nav" aria-label="Navigație principală">
+          <a href="/">Acasă</a>
+          <a href="/produse/">Produse</a>
+          <a href="/servicii/">Servicii</a>
+        </nav>
+
+        <a href="/cos/" class="site-cart">
+          Coș
+          <span class="cart-count">0</span>
+        </a>
+
+      </div>
+    </header>
+  `;
+}
+
 function createHomePage(products) {
   const featuredProducts = products
     .filter((product) => product.featured === "true")
@@ -923,6 +955,8 @@ function createHomePage(products) {
 </head>
 
 <body>
+
+${createHeader()}
 
   <main>
 
