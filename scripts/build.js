@@ -1511,13 +1511,13 @@ function createCartPage(products) {
             <strong id="cart-total">0.00 lei</strong>
           </div>
 
-          <button
-            type="button"
-            class="cart-checkout-button"
-            id="cart-checkout-button"
-          >
-            Continuă comanda
-          </button>
+          <a
+  href="/checkout/"
+  class="cart-checkout-button"
+  id="cart-checkout-button"
+>
+  Continuă comanda
+</a>
         </aside>
 
       </section>
@@ -1530,6 +1530,222 @@ function createCartPage(products) {
   </script>
 
   <script src="/assets/js/cart.js"></script>
+
+</body>
+</html>`;
+}
+
+function createCheckoutPage(products) {
+  const productsJson = JSON.stringify(
+    products.map((product) => ({
+      slug: product.slug,
+      name: product.name,
+      price: Number(product.price),
+      image_1: product.image_1,
+      stock: Number(product.stock),
+    }))
+  ).replace(/</g, "\\u003c");
+
+  return `<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Finalizare comandă | Pomi Fructiferi Online</title>
+
+  <meta
+    name="description"
+    content="Completează datele pentru finalizarea comenzii."
+  >
+
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<body>
+
+  ${createHeader()}
+
+  <main class="checkout-page">
+    <div class="container">
+
+      <nav class="breadcrumb">
+        <a href="/">Acasă</a>
+        <span>›</span>
+        <a href="/cos/">Coș</a>
+        <span>›</span>
+        <span>Finalizare comandă</span>
+      </nav>
+
+      <section class="checkout-header">
+        <span class="eyebrow">FINALIZARE COMANDĂ</span>
+
+        <h1>Date pentru livrare</h1>
+
+        <p>
+          Completează informațiile de mai jos pentru pregătirea și livrarea comenzii.
+        </p>
+      </section>
+
+      <div class="checkout-layout">
+
+        <form
+          id="checkout-form"
+          class="checkout-form"
+          novalidate
+        >
+
+          <h2>Date client</h2>
+
+          <div class="checkout-fields">
+
+            <div class="checkout-field">
+              <label for="customer-name">
+                Nume și prenume *
+              </label>
+
+              <input
+                type="text"
+                id="customer-name"
+                name="name"
+                autocomplete="name"
+                required
+              >
+            </div>
+
+            <div class="checkout-field">
+              <label for="customer-phone">
+                Telefon *
+              </label>
+
+              <input
+                type="tel"
+                id="customer-phone"
+                name="phone"
+                autocomplete="tel"
+                required
+              >
+            </div>
+
+            <div class="checkout-field">
+              <label for="customer-email">
+                Email
+              </label>
+
+              <input
+                type="email"
+                id="customer-email"
+                name="email"
+                autocomplete="email"
+              >
+            </div>
+
+            <div class="checkout-field">
+              <label for="customer-county">
+                Județ *
+              </label>
+
+              <input
+                type="text"
+                id="customer-county"
+                name="county"
+                required
+              >
+            </div>
+
+            <div class="checkout-field">
+              <label for="customer-city">
+                Localitate *
+              </label>
+
+              <input
+                type="text"
+                id="customer-city"
+                name="city"
+                required
+              >
+            </div>
+
+            <div class="checkout-field checkout-field-full">
+              <label for="customer-address">
+                Adresă *
+              </label>
+
+              <input
+                type="text"
+                id="customer-address"
+                name="address"
+                autocomplete="street-address"
+                required
+              >
+            </div>
+
+            <div class="checkout-field checkout-field-full">
+              <label for="customer-notes">
+                Observații
+              </label>
+
+              <textarea
+                id="customer-notes"
+                name="notes"
+                rows="5"
+                placeholder="Ex: sunați înainte de livrare"
+              ></textarea>
+            </div>
+
+          </div>
+
+          <label class="checkout-consent">
+            <input
+              type="checkbox"
+              name="terms"
+              required
+            >
+
+            <span>
+              Confirm că datele introduse sunt corecte și doresc trimiterea comenzii.
+            </span>
+          </label>
+
+          <div
+            id="checkout-error"
+            class="checkout-error"
+            hidden
+          ></div>
+
+          <button
+            type="submit"
+            class="checkout-submit-button"
+          >
+            Trimite comanda
+          </button>
+
+        </form>
+
+        <aside class="checkout-summary">
+          <h2>Comanda ta</h2>
+
+          <div id="checkout-items"></div>
+
+          <div class="checkout-total-row">
+            <span>Total</span>
+            <strong id="checkout-total">
+              0.00 lei
+            </strong>
+          </div>
+        </aside>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    window.PRODUCTS = ${productsJson};
+  </script>
+
+  <script src="/assets/js/cart.js"></script>
+  <script src="/assets/js/checkout.js"></script>
 
 </body>
 </html>`;
@@ -1583,6 +1799,11 @@ fs.mkdirSync(jsDistFolder, {
 fs.copyFileSync(
   path.join(__dirname, "..", "src", "js", "cart.js"),
   path.join(jsDistFolder, "cart.js")
+);
+
+fs.copyFileSync(
+  path.join(__dirname, "..", "src", "js", "checkout.js"),
+  path.join(jsDistFolder, "checkout.js")
 );
 
   const imagesDistPath = path.join(distPath, "images");
@@ -1710,6 +1931,24 @@ fs.writeFileSync(
 );
 
 console.log("Generat: /cos/");
+
+// Checkout
+const checkoutFolder = path.join(
+  distPath,
+  "checkout"
+);
+
+fs.mkdirSync(checkoutFolder, {
+  recursive: true
+});
+
+fs.writeFileSync(
+  path.join(checkoutFolder, "index.html"),
+  createCheckoutPage(products),
+  "utf8"
+);
+
+console.log("Generat: /checkout/");
 
   // Homepage
   fs.writeFileSync(

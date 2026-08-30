@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Finalizare comandă | Pomi Fructiferi Online</title>
+
+  <meta
+    name="description"
+    content="Completează datele pentru finalizarea comenzii."
+  >
+
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<body>
+
+  
+    <header class="site-header">
+      <div class="site-header-inner">
+
+        <a href="/" class="site-logo">
+          <span class="site-logo-main">Pomi Fructiferi</span>
+          <span class="site-logo-sub">online.ro</span>
+        </a>
+
+        <nav class="site-nav" aria-label="Navigație principală">
+          <a href="/">Acasă</a>
+          <div class="nav-dropdown">
+  <a href="/produse/" class="nav-dropdown-trigger">Produse</a>
+
+  <div class="nav-dropdown-menu">
+    <a href="/pomi-fructiferi/">Pomi fructiferi</a>
+    <a href="/pomi-columnari/">Pomi columnari</a>
+    <a href="/vita-de-vie/">Viță de vie</a>
+    <a href="/arbusti-fructiferi/">Arbuști fructiferi</a>
+  </div>
+</div>
+          <a href="/servicii/">Servicii</a>
+        </nav>
+
+        <a href="/cos/" class="site-cart">
+  Coș
+  <span class="cart-count" data-cart-count>0</span>
+</a>
+
+      </div>
+    </header>
+  
+
+  <main class="checkout-page">
+    <div class="container">
+
+      <nav class="breadcrumb">
+        <a href="/">Acasă</a>
+        <span>›</span>
+        <a href="/cos/">Coș</a>
+        <span>›</span>
+        <span>Finalizare comandă</span>
+      </nav>
+
+      <section class="checkout-header">
+        <span class="eyebrow">FINALIZARE COMANDĂ</span>
+
+        <h1>Date pentru livrare</h1>
+
+        <p>
+          Completează informațiile de mai jos pentru pregătirea și livrarea comenzii.
+        </p>
+      </section>
+
+      <div class="checkout-layout">
+
+        <form
+          id="checkout-form"
+          class="checkout-form"
+          novalidate
+        >
+
+          <h2>Date client</h2>
+
+          <div class="checkout-fields">
+
+            <div class="checkout-field">
+              <label for="customer-name">
+                Nume și prenume *
+              </label>
+
+              <input
+                type="text"
+                id="customer-name"
+                name="name"
+                autocomplete="name"
+                required
+              >
+            </div>
+
+            <div class="checkout-field">
+              <label for="customer-phone">
+                Telefon *
+              </label>
+
+              <input
+                type="tel"
+                id="customer-phone"
+                name="phone"
+                autocomplete="tel"
+                required
+              >
+            </div>
+
+            <div class="checkout-field">
+              <label for="customer-email">
+                Email
+              </label>
+
+              <input
+                type="email"
+                id="customer-email"
+                name="email"
+                autocomplete="email"
+              >
+            </div>
+
+            <div class="checkout-field">
+              <label for="customer-county">
+                Județ *
+              </label>
+
+              <input
+                type="text"
+                id="customer-county"
+                name="county"
+                required
+              >
+            </div>
+
+            <div class="checkout-field">
+              <label for="customer-city">
+                Localitate *
+              </label>
+
+              <input
+                type="text"
+                id="customer-city"
+                name="city"
+                required
+              >
+            </div>
+
+            <div class="checkout-field checkout-field-full">
+              <label for="customer-address">
+                Adresă *
+              </label>
+
+              <input
+                type="text"
+                id="customer-address"
+                name="address"
+                autocomplete="street-address"
+                required
+              >
+            </div>
+
+            <div class="checkout-field checkout-field-full">
+              <label for="customer-notes">
+                Observații
+              </label>
+
+              <textarea
+                id="customer-notes"
+                name="notes"
+                rows="5"
+                placeholder="Ex: sunați înainte de livrare"
+              ></textarea>
+            </div>
+
+          </div>
+
+          <label class="checkout-consent">
+            <input
+              type="checkbox"
+              name="terms"
+              required
+            >
+
+            <span>
+              Confirm că datele introduse sunt corecte și doresc trimiterea comenzii.
+            </span>
+          </label>
+
+          <div
+            id="checkout-error"
+            class="checkout-error"
+            hidden
+          ></div>
+
+          <button
+            type="submit"
+            class="checkout-submit-button"
+          >
+            Trimite comanda
+          </button>
+
+        </form>
+
+        <aside class="checkout-summary">
+          <h2>Comanda ta</h2>
+
+          <div id="checkout-items"></div>
+
+          <div class="checkout-total-row">
+            <span>Total</span>
+            <strong id="checkout-total">
+              0.00 lei
+            </strong>
+          </div>
+        </aside>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    window.PRODUCTS = [{"slug":"mar-golden-delicious","name":"Mar Golden Delicious","price":39.99,"image_1":"/images/pomi-fructiferi/mar/mar-golden-delicious/mar-golden-delicious-1.jpg","stock":25},{"slug":"par-williams","name":"Par Williams","price":42.99,"image_1":"/images/pomi-fructiferi/par/par-williams/par-williams-1.jpg","stock":18},{"slug":"prun-stanley","name":"Prun Stanley","price":44.99,"image_1":"/images/pomi-fructiferi/prun/prun-stanley/prun-stanley-1.jpg","stock":30},{"slug":"mar-columnar-golden-delicious","name":"Mar Columnar Golden Delicious","price":59.99,"image_1":"/images/pomi-columnari/mar/mar-columnar-golden-delicious/mar-columnar-golden-delicious-1.jpg","stock":15},{"slug":"prun-columnar-stanley","name":"Prun Columnar Stanley","price":62.99,"image_1":"/images/pomi-columnari/prun/prun-columnar-stanley/prun-columnar-stanley-1.jpg","stock":12},{"slug":"red-globe","name":"Red Globe","price":29.99,"image_1":"/images/vita-de-vie/soiuri-de-masa/red-globe/red-globe-1.jpg","stock":40},{"slug":"merlot","name":"Merlot","price":27.99,"image_1":"/images/vita-de-vie/soiuri-de-vin/merlot/merlot-1.jpg","stock":35},{"slug":"zmeur-polka","name":"Zmeur Polka","price":24.99,"image_1":"/images/arbusti-fructiferi/zmeura/zmeur-polka/zmeur-polka-1.jpg","stock":40},{"slug":"afin-duke","name":"Afin Duke","price":34.99,"image_1":"/images/arbusti-fructiferi/afin/afin-duke/afin-duke-1.jpg","stock":25},{"slug":"mur-thornfree","name":"Mur Thornfree","price":27.99,"image_1":"/images/arbusti-fructiferi/mur/mur-thornfree/mur-thornfree-1.jpg","stock":35}];
+  </script>
+
+  <script src="/assets/js/cart.js"></script>
+  <script src="/assets/js/checkout.js"></script>
+
+</body>
+</html>
