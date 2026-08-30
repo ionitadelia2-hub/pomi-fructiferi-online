@@ -4,6 +4,9 @@ const path = require("path");
 const csvPath = path.join(__dirname, "..", "src", "data", "products.csv");
 const distPath = path.join(__dirname, "..", "dist");
 const cssSourcePath = path.join(__dirname, "..", "src", "css", "style.css");
+const imagesSourcePath = path.join(__dirname, "..", "public", "images");
+
+const SITE_URL = "https://pomifructiferionline.ro";
 
 function parseCSVLine(line) {
   const values = [];
@@ -12,8 +15,12 @@ function parseCSVLine(line) {
 
   for (let i = 0; i < line.length; i++) {
     const char = line[i];
+    const nextChar = line[i + 1];
 
-    if (char === '"') {
+    if (char === '"' && insideQuotes && nextChar === '"') {
+      current += '"';
+      i++;
+    } else if (char === '"') {
       insideQuotes = !insideQuotes;
     } else if (char === "," && !insideQuotes) {
       values.push(current);
@@ -24,56 +31,220 @@ function parseCSVLine(line) {
   }
 
   values.push(current);
-  return values.map((value) => value.replace(/^"|"$/g, "").trim());
+
+  return values.map((value) => value.trim());
 }
 
 function readProducts() {
   const csv = fs.readFileSync(csvPath, "utf8").trim();
   const lines = csv.split(/\r?\n/);
 
+  if (lines.length < 2) {
+    return [];
+  }
+
   const headers = parseCSVLine(lines[0]);
 
-  return lines.slice(1).map((line) => {
-    const values = parseCSVLine(line);
+  return lines
+    .slice(1)
+    .filter((line) => line.trim() !== "")
+    .map((line) => {
+      const values = parseCSVLine(line);
 
-    return headers.reduce((product, header, index) => {
-      product[header] = values[index] ?? "";
-      return product;
-    }, {});
-  });
+      return headers.reduce((product, header, index) => {
+        product[header] = values[index] ?? "";
+        return product;
+      }, {});
+    })
+    .filter((product) => product.status === "active");
+}
+
+function escapeHtml(value = "") {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function getCategoryName(slug) {
+  const categoryNames = {
+    mar: "Meri",
+    par: "Peri",
+    prun: "Pruni",
+    cires: "Cireși",
+    visin: "Vișini",
+    cais: "Caiși",
+    piersic: "Piersici",
+    nectarin: "Nectarini",
+    gutui: "Gutui",
+    nuc: "Nuci",
+    zmeura: "Zmeură"
+  };
+
+  return categoryNames[slug] || slug;
+}
+
+function createProductCard(product) {
+  return `
+    <article class="product-card">
+      <h2 class="product-card-title">
+        <a href="/produse/${escapeHtml(product.slug)}/">
+          ${escapeHtml(product.name)}
+        </a>
+      </h2>
+
+      <p class="product-card-description">
+        ${escapeHtml(product.short_description)}
+      </p>
+
+      <p class="product-card-price">
+        <strong>${escapeHtml(product.price)} lei</strong>
+      </p>
+
+      <p class="product-card-stock">
+        ${
+          Number(product.stock) > 0
+            ? `În stoc: ${escapeHtml(product.stock)}`
+            : "Stoc epuizat"
+        }
+      </p>
+
+      <div class="product-card-actions">
+        <a
+          class="product-link"
+          href="/produse/${escapeHtml(product.slug)}/"
+        >
+          Vezi produsul
+        </a>
+
+        <button
+          type="button"
+          class="add-to-cart"
+          data-product-id="${escapeHtml(product.id)}"
+        >
+          Adaugă în coș
+        </button>
+      </div>
+    </article>
+  `;
 }
 
 function createProductPage(product) {
+  const categoryName = getCategoryName(product.subcategory);
+
   return `<!DOCTYPE html>
 <html lang="ro">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>${product.seo_title}</title>
-  <meta name="description" content="${product.seo_description}">
+  <title>${escapeHtml(product.seo_title)}</title>
+  <meta
+    name="description"
+    content="${escapeHtml(product.seo_description)}"
+  >
 
-  <link rel="canonical" href="https://pomifructiferionline.ro/produse/${product.slug}/">
+  <link
+    rel="canonical"
+    href="${SITE_URL}/produse/${escapeHtml(product.slug)}/"
+  >
+
   <link rel="stylesheet" href="/assets/css/style.css">
 </head>
+
 <body>
 
   <main>
-    <article>
-      <h1>${product.name}</h1>
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="/">Acasă</a>
+      <span>›</span>
 
-      <p>${product.short_description}</p>
+      <a href="/produse/">Produse</a>
+      <span>›</span>
 
-      <p><strong>Preț:</strong> ${product.price} lei</p>
-      <p><strong>Stoc:</strong> ${product.stock}</p>
-      <p><strong>Înălțime:</strong> ${product.height_cm} cm</p>
-      <p><strong>Vârstă:</strong> ${product.age_years} ani</p>
-      <p><strong>Tip rădăcină:</strong> ${product.root_type}</p>
+      <a href="/categorii/${escapeHtml(product.subcategory)}/">
+        ${escapeHtml(categoryName)}
+      </a>
+      <span>›</span>
 
-      <h2>Descriere</h2>
-      <p>${product.description}</p>
+      <span>${escapeHtml(product.name)}</span>
+    </nav>
 
-      <button type="button">Adaugă în coș</button>
+    <article class="product-page">
+      <p class="product-category">
+        ${escapeHtml(categoryName)}
+      </p>
+
+      <h1>${escapeHtml(product.name)}</h1>
+
+      <p class="product-short-description">
+        ${escapeHtml(product.short_description)}
+      </p>
+
+      <div class="product-details">
+        <p>
+          <strong>Preț:</strong>
+          ${escapeHtml(product.price)} lei
+        </p>
+
+        <p>
+          <strong>Stoc:</strong>
+          ${escapeHtml(product.stock)}
+        </p>
+
+        <p>
+          <strong>Înălțime:</strong>
+          ${escapeHtml(product.height_cm)} cm
+        </p>
+
+        <p>
+          <strong>Vârstă:</strong>
+          ${escapeHtml(product.age_years)} ani
+        </p>
+
+        <p>
+          <strong>Tip rădăcină:</strong>
+          ${escapeHtml(product.root_type)}
+        </p>
+
+        <p>
+          <strong>Perioadă plantare:</strong>
+          ${escapeHtml(product.planting_period)}
+        </p>
+
+        <p>
+          <strong>Perioadă recoltare:</strong>
+          ${escapeHtml(product.harvest_period)}
+        </p>
+
+        <p>
+          <strong>Expunere:</strong>
+          ${escapeHtml(product.sun_exposure)}
+        </p>
+
+        <p>
+          <strong>Rezistență la ger:</strong>
+          ${escapeHtml(product.frost_resistance)}°C
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="add-to-cart"
+        data-product-id="${escapeHtml(product.id)}"
+      >
+        Adaugă în coș
+      </button>
+
+      <section class="product-description">
+        <h2>Descriere</h2>
+
+        <p>
+          ${escapeHtml(product.description)}
+        </p>
+      </section>
     </article>
   </main>
 
@@ -83,24 +254,7 @@ function createProductPage(product) {
 
 function createProductsPage(products) {
   const productCards = products
-    .map(
-      (product) => `
-        <article class="product-card">
-          <h2>
-            <a href="/produse/${product.slug}/">${product.name}</a>
-          </h2>
-
-          <p>${product.short_description}</p>
-
-          <p><strong>Preț:</strong> ${product.price} lei</p>
-          <p><strong>Stoc:</strong> ${product.stock}</p>
-
-          <a class="product-link" href="/produse/${product.slug}/">
-            Vezi produsul
-          </a>
-        </article>
-      `
-    )
+    .map((product) => createProductCard(product))
     .join("");
 
   return `<!DOCTYPE html>
@@ -110,22 +264,27 @@ function createProductsPage(products) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Pomi fructiferi de vânzare | Pomi Fructiferi Online</title>
+
   <meta
     name="description"
-    content="Descoperă pomi fructiferi de vânzare pentru grădină și livadă: meri, peri, pruni și alte soiuri atent selecționate."
+    content="Descoperă pomi fructiferi de vânzare pentru grădină și livadă. Alege dintre meri, peri, pruni, cireși, caiși și numeroase alte soiuri."
   >
 
-  <link rel="canonical" href="https://pomifructiferionline.ro/produse/">
+  <link rel="canonical" href="${SITE_URL}/produse/">
   <link rel="stylesheet" href="/assets/css/style.css">
 </head>
+
 <body>
 
   <main>
     <section class="products-page">
-      <h1>Pomi fructiferi</h1>
+      <h1>Pomi fructiferi de vânzare</h1>
 
-      <p>
-        Descoperă pomii fructiferi disponibili pentru plantare în grădină sau livadă.
+      <p class="category-intro">
+        Descoperă soiurile disponibile de pomi fructiferi pentru
+        grădină și livadă. Alege soiul potrivit în funcție de
+        perioada de recoltare, caracteristicile fructelor și
+        condițiile de plantare.
       </p>
 
       <div class="products-grid">
@@ -138,24 +297,123 @@ function createProductsPage(products) {
 </html>`;
 }
 
+function createCategoryPage(categorySlug, products) {
+  const categoryName = getCategoryName(categorySlug);
+
+  const productCards = products
+    .map((product) => createProductCard(product))
+    .join("");
+
+  return `<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>${escapeHtml(categoryName)} de vânzare | Pomi Fructiferi Online</title>
+
+  <meta
+    name="description"
+    content="Descoperă soiurile de ${escapeHtml(
+      categoryName.toLowerCase()
+    )} disponibile pentru grădină și livadă. Comandă online pomi fructiferi sănătoși și atent selecționați."
+  >
+
+  <link
+    rel="canonical"
+    href="${SITE_URL}/categorii/${escapeHtml(categorySlug)}/"
+  >
+
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<body>
+
+  <main>
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="/">Acasă</a>
+      <span>›</span>
+
+      <a href="/produse/">Produse</a>
+      <span>›</span>
+
+      <span>${escapeHtml(categoryName)}</span>
+    </nav>
+
+    <section class="category-page">
+      <h1>${escapeHtml(categoryName)} de vânzare</h1>
+
+      <p class="category-intro">
+        Descoperă soiurile de ${escapeHtml(
+          categoryName.toLowerCase()
+        )} disponibile în pepiniera noastră.
+        Compară soiurile și alege pomii potriviți pentru grădina
+        sau livada ta.
+      </p>
+
+      <div class="products-grid">
+        ${productCards}
+      </div>
+
+      <section class="category-seo-content">
+        <h2>Cum alegi ${escapeHtml(categoryName.toLowerCase())} pentru plantare?</h2>
+
+        <p>
+          Alegerea unui pom fructifer trebuie făcută în funcție de
+          soi, perioada de coacere, condițiile de climă și spațiul
+          disponibil. Pe pagina fiecărui produs vei găsi informații
+          despre plantare, recoltare, dimensiuni și particularitățile
+          soiului.
+        </p>
+      </section>
+    </section>
+  </main>
+
+</body>
+</html>`;
+}
+
 function build() {
   const products = readProducts();
 
   if (fs.existsSync(distPath)) {
-    fs.rmSync(distPath, { recursive: true, force: true });
+    fs.rmSync(distPath, {
+      recursive: true,
+      force: true
+    });
   }
 
-  fs.mkdirSync(distPath, { recursive: true });
+  fs.mkdirSync(distPath, {
+    recursive: true
+  });
 
-  const cssDistFolder = path.join(distPath, "assets", "css");
+  // CSS
+  const cssDistFolder = path.join(
+    distPath,
+    "assets",
+    "css"
+  );
 
-fs.mkdirSync(cssDistFolder, { recursive: true });
+  fs.mkdirSync(cssDistFolder, {
+    recursive: true
+  });
 
-fs.copyFileSync(
-  cssSourcePath,
-  path.join(cssDistFolder, "style.css")
-);
+  fs.copyFileSync(
+    cssSourcePath,
+    path.join(cssDistFolder, "style.css")
+  );
 
+  const imagesDistPath = path.join(distPath, "images");
+
+if (fs.existsSync(imagesSourcePath)) {
+  fs.cpSync(imagesSourcePath, imagesDistPath, {
+    recursive: true
+  });
+
+  console.log("Copiat: /images/");
+}
+
+  // Pagini produse individuale
   products.forEach((product) => {
     const productFolder = path.join(
       distPath,
@@ -163,32 +421,82 @@ fs.copyFileSync(
       product.slug
     );
 
-    fs.mkdirSync(productFolder, { recursive: true });
-
-    const html = createProductPage(product);
+    fs.mkdirSync(productFolder, {
+      recursive: true
+    });
 
     fs.writeFileSync(
       path.join(productFolder, "index.html"),
-      html,
+      createProductPage(product),
       "utf8"
     );
 
-    console.log(`Generat: /produse/${product.slug}/`);
+    console.log(
+      `Generat: /produse/${product.slug}/`
+    );
   });
 
-  const productsFolder = path.join(distPath, "produse");
+  // Pagina toate produsele
+  const productsFolder = path.join(
+    distPath,
+    "produse"
+  );
 
-fs.mkdirSync(productsFolder, { recursive: true });
+  fs.mkdirSync(productsFolder, {
+    recursive: true
+  });
 
-fs.writeFileSync(
-  path.join(productsFolder, "index.html"),
-  createProductsPage(products),
-  "utf8"
-);
+  fs.writeFileSync(
+    path.join(productsFolder, "index.html"),
+    createProductsPage(products),
+    "utf8"
+  );
 
-console.log("Generat: /produse/");
+  console.log("Generat: /produse/");
 
-  console.log(`\nBuild finalizat. Produse generate: ${products.length}`);
+  // Categorii generate automat
+  const categories = [
+    ...new Set(
+      products
+        .map((product) => product.subcategory)
+        .filter(Boolean)
+    )
+  ];
+
+  categories.forEach((categorySlug) => {
+    const categoryProducts = products.filter(
+      (product) =>
+        product.subcategory === categorySlug
+    );
+
+    const categoryFolder = path.join(
+      distPath,
+      "categorii",
+      categorySlug
+    );
+
+    fs.mkdirSync(categoryFolder, {
+      recursive: true
+    });
+
+    fs.writeFileSync(
+      path.join(categoryFolder, "index.html"),
+      createCategoryPage(
+        categorySlug,
+        categoryProducts
+      ),
+      "utf8"
+    );
+
+    console.log(
+      `Generat: /categorii/${categorySlug}/ (${categoryProducts.length} produse)`
+    );
+  });
+
+  console.log("");
+  console.log("Build finalizat.");
+  console.log(`Produse generate: ${products.length}`);
+  console.log(`Categorii generate: ${categories.length}`);
 }
 
 build();
