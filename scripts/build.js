@@ -90,6 +90,7 @@ function escapeHtml(value = "") {
 
 function getCategoryName(slug) {
   const categoryNames = {
+    // Pomi fructiferi clasici
     mar: "Meri",
     par: "Peri",
     prun: "Pruni",
@@ -100,11 +101,34 @@ function getCategoryName(slug) {
     nectarin: "Nectarini",
     gutui: "Gutui",
     nuc: "Nuci",
-    zmeura: "Zmeură"
+
+    // Pomi columnari
+    "mar-columnar": "Meri columnari",
+    "par-columnar": "Peri columnari",
+    "prun-columnar": "Pruni columnari",
+    "cires-columnar": "Cireși columnari",
+    "visin-columnar": "Vișini columnari",
+    "cais-columnar": "Caiși columnari",
+    "piersic-columnar": "Piersici columnari",
+
+    // Viță de vie
+    "soiuri-de-masa": "Soiuri de masă",
+    "soiuri-de-vin": "Soiuri de vin",
+    "soiuri-rezistente": "Soiuri rezistente",
+
+    // Arbuști fructiferi
+    zmeura: "Zmeură",
+    mur: "Mur",
+    afin: "Afin",
+    coacaz: "Coacăz",
+    agris: "Agriș",
+    aronia: "Aronia",
+    "catina": "Cătină"
   };
 
-  return categoryNames[slug] || slug;
+  return categoryNames[slug] || slug.replaceAll("-", " ");
 }
+
 
 function formatValue(value = "") {
   const map = {
