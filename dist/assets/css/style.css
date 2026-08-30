@@ -1544,16 +1544,20 @@ button:hover {
 }
 
 .checkout-field input,
+.checkout-field select,
 .checkout-field textarea {
   width: 100%;
   padding: 13px 14px;
   border: 1px solid #ced9cf;
   border-radius: 10px;
+  background: #fff;
+  color: #1f2a1f;
   font: inherit;
   box-sizing: border-box;
 }
 
 .checkout-field input:focus,
+.checkout-field select:focus,
 .checkout-field textarea:focus {
   outline: 2px solid #8fc899;
   border-color: #2c873d;

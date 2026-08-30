@@ -1641,30 +1641,37 @@ function createCheckoutPage(products) {
             </div>
 
             <div class="checkout-field">
-              <label for="customer-county">
-                Județ *
-              </label>
+  <label for="customer-county">
+    Județ *
+  </label>
 
-              <input
-                type="text"
-                id="customer-county"
-                name="county"
-                required
-              >
-            </div>
+  <select
+    id="customer-county"
+    name="county"
+    required
+  >
+    <option value="">
+      Alege județul
+    </option>
+  </select>
+</div>
 
-            <div class="checkout-field">
-              <label for="customer-city">
-                Localitate *
-              </label>
+           <div class="checkout-field">
+  <label for="customer-city">
+    Localitate *
+  </label>
 
-              <input
-                type="text"
-                id="customer-city"
-                name="city"
-                required
-              >
-            </div>
+  <select
+    id="customer-city"
+    name="city"
+    required
+    disabled
+  >
+    <option value="">
+      Alege mai întâi județul
+    </option>
+  </select>
+</div>
 
             <div class="checkout-field checkout-field-full">
               <label for="customer-address">
@@ -1814,6 +1821,30 @@ if (fs.existsSync(imagesSourcePath)) {
   });
 
   console.log("Copiat: /images/");
+}
+
+const dataSourceFolder = path.join(
+  __dirname,
+  "..",
+  "public",
+  "data"
+);
+
+const dataDistFolder = path.join(
+  distPath,
+  "data"
+);
+
+if (fs.existsSync(dataSourceFolder)) {
+  fs.cpSync(
+    dataSourceFolder,
+    dataDistFolder,
+    {
+      recursive: true
+    }
+  );
+
+  console.log("Copiat: /data/");
 }
 
   // Pagini produse individuale

@@ -122,4 +122,116 @@ document
     );
   });
 
+  async function initRomaniaLocations() {
+  const countySelect =
+    document.getElementById("customer-county");
+
+  const citySelect =
+    document.getElementById("customer-city");
+
+  if (!countySelect || !citySelect) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "/data/romania-localitati.json"
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        "Nu s-a putut încărca lista de localități."
+      );
+    }
+
+    const data = await response.json();
+
+    const counties = Array.isArray(data.judete)
+      ? data.judete
+      : [];
+
+    counties.forEach((county) => {
+      const option =
+        document.createElement("option");
+
+      option.value = county.nume;
+      option.textContent = county.nume;
+
+      countySelect.appendChild(option);
+    });
+
+    countySelect.addEventListener(
+      "change",
+      () => {
+        const selectedCounty =
+          counties.find(
+            (county) =>
+              county.nume === countySelect.value
+          );
+
+        citySelect.innerHTML = "";
+
+        if (
+          !selectedCounty ||
+          !Array.isArray(selectedCounty.localitati)
+        ) {
+          citySelect.disabled = true;
+
+          citySelect.innerHTML = `
+            <option value="">
+              Alege mai întâi județul
+            </option>
+          `;
+
+          return;
+        }
+
+        citySelect.disabled = false;
+
+        const placeholder =
+          document.createElement("option");
+
+        placeholder.value = "";
+        placeholder.textContent =
+          "Alege localitatea";
+
+        placeholder.selected = true;
+
+        citySelect.appendChild(placeholder);
+
+        selectedCounty.localitati.forEach(
+          (city) => {
+            const option =
+              document.createElement("option");
+
+            option.value = city.nume;
+            option.textContent = city.nume;
+
+            citySelect.appendChild(option);
+          }
+        );
+      }
+    );
+  } catch (error) {
+    console.error(error);
+
+    countySelect.innerHTML = `
+      <option value="">
+        Lista județelor nu a putut fi încărcată
+      </option>
+    `;
+
+    countySelect.disabled = true;
+
+    citySelect.innerHTML = `
+      <option value="">
+        Lista localităților nu a putut fi încărcată
+      </option>
+    `;
+
+    citySelect.disabled = true;
+  }
+}
+
+initRomaniaLocations();
 renderCheckout();
