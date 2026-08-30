@@ -1015,15 +1015,20 @@ function createFamilyPage(familySlug, products) {
     }
   };
 
-  const content = familyContent[familySlug] || {
-    title: familySlug.replaceAll("-", " "),
-    eyebrow: "Catalog",
-    intro: "Descoperă produsele disponibile în această categorie.",
-    seoTitle: `${familySlug.replaceAll("-", " ")} | Pomi Fructiferi Online`,
-    seoDescription: "Descoperă produsele disponibile în catalogul nostru."
-  };
+ const content = familyContent[familySlug] || {
+  title: familySlug.replaceAll("-", " "),
+  eyebrow: "Catalog",
+  intro: "Descoperă produsele disponibile în această categorie.",
+  seoTitle: `${familySlug.replaceAll("-", " ")} | Pomi Fructiferi Online`,
+  seoDescription: "Descoperă produsele disponibile în catalogul nostru."
+};
 
-  const subcategories = groupProducts(products, "subcategory");
+const categorySectionTitle =
+  familySlug === "vita-de-vie"
+    ? "Alege după tip"
+    : "Alege după specie";
+
+const subcategories = groupProducts(products, "subcategory");
 
   const categoryCards = Object.entries(subcategories)
     .map(([subcategorySlug, categoryProducts]) => {
@@ -1119,8 +1124,8 @@ ${createHeader()}
       </p>
 
       <h2>
-        Alege după specie
-      </h2>
+  ${escapeHtml(categorySectionTitle)}
+</h2>
 
       <p>
         Găsește rapid produsele potrivite pentru grădina
