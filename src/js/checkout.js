@@ -204,14 +204,11 @@ async function submitOrder(form) {
     },
 
     items: items.map(
-      ({ product, quantity }) => ({
-        slug: product.slug,
-        name: product.name,
-        quantity,
-        unit_price:
-          Number(product.price),
-      })
-    ),
+  ({ product, quantity }) => ({
+    slug: product.slug,
+    quantity,
+  })
+),
   };
 
   try {

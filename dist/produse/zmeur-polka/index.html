@@ -180,14 +180,51 @@
           </div>
 
 
-          <button
-  type="button"
-  class="add-to-cart product-add-to-cart"
-  data-product-slug="zmeur-polka"
-  
->
-  Adaugă în coș
-</button>
+          <div class="product-buy-row">
+
+  <div class="product-quantity-selector">
+
+    <button
+      type="button"
+      class="product-quantity-button"
+      data-product-minus
+      aria-label="Scade cantitatea"
+    >
+      −
+    </button>
+
+    <input
+      type="number"
+      class="product-quantity-input"
+      data-product-quantity
+      value="1"
+      min="1"
+      step="1"
+      inputmode="numeric"
+      aria-label="Cantitate"
+    >
+
+    <button
+      type="button"
+      class="product-quantity-button"
+      data-product-plus
+      aria-label="Crește cantitatea"
+    >
+      +
+    </button>
+
+  </div>
+
+  <button
+    type="button"
+    class="add-to-cart product-add-to-cart"
+    data-product-slug="zmeur-polka"
+    
+  >
+    Adaugă în coș
+  </button>
+
+</div>
 
           <p class="product-delivery-note">
             Pom pregătit pentru plantare și livrare în condiții corespunzătoare.
