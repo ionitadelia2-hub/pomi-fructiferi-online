@@ -2102,3 +2102,23 @@ button:hover {
     padding: 30px 24px;
   }
 }
+
+.services-phone-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.services-phone-buttons .home-primary-button {
+  margin-top: 0;
+}
+
+@media (max-width: 600px) {
+  .services-phone-buttons {
+    flex-direction: column;
+  }
+
+  .services-phone-buttons .home-primary-button {
+    width: 100%;
+  }
+}
