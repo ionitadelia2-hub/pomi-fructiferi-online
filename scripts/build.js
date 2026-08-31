@@ -285,6 +285,7 @@ function createProductPage(product) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/images/branding/logo-pomifructiferi.png">
 
   <title>${escapeHtml(product.seo_title)}</title>
 
@@ -729,6 +730,7 @@ function createProductsPage(products) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/images/branding/logo-pomifructiferi.png">
 
   <title>Pomi fructiferi de vânzare | Pomi Fructiferi Online</title>
 
@@ -872,6 +874,8 @@ function createCategoryPage(categorySlug, products) {
     name="viewport"
     content="width=device-width, initial-scale=1.0"
   >
+
+  <link rel="icon" type="image/png" href="/images/branding/logo-pomifructiferi.png">
 
   <title>${escapeHtml(content.seoTitle)}</title>
 
@@ -1120,6 +1124,8 @@ const subcategories = groupProducts(products, "subcategory");
     content="width=device-width, initial-scale=1.0"
   >
 
+<link rel="icon" type="image/png" href="/images/branding/logo-pomifructiferi.png">
+
   <title>${escapeHtml(content.seoTitle)}</title>
 
   <meta
@@ -1286,6 +1292,7 @@ const familyCardsHtml = familyCards
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/images/branding/logo-pomifructiferi.png">
 
   <title>Pomi fructiferi de vânzare | Pomi Fructiferi Online</title>
 
@@ -1503,6 +1510,7 @@ function createCartPage(products) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/images/branding/logo-pomifructiferi.png">
 
   <title>Coș de cumpărături | Pomi Fructiferi Online</title>
   <meta
@@ -1595,6 +1603,7 @@ function createCheckoutPage(products) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/images/branding/logo-pomifructiferi.png">
 
   <title>Finalizare comandă | Pomi Fructiferi Online</title>
 
@@ -1809,6 +1818,7 @@ function generateOrderSuccessPage() {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/images/branding/logo-pomifructiferi.png">
 
   <title>Comandă trimisă | Pomi Fructiferi Online</title>
 
