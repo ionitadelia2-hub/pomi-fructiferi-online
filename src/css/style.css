@@ -1252,19 +1252,33 @@ button:hover {
 }
 
 .cart-quantity {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.cart-quantity-button {
-  width: 38px;
+.cart-quantity-input {
   height: 38px;
-  border: 1px solid #2e8b3c;
+  text-align: center;
+  line-height: 38px;
+}
+
+.cart-quantity-button {
+  width: 44px;
+  height: 38px;
+  border: 1px solid #2f8a43;
+  background: #ffffff;
+  color: #168332;
   border-radius: 10px;
-  background: #fff;
-  color: #236f30;
-  font-size: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  line-height: 1;
+
+  font-size: 24px;
   font-weight: 700;
   cursor: pointer;
 }
