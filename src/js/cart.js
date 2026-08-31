@@ -67,7 +67,6 @@ function setQuantity(slug, quantity) {
     return;
   }
 
-  const product = getProduct(slug);
 
   let newQuantity = Number(quantity);
 
@@ -77,12 +76,7 @@ function setQuantity(slug, quantity) {
 
   newQuantity = Math.floor(newQuantity);
 
-  if (product && Number(product.stock) > 0) {
-    newQuantity = Math.min(
-      newQuantity,
-      Number(product.stock)
-    );
-  }
+  
 
   if (newQuantity <= 0) {
     removeFromCart(slug);
@@ -243,14 +237,13 @@ function renderCart() {
             </button>
 
             <input
-              type="number"
-              class="cart-quantity-input"
-              value="${quantity}"
-              min="1"
-              max="${Number(product.stock) || 999}"
-              data-cart-quantity="${escapeHtml(product.slug)}"
-              aria-label="Cantitate ${escapeHtml(product.name)}"
-            >
+  type="number"
+  class="cart-quantity-input"
+  value="${quantity}"
+  min="1"
+  data-cart-quantity="${escapeHtml(product.slug)}"
+  aria-label="Cantitate ${escapeHtml(product.name)}"
+>
 
             <button
               type="button"

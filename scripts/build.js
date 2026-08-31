@@ -396,7 +396,7 @@ ${createHeader()}
           }">
             ${
               Number(product.stock) > 0
-                ? `✓ În stoc (${escapeHtml(product.stock)} buc.)`
+                ? `✓ În stoc`
                 : "Stoc epuizat"
             }
           </p>
