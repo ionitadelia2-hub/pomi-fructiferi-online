@@ -2249,6 +2249,24 @@ Object.entries(subcategories).forEach(
     }
   );
 
+// Pagina Servicii
+const servicesFolder = path.join(
+  distPath,
+  "servicii"
+);
+
+fs.mkdirSync(servicesFolder, {
+  recursive: true
+});
+
+fs.writeFileSync(
+  path.join(servicesFolder, "index.html"),
+  createServicesPage(),
+  "utf8"
+);
+
+console.log("Generat: /servicii/");
+
   // Cart
 const cartFolder = path.join(
   distPath,
