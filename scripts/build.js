@@ -1758,6 +1758,98 @@ function createCheckoutPage(products) {
 </html>`;
 }
 
+function generateOrderSuccessPage() {
+  const pageHtml = `
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Comandă trimisă | Pomi Fructiferi Online</title>
+
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<body>
+
+  ${createHeader()}
+
+  <main class="order-success-page">
+    <div class="container">
+
+      <section class="order-success-card">
+
+        <div class="order-success-icon">
+          ✓
+        </div>
+
+        <p class="eyebrow">
+          COMANDĂ ÎNREGISTRATĂ
+        </p>
+
+        <h1>
+          Mulțumim pentru comandă!
+        </h1>
+
+        <p class="order-success-text">
+          Comanda ta a fost înregistrată cu succes.
+          Te vom contacta pentru confirmarea și
+          pregătirea livrării.
+        </p>
+
+        <div class="order-success-details">
+
+          <div>
+            <span>Număr comandă</span>
+            <strong id="success-order-number">
+              —
+            </strong>
+          </div>
+
+          <div>
+            <span>Total comandă</span>
+            <strong id="success-order-total">
+              —
+            </strong>
+          </div>
+
+        </div>
+
+        <a href="/produse/" class="button button-primary">
+          Continuă cumpărăturile
+        </a>
+
+      </section>
+
+    </div>
+  </main>
+
+  <script src="/assets/js/order-success.js"></script>
+
+</body>
+</html>
+  `;
+
+  const outputDir = path.join(
+    distPath,
+    "comanda-trimisa"
+  );
+
+  fs.mkdirSync(outputDir, {
+    recursive: true,
+  });
+
+  fs.writeFileSync(
+    path.join(outputDir, "index.html"),
+    pageHtml
+  );
+
+  console.log(
+    "Generat: /comanda-trimisa/"
+  );
+}
+
 function build() {
    const products = readProducts();
 
@@ -1811,6 +1903,11 @@ fs.copyFileSync(
 fs.copyFileSync(
   path.join(__dirname, "..", "src", "js", "checkout.js"),
   path.join(jsDistFolder, "checkout.js")
+);
+
+fs.copyFileSync(
+  path.join(__dirname, "..", "src", "js", "order-success.js"),
+  path.join(jsDistFolder, "order-success.js")
 );
 
   const imagesDistPath = path.join(distPath, "images");
@@ -1980,6 +2077,8 @@ fs.writeFileSync(
 );
 
 console.log("Generat: /checkout/");
+
+generateOrderSuccessPage();
 
   // Homepage
   fs.writeFileSync(
