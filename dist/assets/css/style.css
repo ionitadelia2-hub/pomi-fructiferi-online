@@ -1928,3 +1928,24 @@ button:hover {
     width: 100%;
   }
 }
+
+.site-logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.site-logo-image {
+  display: block;
+  width: 105px;
+  height: 72px;
+  object-fit: contain;
+}
+
+@media (max-width: 700px) {
+  .site-logo-image {
+    width: 82px;
+    height: 58px;
+  }
+}
