@@ -1201,11 +1201,17 @@ button:hover {
   }
 
   .site-cart {
-    padding: 8px 11px;
-  }
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+
+  width: auto;
+  padding: 8px 11px;
+}
 
   .site-nav {
     grid-column: 1 / -1;
+    grid-row: 2;
     width: 100%;
     justify-content: center;
     gap: 24px;
