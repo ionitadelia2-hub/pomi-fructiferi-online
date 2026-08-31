@@ -999,9 +999,14 @@ function createHeader() {
 >
   <img
     src="/images/branding/logo-pomifructiferi.png"
-    alt="Pomi Fructiferi Online"
+    alt=""
     class="site-logo-image"
   >
+
+  <span class="site-logo-text">
+    <span class="site-logo-main">Pomi Fructiferi</span>
+    <span class="site-logo-sub">online.ro</span>
+  </span>
 </a>
 
         <nav class="site-nav" aria-label="Navigație principală">
