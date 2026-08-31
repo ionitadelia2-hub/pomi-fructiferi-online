@@ -517,6 +517,45 @@ ${createHeader()}
 
       </section>
 
+            ${
+        product.why_choose
+          ? `
+            <section class="product-section product-why-choose">
+              <h2>
+                De ce să alegi ${escapeHtml(product.name)}
+              </h2>
+
+              <p>
+                ${escapeHtml(product.why_choose)}
+              </p>
+            </section>
+          `
+          : ""
+      }
+
+
+      ${
+        product.key_benefits
+          ? `
+            <section class="product-section product-benefits-section">
+              <h2>Beneficii cheie</h2>
+
+              <ul class="product-benefits-list">
+                ${product.key_benefits
+                  .split("|")
+                  .map((benefit) => benefit.trim())
+                  .filter(Boolean)
+                  .map(
+                    (benefit) =>
+                      `<li>${escapeHtml(benefit)}</li>`
+                  )
+                  .join("")}
+              </ul>
+            </section>
+          `
+          : ""
+      }
+
 
             <!-- CARACTERISTICI -->
       <section class="product-section">
@@ -660,6 +699,49 @@ ${createHeader()}
 
               <p>
                 ${escapeHtml(product.care_notes)}
+              </p>
+            </section>
+          `
+          : ""
+      }
+
+            ${
+        product.fruiting_period || product.harvest_period
+          ? `
+            <section class="product-section product-harvest-info">
+              <h2>Fructificare și recoltare</h2>
+
+              <p>
+                ${
+                  product.fruiting_period
+                    ? `Perioada de fructificare este ${escapeHtml(
+                        formatValue(product.fruiting_period)
+                      )}. `
+                    : ""
+                }
+
+                ${
+                  product.harvest_period
+                    ? `Recoltarea are loc în principal în perioada ${escapeHtml(
+                        formatValue(product.harvest_period)
+                      )}.`
+                    : ""
+                }
+              </p>
+            </section>
+          `
+          : ""
+      }
+
+
+      ${
+        product.conclusion
+          ? `
+            <section class="product-section product-conclusion">
+              <h2>Concluzie</h2>
+
+              <p>
+                ${escapeHtml(product.conclusion)}
               </p>
             </section>
           `
