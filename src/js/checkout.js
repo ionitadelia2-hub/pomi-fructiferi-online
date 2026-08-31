@@ -267,11 +267,14 @@ async function submitOrder(form) {
       updateCartBadge();
     }
 
-    alert(
-      `Comanda a fost înregistrată cu succes.\n\nNumăr comandă: ${result.order_number}\nTotal: ${checkoutPrice(result.total)}`
-    );
+    const successUrl =
+  `/comanda-trimisa/?order=${encodeURIComponent(
+    result.order_number
+  )}&total=${encodeURIComponent(
+    result.total
+  )}`;
 
-    window.location.href = "/";
+window.location.href = successUrl;
   } catch (submitError) {
     console.error(submitError);
 
