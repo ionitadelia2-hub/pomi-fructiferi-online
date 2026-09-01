@@ -1,5 +1,5 @@
 const CHECKOUT_API_URL =
-  "https://pomi-fructiferi-api.rodromanesc.workers.dev/api/orders";
+  "https://api.pomifructiferionline.ro/api/orders";
 
 const CHECKOUT_CART_KEY = "pomi-fructiferi-cart";
 
