@@ -2234,3 +2234,11 @@ button:hover {
   border-color: #2f7d3f;
   box-shadow: 0 0 0 3px rgba(47, 125, 63, 0.12);
 }
+
+.cart-item-variant {
+  display: block;
+  margin-top: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #66736a;
+}
