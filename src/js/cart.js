@@ -324,6 +324,9 @@ function updateCartSummary(items) {
   const totalElement =
     document.getElementById("cart-total");
 
+    const shippingElement =
+  document.getElementById("cart-shipping");
+
   const checkoutButton =
     document.getElementById("cart-checkout-button");
 
@@ -350,6 +353,12 @@ function updateCartSummary(items) {
   0
 );
 
+const shippingCost =
+  totalQuantity > 0 ? 30 : 0;
+
+const grandTotal =
+  totalPrice + shippingCost;
+
   if (countElement) {
     countElement.textContent =
       `${totalQuantity} buc.`;
@@ -357,8 +366,13 @@ function updateCartSummary(items) {
 
   if (totalElement) {
     totalElement.textContent =
-      formatPrice(totalPrice);
+      formatPrice(grandTotal);
   }
+
+  if (shippingElement) {
+  shippingElement.textContent =
+    formatPrice(shippingCost);
+}
 
   if (checkoutButton) {
     checkoutButton.disabled =

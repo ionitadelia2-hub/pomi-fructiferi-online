@@ -1718,6 +1718,11 @@ function createCartPage(products) {
             <strong id="cart-summary-count">0 buc.</strong>
           </div>
 
+          <div class="cart-summary-row">
+  <span>Transport</span>
+  <strong id="cart-shipping">0.00 lei</strong>
+</div>
+
           <div class="cart-summary-row cart-summary-total">
             <span>Total</span>
             <strong id="cart-total">0.00 lei</strong>
@@ -1942,18 +1947,25 @@ function createCheckoutPage(products) {
 
         </form>
 
-        <aside class="checkout-summary">
-          <h2>Comanda ta</h2>
+       <aside class="checkout-summary">
+  <h2>Comanda ta</h2>
 
-          <div id="checkout-items"></div>
+  <div id="checkout-items"></div>
 
-          <div class="checkout-total-row">
-            <span>Total</span>
-            <strong id="checkout-total">
-              0.00 lei
-            </strong>
-          </div>
-        </aside>
+  <div class="checkout-summary-row">
+    <span>Transport</span>
+    <strong id="checkout-shipping">
+      30.00 lei
+    </strong>
+  </div>
+
+  <div class="checkout-total-row">
+    <span>Total</span>
+    <strong id="checkout-total">
+      0.00 lei
+    </strong>
+  </div>
+</aside>
 
       </div>
 

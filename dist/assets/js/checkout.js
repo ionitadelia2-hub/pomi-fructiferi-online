@@ -72,6 +72,9 @@ function renderCheckout() {
   const totalElement =
     document.getElementById("checkout-total");
 
+    const shippingElement =
+  document.getElementById("checkout-shipping");
+
   if (!container || !totalElement) {
     return;
   }
@@ -83,14 +86,14 @@ function renderCheckout() {
     return;
   }
 
-  let total = 0;
+  let productsTotal = 0;
 
   container.innerHTML = items
     .map(({ product, quantity, variant, unitPrice }) => {
   const subtotal =
     unitPrice * quantity;
 
-      total += subtotal;
+      productsTotal += subtotal;
 
       return `
         <div class="checkout-summary-item">
@@ -120,8 +123,19 @@ ${quantity} × ${checkoutPrice(unitPrice)}
     })
     .join("");
 
-  totalElement.textContent =
-    checkoutPrice(total);
+    const shippingCost =
+  items.length > 0 ? 30 : 0;
+
+const grandTotal =
+  productsTotal + shippingCost;
+
+if (shippingElement) {
+  shippingElement.textContent =
+    checkoutPrice(shippingCost);
+}
+
+totalElement.textContent =
+  checkoutPrice(grandTotal);
 }
 
 function getFormValue(form, selectors) {
