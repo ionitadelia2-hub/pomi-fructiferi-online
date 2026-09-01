@@ -49,10 +49,18 @@ function getCheckoutItems() {
         return null;
       }
 
-      return {
-        product,
-        quantity,
-      };
+      const unitPrice =
+  cartItem.unit_price !== null &&
+  cartItem.unit_price !== undefined
+    ? Number(cartItem.unit_price)
+    : Number(product.price);
+
+return {
+  product,
+  quantity,
+  variant: cartItem.variant || "",
+  unitPrice,
+};
     })
     .filter(Boolean);
 }
@@ -78,9 +86,9 @@ function renderCheckout() {
   let total = 0;
 
   container.innerHTML = items
-    .map(({ product, quantity }) => {
-      const subtotal =
-        Number(product.price) * quantity;
+    .map(({ product, quantity, variant, unitPrice }) => {
+  const subtotal =
+    unitPrice * quantity;
 
       total += subtotal;
 
@@ -98,7 +106,8 @@ function renderCheckout() {
             </strong>
 
             <span>
-              ${quantity} × ${checkoutPrice(product.price)}
+              ${variant ? `Vârstă: ${variant} ani<br>` : ""}
+${quantity} × ${checkoutPrice(unitPrice)}
             </span>
           </div>
 
@@ -204,9 +213,10 @@ async function submitOrder(form) {
     },
 
     items: items.map(
-  ({ product, quantity }) => ({
+  ({ product, quantity, variant }) => ({
     slug: product.slug,
     quantity,
+    variant,
   })
 ),
   };

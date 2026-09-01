@@ -233,14 +233,27 @@ function createProductCard(product) {
             Vezi detalii
           </a>
 
-          <button
-  type="button"
-  class="add-to-cart product-card-cart"
-  data-product-slug="${escapeHtml(product.slug)}"
-  ${!inStock ? "disabled" : ""}
->
-  Adaugă în coș
-</button>
+          ${
+  product.variants
+    ? `
+      <a
+        href="/produse/${escapeHtml(product.slug)}/"
+        class="product-card-cart product-card-variant-link"
+      >
+        Alege varianta
+      </a>
+    `
+    : `
+      <button
+        type="button"
+        class="add-to-cart product-card-cart"
+        data-product-slug="${escapeHtml(product.slug)}"
+        ${!inStock ? "disabled" : ""}
+      >
+        Adaugă în coș
+      </button>
+    `
+}
 
         </div>
 
@@ -388,7 +401,12 @@ ${createHeader()}
                 : ""
             }
 
-            <strong>${escapeHtml(product.price)} lei</strong>
+            <strong
+  id="product-current-price"
+  data-base-price="${escapeHtml(product.price)}"
+>
+  ${escapeHtml(product.price)} lei
+</strong>
           </div>
 
           <p class="product-stock ${
@@ -416,15 +434,43 @@ ${createHeader()}
             }
 
             ${
-              product.age_years
-                ? `
-                  <div>
-                    <span>Vârstă</span>
-                    <strong>${escapeHtml(product.age_years)} ani</strong>
-                  </div>
-                `
-                : ""
-            }
+  product.variants
+    ? `
+      <div class="product-age-option">
+        <span>Vârstă</span>
+
+        <select
+          class="product-variant-select"
+          data-product-variant
+          aria-label="Alege vârsta"
+        >
+          ${product.variants
+            .split("|")
+            .map((variant) => {
+              const [age, price] = variant.split(":");
+
+              return `
+                <option
+                  value="${escapeHtml(age)}"
+                  data-price="${escapeHtml(price)}"
+                >
+                  ${escapeHtml(age)} ani
+                </option>
+              `;
+            })
+            .join("")}
+        </select>
+      </div>
+    `
+    : product.age_years
+      ? `
+        <div>
+          <span>Vârstă</span>
+          <strong>${escapeHtml(product.age_years)} ani</strong>
+        </div>
+      `
+      : ""
+}
 
             ${
               product.root_type
@@ -753,7 +799,7 @@ ${createHeader()}
   </main>
 
 
-  <script>
+    <script>
     document.querySelectorAll(".product-thumbnail").forEach(function(button) {
 
       button.addEventListener("click", function() {
@@ -775,6 +821,33 @@ ${createHeader()}
       });
 
     });
+
+
+    const variantSelect =
+      document.querySelector("[data-product-variant]");
+
+    const currentPrice =
+      document.getElementById("product-current-price");
+
+    if (variantSelect && currentPrice) {
+      variantSelect.addEventListener("change", function() {
+
+        const selectedOption =
+          variantSelect.options[variantSelect.selectedIndex];
+
+        const price =
+          selectedOption.dataset.price;
+
+        if (!price) {
+          return;
+        }
+
+        currentPrice.textContent =
+          Number(price).toFixed(2) + " lei";
+
+      });
+    }
+
   </script>
 <script src="/assets/js/cart.js"></script>
 </body>

@@ -24,7 +24,12 @@ function updateCartBadge() {
   });
 }
 
-function addToCart(slug, quantity = 1) {
+function addToCart(
+  slug,
+  quantity = 1,
+  variant = "",
+  unitPrice = null
+) {
   const cart = getCart();
 
   let amount = Number(quantity);
@@ -36,17 +41,29 @@ function addToCart(slug, quantity = 1) {
   amount = Math.max(1, Math.floor(amount));
 
   const existingItem = cart.find((item) => {
-    return item.slug === slug;
-  });
+  return (
+    item.slug === slug &&
+    (item.variant || "") === (variant || "")
+  );
+});
 
-  if (existingItem) {
-    existingItem.quantity += amount;
-  } else {
-    cart.push({
-      slug,
-      quantity: amount,
-    });
+ if (existingItem) {
+  existingItem.quantity += amount;
+
+  if (unitPrice !== null) {
+    existingItem.unit_price = Number(unitPrice);
   }
+} else {
+  cart.push({
+    slug,
+    variant: variant || "",
+    quantity: amount,
+    unit_price:
+      unitPrice !== null
+        ? Number(unitPrice)
+        : null,
+  });
+}
 
   saveCart(cart);
   updateCartBadge();
@@ -56,17 +73,19 @@ function addToCart(slug, quantity = 1) {
   }
 }
 
-function setQuantity(slug, quantity) {
+function setQuantity(slug, variant, quantity) {
   const cart = getCart();
 
   const item = cart.find((item) => {
-    return item.slug === slug;
+    return (
+      item.slug === slug &&
+      (item.variant || "") === (variant || "")
+    );
   });
 
   if (!item) {
     return;
   }
-
 
   let newQuantity = Number(quantity);
 
@@ -76,10 +95,8 @@ function setQuantity(slug, quantity) {
 
   newQuantity = Math.floor(newQuantity);
 
-  
-
   if (newQuantity <= 0) {
-    removeFromCart(slug);
+    removeFromCart(slug, variant);
     return;
   }
 
@@ -90,11 +107,15 @@ function setQuantity(slug, quantity) {
   renderCart();
 }
 
-function changeQuantity(slug, change) {
+
+function changeQuantity(slug, variant, change) {
   const cart = getCart();
 
   const item = cart.find((item) => {
-    return item.slug === slug;
+    return (
+      item.slug === slug &&
+      (item.variant || "") === (variant || "")
+    );
   });
 
   if (!item) {
@@ -103,13 +124,17 @@ function changeQuantity(slug, change) {
 
   setQuantity(
     slug,
+    variant,
     Number(item.quantity) + change
   );
 }
 
-function removeFromCart(slug) {
+function removeFromCart(slug, variant = "") {
   const cart = getCart().filter((item) => {
-    return item.slug !== slug;
+    return !(
+      item.slug === slug &&
+      (item.variant || "") === (variant || "")
+    );
   });
 
   saveCart(cart);
@@ -185,8 +210,15 @@ function renderCart() {
   container.innerHTML = validItems
     .map(({ cartItem, product }) => {
       const quantity = Number(cartItem.quantity);
-      const subtotal =
-        Number(product.price) * quantity;
+
+const unitPrice =
+  cartItem.unit_price !== null &&
+  cartItem.unit_price !== undefined
+    ? Number(cartItem.unit_price)
+    : Number(product.price);
+
+const subtotal =
+  unitPrice * quantity;
 
       return `
         <article
@@ -213,14 +245,25 @@ function renderCart() {
               ${escapeHtml(product.name)}
             </a>
 
-            <span class="cart-item-unit-price">
-              ${formatPrice(product.price)} / buc.
-            </span>
+            ${
+  cartItem.variant
+    ? `
+      <span class="cart-item-variant">
+        Vârstă: ${escapeHtml(cartItem.variant)} ani
+      </span>
+    `
+    : ""
+}
+
+<span class="cart-item-unit-price">
+  ${formatPrice(unitPrice)} / buc.
+</span>
 
             <button
               type="button"
               class="cart-remove-button"
               data-cart-remove="${escapeHtml(product.slug)}"
+data-cart-variant="${escapeHtml(cartItem.variant || "")}"
             >
               Elimină
             </button>
@@ -231,6 +274,7 @@ function renderCart() {
               type="button"
               class="cart-quantity-button"
               data-cart-minus="${escapeHtml(product.slug)}"
+data-cart-variant="${escapeHtml(cartItem.variant || "")}"
               aria-label="Scade cantitatea"
             >
               −
@@ -242,6 +286,7 @@ function renderCart() {
   value="${quantity}"
   min="1"
   data-cart-quantity="${escapeHtml(product.slug)}"
+data-cart-variant="${escapeHtml(cartItem.variant || "")}"
   aria-label="Cantitate ${escapeHtml(product.name)}"
 >
 
@@ -249,6 +294,7 @@ function renderCart() {
               type="button"
               class="cart-quantity-button"
               data-cart-plus="${escapeHtml(product.slug)}"
+data-cart-variant="${escapeHtml(cartItem.variant || "")}"
               aria-label="Crește cantitatea"
             >
               +
@@ -288,16 +334,21 @@ function updateCartSummary(items) {
     0
   );
 
-  const totalPrice = items.reduce(
-    (total, { cartItem, product }) => {
-      return (
-        total +
-        Number(product.price) *
-          Number(cartItem.quantity)
-      );
-    },
-    0
-  );
+ const totalPrice = items.reduce(
+  (total, { cartItem, product }) => {
+    const unitPrice =
+      cartItem.unit_price !== null &&
+      cartItem.unit_price !== undefined
+        ? Number(cartItem.unit_price)
+        : Number(product.price);
+
+    return (
+      total +
+      unitPrice * Number(cartItem.quantity)
+    );
+  },
+  0
+);
 
   if (countElement) {
     countElement.textContent =
@@ -372,7 +423,31 @@ const quantity =
       )
     : 1;
 
-addToCart(slug, quantity);
+const variantSelect =
+  document.querySelector("[data-product-variant]");
+
+let selectedVariant = "";
+let selectedPrice = null;
+
+if (variantSelect) {
+  const selectedOption =
+    variantSelect.options[
+      variantSelect.selectedIndex
+    ];
+
+  selectedVariant =
+    selectedOption.value || "";
+
+  selectedPrice =
+    selectedOption.dataset.price || null;
+}
+
+addToCart(
+  slug,
+  quantity,
+  selectedVariant,
+  selectedPrice
+);
 
 if (quantityInput) {
   quantityInput.value = 1;
@@ -395,33 +470,36 @@ if (quantityInput) {
   const plusButton =
     event.target.closest("[data-cart-plus]");
 
-  if (plusButton) {
-    changeQuantity(
-      plusButton.dataset.cartPlus,
-      1
-    );
+ if (plusButton) {
+  changeQuantity(
+    plusButton.dataset.cartPlus,
+    plusButton.dataset.cartVariant || "",
+    1
+  );
 
-    return;
-  }
+  return;
+}
 
   const minusButton =
     event.target.closest("[data-cart-minus]");
 
   if (minusButton) {
-    changeQuantity(
-      minusButton.dataset.cartMinus,
-      -1
-    );
+  changeQuantity(
+    minusButton.dataset.cartMinus,
+    minusButton.dataset.cartVariant || "",
+    -1
+  );
 
-    return;
-  }
+  return;
+}
 
   const removeButton =
     event.target.closest("[data-cart-remove]");
 
   if (removeButton) {
     removeFromCart(
-      removeButton.dataset.cartRemove
+      removeButton.dataset.cartRemove,
+      removeButton.dataset.cartVariant || ""
     );
   }
 });
@@ -435,9 +513,10 @@ document.addEventListener("change", (event) => {
   }
 
   setQuantity(
-    input.dataset.cartQuantity,
-    input.value
-  );
+  input.dataset.cartQuantity,
+  input.dataset.cartVariant || "",
+  input.value
+);
 });
 
 updateCartBadge();
