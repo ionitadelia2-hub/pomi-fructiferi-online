@@ -454,7 +454,7 @@ ${createHeader()}
                   value="${escapeHtml(age)}"
                   data-price="${escapeHtml(price)}"
                 >
-                  ${escapeHtml(age)} ani
+                  ${escapeHtml(age)} ani — ${Number(price).toFixed(2)} lei
                 </option>
               `;
             })
