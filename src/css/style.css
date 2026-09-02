@@ -161,10 +161,10 @@ button:hover {
 }
 
 .product-info h1 {
-  margin: 0 0 18px;
+  margin: 0 0 14px;
   color: #17281c;
-  font-size: clamp(34px, 4vw, 52px);
-  line-height: 1.06;
+  font-size: clamp(30px, 3vw, 44px);
+  line-height: 1.08;
 }
 
 .product-short-description {
@@ -357,7 +357,7 @@ button:hover {
   }
 
   .product-info h1 {
-    font-size: 32px;
+    font-size: 28px;
   }
 
   .product-short-description {
@@ -2241,4 +2241,74 @@ button:hover {
   font-size: 14px;
   font-weight: 600;
   color: #66736a;
+}
+
+/* =========================================
+   DISCOUNT PRODUS
+========================================= */
+
+.product-price {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.product-discount-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 5px 10px;
+
+  border-radius: 999px;
+  background: #d9362b;
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.old-price {
+  color: #8a8a8a;
+  font-size: 18px;
+  font-weight: 500;
+  text-decoration: line-through;
+}
+
+.product-price strong {
+  color: #183b22;
+  font-size: 32px;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.product-main-image-wrapper {
+  position: relative;
+}
+
+.product-discount-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 5;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 64px;
+  padding: 9px 13px;
+
+  background: #e53935;
+  color: #ffffff;
+
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1;
+
+  border-radius: 8px;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
 }

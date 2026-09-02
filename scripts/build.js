@@ -354,16 +354,29 @@ ${createHeader()}
             product.image_1
               ? `
                 <div class="product-main-image-wrapper">
-                  <img
-                    id="product-main-image"
-                    src="${escapeHtml(product.image_1)}"
-                    alt="${escapeHtml(product.name)}"
-                    class="product-main-image"
-                    loading="eager"
-                    width="900"
-                    height="900"
-                  >
-                </div>
+
+  ${
+    product.old_price &&
+    Number(product.old_price) > Number(product.price)
+      ? `
+        <span
+  class="product-discount-badge"
+  id="product-discount-badge"
+>
+      `
+      : ""
+  }
+
+  <img
+    id="product-main-image"
+    src="${escapeHtml(product.image_1)}"
+    alt="${escapeHtml(product.name)}"
+    class="product-main-image"
+    loading="eager"
+    width="900"
+    height="900"
+  >
+</div>
               `
               : ""
           }
@@ -395,19 +408,23 @@ ${createHeader()}
           </p>
 
           <div class="product-price">
-            ${
-              product.old_price
-                ? `<span class="old-price">${escapeHtml(product.old_price)} lei</span>`
-                : ""
-            }
 
-            <strong
-  id="product-current-price"
-  data-base-price="${escapeHtml(product.price)}"
->
-  ${escapeHtml(product.price)} lei
-</strong>
-          </div>
+  <span
+    class="old-price"
+    id="product-old-price"
+    ${product.old_price ? "" : "hidden"}
+  >
+    ${product.old_price ? `${escapeHtml(product.old_price)} lei` : ""}
+  </span>
+
+  <strong
+    id="product-current-price"
+    data-base-price="${escapeHtml(product.price)}"
+  >
+    ${escapeHtml(product.price)} lei
+  </strong>
+
+</div>
 
           <p class="product-stock ${
             Number(product.stock) > 0 ? "in-stock" : "out-of-stock"
@@ -447,16 +464,17 @@ ${createHeader()}
           ${product.variants
             .split("|")
             .map((variant) => {
-              const [age, price] = variant.split(":");
+              const [age, price, oldPrice] = variant.split(":");
 
-              return `
-                <option
-                  value="${escapeHtml(age)}"
-                  data-price="${escapeHtml(price)}"
-                >
-                  ${escapeHtml(age)} ani — ${Number(price).toFixed(2)} lei
-                </option>
-              `;
+return `
+  <option
+    value="${escapeHtml(age)}"
+    data-price="${escapeHtml(price)}"
+    data-old-price="${escapeHtml(oldPrice || "")}"
+  >
+    ${escapeHtml(age)} ani — ${Number(price).toFixed(2)} lei
+  </option>
+`;
             })
             .join("")}
         </select>
@@ -824,29 +842,76 @@ ${createHeader()}
 
 
     const variantSelect =
-      document.querySelector("[data-product-variant]");
+  document.querySelector("[data-product-variant]");
 
-    const currentPrice =
-      document.getElementById("product-current-price");
+const currentPrice =
+  document.getElementById("product-current-price");
 
-    if (variantSelect && currentPrice) {
-      variantSelect.addEventListener("change", function() {
+const oldPriceElement =
+  document.getElementById("product-old-price");
 
-        const selectedOption =
-          variantSelect.options[variantSelect.selectedIndex];
+const discountBadge =
+  document.getElementById("product-discount-badge");
 
-        const price =
-          selectedOption.dataset.price;
+function updateVariantPrice() {
+  if (!variantSelect || !currentPrice) {
+    return;
+  }
 
-        if (!price) {
-          return;
-        }
+  const selectedOption =
+    variantSelect.options[variantSelect.selectedIndex];
 
-        currentPrice.textContent =
-          Number(price).toFixed(2) + " lei";
+  const price =
+    Number(selectedOption.dataset.price);
 
-      });
+  const oldPrice =
+    Number(selectedOption.dataset.oldPrice);
+
+  if (!price) {
+    return;
+  }
+
+  currentPrice.textContent =
+    price.toFixed(2) + " lei";
+
+  if (oldPriceElement) {
+    if (oldPrice > price) {
+      oldPriceElement.textContent =
+        oldPrice.toFixed(2) + " lei";
+
+      oldPriceElement.hidden = false;
+    } else {
+      oldPriceElement.textContent = "";
+      oldPriceElement.hidden = true;
     }
+  }
+
+  if (discountBadge) {
+    if (oldPrice > price) {
+      const discount =
+        Math.round(
+          ((oldPrice - price) / oldPrice) * 100
+        );
+
+      discountBadge.textContent =
+        "-" + discount + "%";
+
+      discountBadge.hidden = false;
+    } else {
+      discountBadge.textContent = "";
+      discountBadge.hidden = true;
+    }
+  }
+}
+
+if (variantSelect && currentPrice) {
+  variantSelect.addEventListener(
+    "change",
+    updateVariantPrice
+  );
+
+  updateVariantPrice();
+}
 
   </script>
 <script src="/assets/js/cart.js"></script>
@@ -1889,6 +1954,23 @@ function createCheckoutPage(products) {
       Alege mai întâi județul
     </option>
   </select>
+</div>
+
+<div class="checkout-field">
+  <label for="customer-postal-code">
+    Cod poștal *
+  </label>
+
+  <input
+    type="text"
+    id="customer-postal-code"
+    name="postal_code"
+    autocomplete="postal-code"
+    inputmode="numeric"
+    maxlength="6"
+    placeholder="Ex: 400001"
+    required
+  >
 </div>
 
             <div class="checkout-field checkout-field-full">

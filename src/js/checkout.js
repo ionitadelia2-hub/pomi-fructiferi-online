@@ -198,16 +198,22 @@ async function submitOrder(form) {
     ]);
 
   const city =
-    getFormValue(form, [
-      "#customer-city",
-      '[name="city"]',
-    ]);
+  getFormValue(form, [
+    "#customer-city",
+    '[name="city"]',
+  ]);
 
-  const address =
-    getFormValue(form, [
-      "#customer-address",
-      '[name="address"]',
-    ]);
+const postalCode =
+  getFormValue(form, [
+    "#customer-postal-code",
+    '[name="postal_code"]',
+  ]);
+
+const address =
+  getFormValue(form, [
+    "#customer-address",
+    '[name="address"]',
+  ]);
 
   const notes =
     getFormValue(form, [
@@ -217,14 +223,15 @@ async function submitOrder(form) {
 
   const payload = {
     customer: {
-      name: customerName,
-      phone,
-      email,
-      county,
-      city,
-      address,
-      notes,
-    },
+  name: customerName,
+  phone,
+  email,
+  county,
+  city,
+  postal_code: postalCode,
+  address,
+  notes,
+},
 
     items: items.map(
   ({ product, quantity, variant }) => ({

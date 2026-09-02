@@ -100,16 +100,19 @@
 
           
                 <div class="product-main-image-wrapper">
-                  <img
-                    id="product-main-image"
-                    src="/images/pomi-fructiferi/par/par-untoasa-hardy/par-untoasa-hardy-1.png"
-                    alt="Par Untoasa Hardy"
-                    class="product-main-image"
-                    loading="eager"
-                    width="900"
-                    height="900"
-                  >
-                </div>
+
+  
+
+  <img
+    id="product-main-image"
+    src="/images/pomi-fructiferi/par/par-untoasa-hardy/par-untoasa-hardy-1.png"
+    alt="Par Untoasa Hardy"
+    class="product-main-image"
+    loading="eager"
+    width="900"
+    height="900"
+  >
+</div>
               
 
           
@@ -150,15 +153,23 @@
           </p>
 
           <div class="product-price">
-            
 
-            <strong
-  id="product-current-price"
-  data-base-price="19.00"
->
-  19.00 lei
-</strong>
-          </div>
+  <span
+    class="old-price"
+    id="product-old-price"
+    hidden
+  >
+    
+  </span>
+
+  <strong
+    id="product-current-price"
+    data-base-price="19.00"
+  >
+    19.00 lei
+  </strong>
+
+</div>
 
           <p class="product-stock in-stock">
             ✓ În stoc
@@ -184,20 +195,22 @@
           aria-label="Alege vârsta"
         >
           
-                <option
-                  value="2"
-                  data-price="19"
-                >
-                  2 ani — 19.00 lei
-                </option>
-              
-                <option
-                  value="3"
-                  data-price="27"
-                >
-                  3 ani — 27.00 lei
-                </option>
-              
+  <option
+    value="2"
+    data-price="19"
+    data-old-price=""
+  >
+    2 ani — 19.00 lei
+  </option>
+
+  <option
+    value="3"
+    data-price="27"
+    data-old-price=""
+  >
+    3 ani — 27.00 lei
+  </option>
+
         </select>
       </div>
     
@@ -447,29 +460,76 @@
 
 
     const variantSelect =
-      document.querySelector("[data-product-variant]");
+  document.querySelector("[data-product-variant]");
 
-    const currentPrice =
-      document.getElementById("product-current-price");
+const currentPrice =
+  document.getElementById("product-current-price");
 
-    if (variantSelect && currentPrice) {
-      variantSelect.addEventListener("change", function() {
+const oldPriceElement =
+  document.getElementById("product-old-price");
 
-        const selectedOption =
-          variantSelect.options[variantSelect.selectedIndex];
+const discountBadge =
+  document.getElementById("product-discount-badge");
 
-        const price =
-          selectedOption.dataset.price;
+function updateVariantPrice() {
+  if (!variantSelect || !currentPrice) {
+    return;
+  }
 
-        if (!price) {
-          return;
-        }
+  const selectedOption =
+    variantSelect.options[variantSelect.selectedIndex];
 
-        currentPrice.textContent =
-          Number(price).toFixed(2) + " lei";
+  const price =
+    Number(selectedOption.dataset.price);
 
-      });
+  const oldPrice =
+    Number(selectedOption.dataset.oldPrice);
+
+  if (!price) {
+    return;
+  }
+
+  currentPrice.textContent =
+    price.toFixed(2) + " lei";
+
+  if (oldPriceElement) {
+    if (oldPrice > price) {
+      oldPriceElement.textContent =
+        oldPrice.toFixed(2) + " lei";
+
+      oldPriceElement.hidden = false;
+    } else {
+      oldPriceElement.textContent = "";
+      oldPriceElement.hidden = true;
     }
+  }
+
+  if (discountBadge) {
+    if (oldPrice > price) {
+      const discount =
+        Math.round(
+          ((oldPrice - price) / oldPrice) * 100
+        );
+
+      discountBadge.textContent =
+        "-" + discount + "%";
+
+      discountBadge.hidden = false;
+    } else {
+      discountBadge.textContent = "";
+      discountBadge.hidden = true;
+    }
+  }
+}
+
+if (variantSelect && currentPrice) {
+  variantSelect.addEventListener(
+    "change",
+    updateVariantPrice
+  );
+
+  updateVariantPrice();
+}
 
   </script>
 <script src="/assets/js/cart.js"></script>
