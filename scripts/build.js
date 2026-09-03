@@ -363,6 +363,12 @@ ${createHeader()}
   class="product-discount-badge"
   id="product-discount-badge"
 >
+  -${Math.round(
+    ((Number(product.old_price) - Number(product.price)) /
+      Number(product.old_price)) *
+      100
+  )}%
+</span>
       `
       : ""
   }
