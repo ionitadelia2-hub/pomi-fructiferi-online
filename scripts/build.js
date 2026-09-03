@@ -2162,7 +2162,14 @@ function generateOrderSuccessPage() {
   );
 }
 
-function generateAdminOrdersPage() {
+function generateAdminOrdersPage(products) {
+  const adminProductsJson = JSON.stringify(
+    products.map((product) => ({
+      slug: product.slug,
+      image_1: product.image_1,
+    }))
+  ).replace(/</g, "\\u003c");
+
   const pageHtml = `
 <!DOCTYPE html>
 <html lang="ro">
@@ -2285,7 +2292,11 @@ function generateAdminOrdersPage() {
     </div>
   </main>
 
-  <script src="/assets/js/admin-orders.js"></script>
+  <script>
+  window.ADMIN_PRODUCTS = ${adminProductsJson};
+</script>
+
+<script src="/assets/js/admin-orders.js"></script>
 
 </body>
 </html>
@@ -2719,7 +2730,7 @@ fs.writeFileSync(
 console.log("Generat: /checkout/");
 
 generateOrderSuccessPage();
-generateAdminOrdersPage();
+generateAdminOrdersPage(products);
 
   // Homepage
   fs.writeFileSync(

@@ -65,30 +65,13 @@ function getProductImage(item) {
     return "";
   }
 
-  const slug =
-    String(item.product_slug);
+  const product =
+    (window.ADMIN_PRODUCTS || []).find(
+      (entry) =>
+        entry.slug === item.product_slug
+    );
 
-  if (slug === "mar-ionagold-columnar") {
-    return `/images/pomi-columnari/mar/${slug}/${slug}-1.png`;
-  }
-
-  let category = "";
-
-  if (slug.startsWith("mar-")) {
-    category = "mar";
-  } else if (slug.startsWith("par-")) {
-    category = "par";
-  } else if (slug.startsWith("cires-")) {
-    category = "cires";
-  } else if (slug.startsWith("visin-")) {
-    category = "visin";
-  }
-
-  if (!category) {
-    return "";
-  }
-
-  return `/images/pomi-fructiferi/${category}/${slug}/${slug}-1.png`;
+  return product?.image_1 || "";
 }
 
 function renderOrders(orders) {
