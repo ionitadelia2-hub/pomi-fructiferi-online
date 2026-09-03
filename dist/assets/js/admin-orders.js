@@ -68,6 +68,10 @@ function getProductImage(item) {
   const slug =
     String(item.product_slug);
 
+  if (slug === "mar-ionagold-columnar") {
+    return `/images/pomi-columnari/mar/${slug}/${slug}-1.png`;
+  }
+
   let category = "";
 
   if (slug.startsWith("mar-")) {
