@@ -2609,3 +2609,172 @@ button:hover {
     gap: 5px;
   }
 }
+
+/* ========================================
+   ADMIN - PRODUSE / AWB / PRINT
+======================================== */
+
+.admin-order-product-image {
+  width: 78px;
+  height: 78px;
+  flex: 0 0 78px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid #e1e6de;
+  background: #f7f8f4;
+}
+
+.admin-order-item {
+  align-items: center;
+}
+
+.admin-order-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-order-item-info strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.admin-order-item-subtotal {
+  margin-left: auto;
+}
+
+
+/* PRINT COMANDA */
+
+.admin-order-print-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.admin-print-order {
+  background: #294f2c;
+  color: #ffffff;
+  border-color: #294f2c;
+  cursor: pointer;
+}
+
+.admin-print-order:hover {
+  background: #1f4022;
+}
+
+
+/* AWB */
+
+.admin-order-awb {
+  margin-top: 20px;
+  padding: 20px;
+  background: #f4f7f2;
+  border: 1px solid #dde5d9;
+  border-radius: 12px;
+}
+
+.admin-order-awb > strong {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 17px;
+  color: #294f2c;
+}
+
+.admin-awb-number {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.admin-awb-input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid #cdd6c9;
+  border-radius: 9px;
+  background: #ffffff;
+  font-size: 15px;
+}
+
+.admin-awb-input:focus {
+  outline: 2px solid #376b3a;
+  outline-offset: 1px;
+}
+
+.admin-awb-pdf {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.admin-awb-file {
+  max-width: 100%;
+}
+
+.admin-save-awb,
+.admin-upload-awb,
+.admin-open-awb {
+  cursor: pointer;
+}
+
+.admin-open-awb {
+  background: #294f2c;
+  color: #ffffff;
+  border-color: #294f2c;
+}
+
+.admin-awb-message {
+  min-height: 20px;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #376b3a;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+  .admin-order-product-image {
+    width: 64px;
+    height: 64px;
+    flex-basis: 64px;
+  }
+
+  .admin-order-item {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .admin-order-item-subtotal {
+    margin-left: 0;
+  }
+
+  .admin-order-print-actions {
+    justify-content: stretch;
+  }
+
+  .admin-print-order {
+    width: 100%;
+  }
+
+  .admin-awb-number {
+    flex-direction: column;
+  }
+
+  .admin-awb-number button {
+    width: 100%;
+  }
+
+  .admin-awb-pdf {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-awb-pdf button {
+    width: 100%;
+  }
+}
