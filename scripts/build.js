@@ -355,23 +355,21 @@ ${createHeader()}
               ? `
                 <div class="product-main-image-wrapper">
 
-  ${
-    product.old_price &&
-    Number(product.old_price) > Number(product.price)
-      ? `
-        <span
-  class="product-discount-badge"
-  id="product-discount-badge"
->
-  -${Math.round(
-    ((Number(product.old_price) - Number(product.price)) /
-      Number(product.old_price)) *
-      100
-  )}%
-</span>
-      `
-      : ""
-  }
+  <span
+    class="product-discount-badge"
+    id="product-discount-badge"
+    ${product.old_price && Number(product.old_price) > Number(product.price) ? "" : "hidden"}
+  >
+    ${
+      product.old_price && Number(product.old_price) > Number(product.price)
+        ? `-${Math.round(
+            ((Number(product.old_price) - Number(product.price)) /
+              Number(product.old_price)) *
+              100
+          )}%`
+        : ""
+    }
+  </span>
 
   <img
     id="product-main-image"
