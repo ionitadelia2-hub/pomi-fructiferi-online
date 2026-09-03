@@ -2162,6 +2162,155 @@ function generateOrderSuccessPage() {
   );
 }
 
+function generateAdminOrdersPage() {
+  const pageHtml = `
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="/images/branding/logo-pomifructiferi.png"
+  >
+
+  <title>Administrare comenzi | Pomi Fructiferi Online</title>
+
+  <link
+    rel="stylesheet"
+    href="/assets/css/style.css"
+  >
+</head>
+
+<body>
+
+  ${createHeader()}
+
+  <main class="admin-orders-page">
+    <div class="container">
+
+      <section
+        class="admin-login-card"
+        id="admin-login-card"
+      >
+        <p class="eyebrow">
+          ADMINISTRARE
+        </p>
+
+        <h1>
+          Comenzi
+        </h1>
+
+        <p>
+          Introdu parola de administrare pentru a vedea comenzile.
+        </p>
+
+        <form id="admin-login-form">
+          <label for="admin-token">
+            Parolă
+          </label>
+
+          <input
+            type="password"
+            id="admin-token"
+            autocomplete="current-password"
+            required
+          >
+
+          <button
+            type="submit"
+            class="button button-primary"
+          >
+            Intră în administrare
+          </button>
+
+          <div
+            id="admin-login-error"
+            class="checkout-error"
+            hidden
+          ></div>
+        </form>
+      </section>
+
+      <section
+        id="admin-orders-panel"
+        class="admin-orders-panel"
+        hidden
+      >
+        <div class="admin-orders-header">
+          <div>
+            <p class="eyebrow">
+              ADMINISTRARE
+            </p>
+
+            <h1>
+              Comenzi
+            </h1>
+          </div>
+
+          <div class="admin-orders-actions">
+            <button
+              type="button"
+              id="admin-refresh-orders"
+              class="button"
+            >
+              Reîncarcă
+            </button>
+
+            <button
+              type="button"
+              id="admin-logout"
+              class="button"
+            >
+              Ieșire
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="admin-orders-status"
+          class="admin-orders-status"
+        >
+          Se încarcă comenzile...
+        </div>
+
+        <div
+          id="admin-orders-list"
+          class="admin-orders-list"
+        ></div>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="/assets/js/admin-orders.js"></script>
+
+</body>
+</html>
+  `;
+
+  const outputDir = path.join(
+    distPath,
+    "admin-comenzi"
+  );
+
+  fs.mkdirSync(outputDir, {
+    recursive: true,
+  });
+
+  fs.writeFileSync(
+    path.join(outputDir, "index.html"),
+    pageHtml,
+    "utf8"
+  );
+
+  console.log(
+    "Generat: /admin-comenzi/"
+  );
+}
+
 function createServicesPage() {
   return `<!DOCTYPE html>
 <html lang="ro">
@@ -2378,6 +2527,11 @@ fs.copyFileSync(
   path.join(jsDistFolder, "order-success.js")
 );
 
+fs.copyFileSync(
+  path.join(__dirname, "..", "src", "js", "admin-orders.js"),
+  path.join(jsDistFolder, "admin-orders.js")
+);
+
   const imagesDistPath = path.join(distPath, "images");
 
 if (fs.existsSync(imagesSourcePath)) {
@@ -2565,6 +2719,7 @@ fs.writeFileSync(
 console.log("Generat: /checkout/");
 
 generateOrderSuccessPage();
+generateAdminOrdersPage();
 
   // Homepage
   fs.writeFileSync(
