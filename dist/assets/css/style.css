@@ -2778,3 +2778,41 @@ button:hover {
     width: 100%;
   }
 }
+
+/* =========================================
+   FIX MOBIL - SELECTOR VARSTA PRODUS
+========================================= */
+
+@media (max-width: 600px) {
+  .product-quick-details {
+    grid-template-columns: 1fr 1.25fr;
+    gap: 12px;
+  }
+
+  .product-quick-details > div {
+    min-width: 0;
+    padding: 14px 12px;
+  }
+
+  .product-age-option {
+    min-width: 0;
+  }
+
+  .product-variant-select {
+    width: 100%;
+    min-width: 0;
+    padding-left: 10px;
+    padding-right: 30px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 390px) {
+  .product-quick-details {
+    grid-template-columns: 1fr;
+  }
+
+  .product-variant-select {
+    font-size: 15px;
+  }
+}
