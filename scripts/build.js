@@ -59,6 +59,46 @@ function readProducts() {
     .filter((product) => product.status === "active");
 }
 
+function writeMerchantFeed(products) {
+  const columns = [
+    "id", "title", "description", "link", "image_link",
+    "availability", "price", "condition", "identifier_exists"
+  ];
+  const clean = (value) => String(value ?? "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/[\t\r\n]+/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+  const lines = [columns.join("\t")];
+
+  for (const product of products) {
+    const firstVariantPrice = product.variants
+      ? Number(product.variants.split("|")[0].split(":")[1])
+      : Number(product.price);
+    // The initial variant changes the displayed price on the product page.
+    // Omit inconsistent products until their catalog prices are corrected.
+    if (!Number.isFinite(firstVariantPrice) ||
+        firstVariantPrice !== Number(product.price)) continue;
+
+    const values = [
+      product.sku,
+      product.name,
+      clean(product.description || product.short_description).slice(0, 5000),
+      `${SITE_URL}/produse/${product.slug}/`,
+      product.image_1,
+      Number(product.stock) > 0 ? "in_stock" : "out_of_stock",
+      `${Number(product.price).toFixed(2)} RON`,
+      "new",
+      "no"
+    ];
+    lines.push(values.map(clean).join("\t"));
+  }
+
+  fs.writeFileSync(path.join(distPath, "merchant-produse.tsv"),
+    `${lines.join("\n")}\n`, "utf8");
+  console.log(`Feed Merchant generat: ${lines.length - 1} produse`);
+}
+
 
 // ADAUGĂ FUNCȚIA AICI
 function groupProducts(products, field) {
@@ -2742,6 +2782,8 @@ generateAdminOrdersPage(products);
   );
 
   console.log("Generat: /");
+
+  writeMerchantFeed(products);
 
 
   console.log("");
