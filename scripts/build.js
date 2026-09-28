@@ -1520,6 +1520,7 @@ const familyCardsHtml = familyCards
 <html lang="ro">
 <head>
   <meta name="google-site-verification" content="iJ1qEGSNZly9jkkc0bK40Y6ogn20LOnjIuUddyKKiBs" />
+  <meta name="google-site-verification" content="-RwVkXYy7AYIZ9Ytezd0U2w2W1dtH05femxqjU2tUJQ" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="/images/branding/logo-pomifructiferi.png">
