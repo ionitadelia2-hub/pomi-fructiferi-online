@@ -286,6 +286,18 @@ const address =
       );
     }
 
+    try {
+  sessionStorage.setItem(
+    "pomi-ads-confirmed-order",
+    JSON.stringify({
+      order_number: String(result.order_number),
+      total: Number(result.total)
+    })
+  );
+} catch (storageError) {
+  console.warn("Conversia nu a putut fi pregătită:", storageError);
+}
+
     localStorage.removeItem(CHECKOUT_CART_KEY);
 
     if (

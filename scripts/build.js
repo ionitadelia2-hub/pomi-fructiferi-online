@@ -8,6 +8,21 @@ const imagesSourcePath = path.join(__dirname, "..", "public", "images");
 
 const SITE_URL = "https://pomifructiferionline.ro";
 
+const GOOGLE_TAG = `
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18482322523"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied'
+  });
+  gtag('config', 'AW-18482322523');
+</script>`;
+
 function parseCSVLine(line) {
   const values = [];
   let current = "";
@@ -359,6 +374,7 @@ function createProductPage(product) {
   >
 
   <link rel="stylesheet" href="/assets/css/style.css">
+${GOOGLE_TAG}
 </head>
 
 <body>
@@ -1005,6 +1021,7 @@ function createProductsPage(products) {
 
   <link rel="canonical" href="${SITE_URL}/produse/">
   <link rel="stylesheet" href="/assets/css/style.css">
+${GOOGLE_TAG}
 </head>
 
 <body>
@@ -1157,6 +1174,7 @@ function createCategoryPage(categorySlug, products) {
     rel="stylesheet"
     href="/assets/css/style.css"
   >
+${GOOGLE_TAG}
 </head>
 
 <body>
@@ -1411,6 +1429,7 @@ const subcategories = groupProducts(products, "subcategory");
     rel="stylesheet"
     href="/assets/css/style.css"
   >
+${GOOGLE_TAG}
 </head>
 
 <body>
@@ -1574,6 +1593,7 @@ const familyCardsHtml = familyCards
 
   <link rel="canonical" href="${SITE_URL}/">
   <link rel="stylesheet" href="/assets/css/style.css">
+${GOOGLE_TAG}
 </head>
 
 <body>
@@ -1790,6 +1810,7 @@ function createCartPage(products) {
   >
 
   <link rel="stylesheet" href="/assets/css/style.css">
+${GOOGLE_TAG}
 </head>
 
 <body>
@@ -1889,6 +1910,7 @@ function createCheckoutPage(products) {
   >
 
   <link rel="stylesheet" href="/assets/css/style.css">
+${GOOGLE_TAG}
 </head>
 
 <body>
@@ -2123,6 +2145,7 @@ function generateOrderSuccessPage() {
   <title>Comandă trimisă | Pomi Fructiferi Online</title>
 
   <link rel="stylesheet" href="/assets/css/style.css">
+${GOOGLE_TAG}
 </head>
 
 <body>
@@ -2231,6 +2254,7 @@ function generateAdminOrdersPage(products) {
     rel="stylesheet"
     href="/assets/css/style.css"
   >
+${GOOGLE_TAG}
 </head>
 
 <body>
@@ -2397,6 +2421,7 @@ function createServicesPage() {
     rel="stylesheet"
     href="/assets/css/style.css"
   >
+${GOOGLE_TAG}
 </head>
 
 <body>
