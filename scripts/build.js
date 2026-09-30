@@ -1423,44 +1423,72 @@ function createHeader() {
       <div class="site-header-inner">
 
         <a
-  href="/"
-  class="site-logo"
-  aria-label="Pomi Fructiferi Online"
->
-  <img
-    src="/images/branding/logo-pomifructiferi.png"
-    alt=""
-    class="site-logo-image"
-  >
+          href="/"
+          class="site-logo"
+          aria-label="Pomi Fructiferi Online"
+        >
+          <img
+            src="/images/branding/logo-pomifructiferi.png"
+            alt=""
+            class="site-logo-image"
+          >
 
-  <span class="site-logo-text">
-    <span class="site-logo-main">Pomi Fructiferi</span>
-    <span class="site-logo-sub">online.ro</span>
-  </span>
-</a>
+          <span class="site-logo-text">
+            <span class="site-logo-main">Pomi Fructiferi</span>
+            <span class="site-logo-sub">online.ro</span>
+          </span>
+        </a>
 
         <nav class="site-nav" aria-label="Navigație principală">
           <a href="/">Acasă</a>
-          <div class="nav-dropdown">
-  <a href="/produse/" class="nav-dropdown-trigger">Produse</a>
 
-  <div class="nav-dropdown-menu">
-    <a href="/pomi-fructiferi/">Pomi fructiferi</a>
-    <a href="/pomi-columnari/">Pomi columnari</a>
-    <a href="/vita-de-vie/">Viță de vie</a>
-    <a href="/arbusti-fructiferi/">Arbuști fructiferi</a>
-  </div>
-</div>
+          <div class="nav-dropdown">
+            <a href="/produse/" class="nav-dropdown-trigger">
+              Produse
+            </a>
+
+            <div class="nav-dropdown-menu">
+              <a href="/pomi-fructiferi/">Pomi fructiferi</a>
+              <a href="/pomi-columnari/">Pomi columnari</a>
+              <a href="/vita-de-vie/">Viță de vie</a>
+              <a href="/arbusti-fructiferi/">Arbuști fructiferi</a>
+            </div>
+          </div>
+
           <a href="/servicii/">Servicii</a>
         </nav>
 
         <a href="/cos/" class="site-cart">
-  Coș
-  <span class="cart-count" data-cart-count>0</span>
-</a>
+          Coș
+          <span class="cart-count" data-cart-count>0</span>
+        </a>
 
       </div>
+
+      <form
+        class="site-search"
+        action="/produse/"
+        method="get"
+        role="search"
+      >
+        <label class="site-search-label" for="product-search">
+          Caută în magazin
+        </label>
+
+        <div class="site-search-controls">
+          <input
+            id="product-search"
+            name="q"
+            type="search"
+            placeholder="Caută un pom sau un soi…"
+            maxlength="120"
+          >
+          <button type="submit">Caută</button>
+        </div>
+      </form>
     </header>
+
+    <script src="/assets/js/search.js" defer></script>
   `;
 }
 
