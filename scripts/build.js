@@ -2771,6 +2771,11 @@ fs.copyFileSync(
   path.join(jsDistFolder, "cart.js")
 );
 
+  fs.copyFileSync(
+  path.join(__dirname, "..", "src", "js", "search.js"),
+  path.join(jsDistFolder, "search.js")
+);
+
 fs.copyFileSync(
   path.join(__dirname, "..", "src", "js", "checkout.js"),
   path.join(jsDistFolder, "checkout.js")
