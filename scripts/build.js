@@ -9,18 +9,166 @@ const imagesSourcePath = path.join(__dirname, "..", "public", "images");
 const SITE_URL = "https://pomifructiferionline.ro";
 
 const GOOGLE_TAG = `
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18482322523"></script>
+<style>
+  #pomi-cookie-banner {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    z-index: 10000;
+    max-width: 680px;
+    max-height: 85vh;
+    overflow: auto;
+    margin: auto;
+    padding: 20px;
+    background: white;
+    color: #183c25;
+    border: 1px solid #cbdace;
+    border-radius: 14px;
+    box-shadow: 0 4px 24px #0003;
+    font: 16px/1.5 Arial, sans-serif;
+  }
+  #pomi-cookie-banner[hidden] { display: none !important; }
+  #pomi-cookie-banner p { margin: 0 0 14px; }
+  #pomi-cookie-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  #pomi-cookie-actions button,
+  #pomi-cookie-settings {
+    padding: 10px 16px;
+    background: white;
+    color: #183c25;
+    border: 1px solid #287e3f;
+    border-radius: 8px;
+    font: 16px Arial, sans-serif;
+    cursor: pointer;
+  }
+  #pomi-cookie-actions button { flex: 1; }
+  #pomi-cookie-settings {
+    position: fixed;
+    bottom: 8px;
+    left: 8px;
+    z-index: 9999;
+    font-size: 13px;
+  }
+</style>
 <script>
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('consent', 'default', {
-    ad_storage: 'denied',
-    ad_user_data: 'denied',
-    ad_personalization: 'denied',
-    analytics_storage: 'denied'
-  });
-  gtag('config', 'AW-18482322523');
+
+  (function () {
+    var key = 'pomi-ads-consent-v1';
+    var accepted = false;
+    var loaded = false;
+    var saved = null;
+
+    window.gtag = function () {
+      if (arguments[0] === 'event' && !accepted) return;
+      window.dataLayer.push(arguments);
+    };
+
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      analytics_storage: 'denied'
+    });
+
+    function applyChoice(allow) {
+      accepted = allow;
+
+      gtag('consent', 'update', {
+        ad_storage: allow ? 'granted' : 'denied',
+        ad_user_data: allow ? 'granted' : 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied'
+      });
+
+      if (allow && !loaded) {
+        loaded = true;
+        gtag('js', new Date());
+        gtag('config', 'AW-18482322523');
+
+        var script = document.createElement('script');
+        script.async = true;
+        script.src =
+          'https://www.googletagmanager.com/gtag/js?id=AW-18482322523';
+        document.head.appendChild(script);
+      }
+    }
+
+    try {
+      saved = JSON.parse(localStorage.getItem(key));
+      if (
+        !saved ||
+        typeof saved.allow !== 'boolean' ||
+        !Number.isFinite(saved.expires) ||
+        saved.expires <= Date.now()
+      ) {
+        saved = null;
+      }
+    } catch (error) {
+      saved = null;
+    }
+
+    if (saved) applyChoice(saved.allow);
+
+    function showBanner() {
+      var banner = document.createElement('section');
+      banner.id = 'pomi-cookie-banner';
+      banner.setAttribute('aria-label', 'Preferințe cookie-uri');
+      banner.hidden = Boolean(saved);
+
+      banner.innerHTML =
+        '<p><strong>Cookie-uri pentru măsurarea reclamelor</strong></p>' +
+        '<p>Cu acordul tău, folosim cookie-uri Google Ads și trimitem către Google date despre vizită și comenzile plasate, pentru a măsura rezultatele reclamelor. Publicitatea personalizată este dezactivată. Poți refuza și folosi magazinul în continuare.</p>' +
+        '<p><a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Cum utilizează Google datele</a></p>' +
+        '<div id="pomi-cookie-actions">' +
+        '<button type="button" id="pomi-cookie-reject">Refuză</button>' +
+        '<button type="button" id="pomi-cookie-accept">Acceptă</button>' +
+        '</div>';
+
+      var settings = document.createElement('button');
+      settings.id = 'pomi-cookie-settings';
+      settings.type = 'button';
+      settings.textContent = 'Setări cookie-uri';
+
+      document.body.appendChild(settings);
+      document.body.appendChild(banner);
+
+      function saveChoice(allow) {
+        applyChoice(allow);
+
+        try {
+          localStorage.setItem(key, JSON.stringify({
+            allow: allow,
+            expires: Date.now() + 180 * 24 * 60 * 60 * 1000
+          }));
+        } catch (error) {}
+
+        banner.hidden = true;
+        settings.focus();
+      }
+
+      document.getElementById('pomi-cookie-accept')
+        .addEventListener('click', function () {
+          saveChoice(true);
+        });
+
+      document.getElementById('pomi-cookie-reject')
+        .addEventListener('click', function () {
+          saveChoice(false);
+        });
+
+      settings.addEventListener('click', function () {
+        banner.hidden = false;
+        document.getElementById('pomi-cookie-reject').focus();
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', showBanner);
+    } else {
+      showBanner();
+    }
+  })();
 </script>`;
 
 function parseCSVLine(line) {
