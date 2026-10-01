@@ -291,9 +291,14 @@ function escapeHtml(value = "") {
     .replaceAll("'", "&#039;");
 }
 
-function getCategoryName(slug) {
+function getCategoryName(slug = "") {
   const categoryNames = {
-    // Pomi fructiferi clasici
+    "pomi-fructiferi": "Pomi fructiferi",
+    "pomi-columnari": "Pomi columnari",
+    "vita-de-vie": "Viță de vie",
+    "butasi-vita-de-vie": "Butași de viță de vie",
+    "arbusti-fructiferi": "Arbuști fructiferi",
+
     mar: "Meri",
     par: "Peri",
     prun: "Pruni",
@@ -305,7 +310,6 @@ function getCategoryName(slug) {
     gutui: "Gutui",
     nuc: "Nuci",
 
-    // Pomi columnari
     "mar-columnar": "Meri columnari",
     "par-columnar": "Peri columnari",
     "prun-columnar": "Pruni columnari",
@@ -313,25 +317,33 @@ function getCategoryName(slug) {
     "visin-columnar": "Vișini columnari",
     "cais-columnar": "Caiși columnari",
     "piersic-columnar": "Piersici columnari",
+    "nectarin-columnar": "Nectarini columnari",
 
-    // Viță de vie
+    "vita-de-vie-masa": "Viță de vie pentru masă",
+    "vita-de-vie-vin": "Viță de vie pentru vin",
     "soiuri-de-masa": "Soiuri de masă",
     "soiuri-de-vin": "Soiuri de vin",
     "soiuri-rezistente": "Soiuri rezistente",
 
-    // Arbuști fructiferi
+    zmeur: "Zmeură",
     zmeura: "Zmeură",
     mur: "Mur",
     afin: "Afin",
     coacaz: "Coacăz",
     agris: "Agriș",
     aronia: "Aronia",
-    "catina": "Cătină"
+    catina: "Cătină",
+    tayberry: "Tayberry"
   };
 
-  return categoryNames[slug] || slug.replaceAll("-", " ");
-}
+  const key = String(slug).trim();
+  const name = categoryNames[key];
 
+  if (name) return name;
+
+  const fallback = key.replaceAll("-", " ");
+  return fallback.charAt(0).toUpperCase() + fallback.slice(1);
+}
 
 function formatValue(value = "") {
   const map = {
