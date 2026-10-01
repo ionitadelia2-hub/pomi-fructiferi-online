@@ -375,9 +375,10 @@ function createProductCard(product) {
     .split("|")
     .filter(Boolean)
     .map((variant) => {
-      const [, price, oldPrice] = variant.split(":");
+            const [age, price, oldPrice] = variant.split(":");
 
       return {
+        age: String(age).trim(),
         price: Number(price),
         oldPrice: Number(oldPrice || 0)
       };
@@ -406,7 +407,21 @@ function createProductCard(product) {
     : Number(product.old_price || 0);
 
   return `
-    <article class="product-card">
+        <article
+      class="product-card"
+      data-filter-category="${escapeHtml(product.subcategory)}"
+      data-filter-options="${escapeHtml(JSON.stringify(
+        variants.length
+          ? variants.map((variant) => ({
+              age: variant.age,
+              price: variant.price
+            }))
+          : [{
+              age: String(product.age_years || "").trim(),
+              price: Number(product.price)
+            }]
+      ))}"
+    >
 
       <a
         href="/produse/${escapeHtml(product.slug)}/"
