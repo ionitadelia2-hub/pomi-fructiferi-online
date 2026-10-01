@@ -2887,6 +2887,7 @@ button:hover {
   color: #15341e;
   font-size: 14px;
   font-weight: 600;
+  text-align: center;
 }
 
 .site-search-controls {
