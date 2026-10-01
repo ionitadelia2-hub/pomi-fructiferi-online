@@ -2945,3 +2945,76 @@ button:hover {
     padding: 11px 14px;
   }
 }
+
+.site-footer {
+  margin-top: 48px;
+  background: #15341e;
+  color: #ffffff;
+}
+
+.site-footer-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px 32px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 36px;
+}
+
+.site-footer h2 {
+  margin: 0 0 16px;
+  color: #ffffff;
+  font-size: 19px;
+}
+
+.site-footer p,
+.site-footer li,
+.site-footer address {
+  color: #e1ebe3;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.site-footer p {
+  margin: 0 0 14px;
+}
+
+.site-footer ul {
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer li {
+  margin-bottom: 8px;
+}
+
+.site-footer a {
+  color: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+
+.site-footer a:hover {
+  color: #c5e6ca;
+}
+
+.site-footer address {
+  font-style: normal;
+}
+
+.site-footer-bottom {
+  padding: 18px 16px;
+  border-top: 1px solid #ffffff30;
+  text-align: center;
+  font-size: 14px;
+}
+
+@media (max-width: 760px) {
+  .site-footer-inner {
+    grid-template-columns: 1fr;
+    padding: 30px 20px;
+    gap: 24px;
+  }
+}

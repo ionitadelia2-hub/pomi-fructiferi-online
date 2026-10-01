@@ -1023,6 +1023,7 @@ return `
     </article>
 
   </main>
+${createFooter()}
 
 
     <script>
@@ -1233,6 +1234,7 @@ ${createHeader()}
     </section>
 
   </main>
+${createFooter()}
 <script src="/assets/js/cart.js"></script>
 </body>
 </html>`;
@@ -1411,6 +1413,7 @@ ${createHeader()}
     </section>
 
   </main>
+${createFooter()}
 <script src="/assets/js/cart.js"></script>
 </body>
 
@@ -1489,6 +1492,62 @@ function createHeader() {
     </header>
 
     <script src="/assets/js/search.js" defer></script>
+  `;
+}
+
+function createFooter() {
+  return `
+    <footer class="site-footer">
+      <div class="site-footer-inner">
+
+        <section>
+          <h2>Pomi Fructiferi Online</h2>
+          <p>
+            Pomi fructiferi, pomi columnari, viță de vie
+            și arbuști pentru grădina ta.
+          </p>
+          <a href="/produse/">Descoperă produsele →</a>
+        </section>
+
+        <section>
+          <h2>Contact</h2>
+
+          <ul>
+            <li>
+              <a href="tel:+40774705738">0774 705 738</a>
+            </li>
+            <li>
+              <a href="tel:+40769929982">0769 929 982</a>
+            </li>
+            <li>
+              <a href="mailto:pomifructiferionline@yahoo.com">
+                pomifructiferionline@yahoo.com
+              </a>
+            </li>
+          </ul>
+
+        </section>
+
+        <section>
+          <h2>Livrare</h2>
+          <ul>
+            <li>Livrare în România</li>
+            <li>Transport: 30 lei / comandă</li>
+            <li>Termen estimativ: 2–5 zile lucrătoare</li>
+          </ul>
+
+          <p>
+            Comenzile primite vineri, sâmbătă și duminică
+            se predau curierului luni.
+          </p>
+        </section>
+
+      </div>
+
+      <div class="site-footer-bottom">
+        © ${new Date().getFullYear()} Pomi Fructiferi Online
+      </div>
+    </footer>
   `;
 }
 
@@ -1686,6 +1745,7 @@ ${createHeader()}
   </section>
 
 </main>
+${createFooter()}
 <script src="/assets/js/cart.js"></script>
 </body>
 </html>`;
@@ -1956,6 +2016,7 @@ ${createHeader()}
     </section>
 
   </main>
+${createFooter()}
 <script src="/assets/js/cart.js"></script>
 </body>
 </html>`;
@@ -2049,6 +2110,7 @@ ${GOOGLE_TAG}
 
     </div>
   </main>
+${createFooter()}
 
   <script>
     window.PRODUCTS = ${productsJson};
@@ -2297,6 +2359,7 @@ ${GOOGLE_TAG}
 
     </div>
   </main>
+${createFooter()}
 
   <script>
     window.PRODUCTS = ${productsJson};
@@ -2377,6 +2440,7 @@ ${GOOGLE_TAG}
 
     </div>
   </main>
+${createFooter()}
 
   <script src="/assets/js/order-success.js"></script>
 
@@ -2533,6 +2597,7 @@ ${GOOGLE_TAG}
 
     </div>
   </main>
+${createFooter()}
 
   <script>
   window.ADMIN_PRODUCTS = ${adminProductsJson};
@@ -2714,6 +2779,7 @@ ${GOOGLE_TAG}
     </section>
 
   </main>
+${createFooter()}
 
   <script src="/assets/js/cart.js"></script>
 

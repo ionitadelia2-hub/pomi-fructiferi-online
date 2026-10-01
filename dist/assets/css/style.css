@@ -2874,3 +2874,147 @@ button:hover {
     font-size: 15px;
   }
 }
+
+.site-search {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px 12px;
+}
+
+.site-search-label {
+  display: block;
+  margin-bottom: 5px;
+  color: #15341e;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.site-search-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.site-search input {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 14px;
+  border: 1px solid #cbdace;
+  border-radius: 10px;
+  background: white;
+  color: #15341e;
+  font: inherit;
+  font-size: 16px;
+}
+
+.site-search button {
+  padding: 11px 20px;
+  border: 1px solid #287e3f;
+  border-radius: 10px;
+  background: #287e3f;
+  color: white;
+  font: inherit;
+  cursor: pointer;
+}
+
+.site-search input:focus-visible,
+.site-search button:focus-visible {
+  outline: 3px solid #83b88f;
+  outline-offset: 2px;
+}
+
+.product-card[hidden] {
+  display: none !important;
+}
+
+.search-status {
+  color: #15341e;
+  margin: 0 0 16px;
+}
+
+.search-status:empty {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .site-search {
+    padding: 0 16px 10px;
+  }
+
+  .site-search button {
+    padding: 11px 14px;
+  }
+}
+
+.site-footer {
+  margin-top: 48px;
+  background: #15341e;
+  color: #ffffff;
+}
+
+.site-footer-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px 32px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 36px;
+}
+
+.site-footer h2 {
+  margin: 0 0 16px;
+  color: #ffffff;
+  font-size: 19px;
+}
+
+.site-footer p,
+.site-footer li,
+.site-footer address {
+  color: #e1ebe3;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.site-footer p {
+  margin: 0 0 14px;
+}
+
+.site-footer ul {
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer li {
+  margin-bottom: 8px;
+}
+
+.site-footer a {
+  color: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+
+.site-footer a:hover {
+  color: #c5e6ca;
+}
+
+.site-footer address {
+  font-style: normal;
+}
+
+.site-footer-bottom {
+  padding: 18px 16px;
+  border-top: 1px solid #ffffff30;
+  text-align: center;
+  font-size: 14px;
+}
+
+@media (max-width: 760px) {
+  .site-footer-inner {
+    grid-template-columns: 1fr;
+    padding: 30px 20px;
+    gap: 24px;
+  }
+}
