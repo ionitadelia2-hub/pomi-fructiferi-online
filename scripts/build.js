@@ -359,6 +359,40 @@ function createProductCard(product) {
   const categoryName = getCategoryName(product.subcategory);
   const inStock = Number(product.stock) > 0;
 
+  const variants = String(product.variants || "")
+    .split("|")
+    .filter(Boolean)
+    .map((variant) => {
+      const [, price, oldPrice] = variant.split(":");
+
+      return {
+        price: Number(price),
+        oldPrice: Number(oldPrice || 0)
+      };
+    })
+    .filter((variant) =>
+      Number.isFinite(variant.price) && variant.price > 0
+    );
+
+  const cheapestVariant = variants.reduce(
+    (cheapest, variant) =>
+      !cheapest || variant.price < cheapest.price
+        ? variant
+        : cheapest,
+    null
+  );
+
+  const displayPrice = cheapestVariant
+    ? cheapestVariant.price
+    : Number(product.price);
+
+  const hasDifferentPrices =
+    new Set(variants.map((variant) => variant.price)).size > 1;
+
+  const displayOldPrice = cheapestVariant
+    ? cheapestVariant.oldPrice
+    : Number(product.old_price || 0);
+
   return `
     <article class="product-card">
 
@@ -411,14 +445,16 @@ function createProductCard(product) {
 
         <div class="product-card-price-row">
 
-          <div class="product-card-price">
+                    <div class="product-card-price">
             ${
-              product.old_price
-                ? `<span class="product-card-old-price">${escapeHtml(product.old_price)} lei</span>`
+              displayOldPrice > displayPrice
+                ? `<span class="product-card-old-price">${displayOldPrice.toFixed(2)} lei</span>`
                 : ""
             }
 
-            <strong>${escapeHtml(product.price)} lei</strong>
+            <strong>
+              ${hasDifferentPrices ? "de la " : ""}${displayPrice.toFixed(2)} lei
+            </strong>
           </div>
 
           <span class="product-card-stock ${inStock ? "in-stock" : "out-of-stock"}">
