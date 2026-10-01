@@ -3094,3 +3094,28 @@ button:hover {
     padding: 16px;
   }
 }
+
+.return-policy {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  color: #183c25;
+  line-height: 1.8;
+}
+
+.return-policy h1 {
+  font-size: clamp(26px, 5vw, 38px);
+  line-height: 1.2;
+  margin-bottom: 24px;
+}
+
+.return-policy h2 {
+  margin-top: 30px;
+  font-size: 21px;
+}
+
+.return-policy a {
+  color: #287e3f;
+  text-decoration: underline;
+  overflow-wrap: anywhere;
+}

@@ -1558,6 +1558,107 @@ function createHeader() {
   `;
 }
 
+function createReturnPolicyPage() {
+  return `<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Politica de retur și rambursare | Pomi Fructiferi Online</title>
+  <meta
+    name="description"
+    content="Informații despre returnarea produselor, costurile transportului și rambursarea comenzilor."
+  >
+
+  <link rel="canonical" href="${SITE_URL}/politica-de-retur/">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  ${GOOGLE_TAG}
+</head>
+<body>
+  ${createHeader()}
+
+  <main class="return-policy">
+    <h1>Politica de retur și rambursare</h1>
+
+    <p>
+      Această politică se aplică comenzilor consumatorilor
+      livrate în România prin Pomi Fructiferi Online.
+    </p>
+
+    <h2>1. Returul prin răzgândire</h2>
+    <p>
+      Poți comunica retragerea din cumpărare, fără justificare,
+      în 14 zile calendaristice de la primirea produselor.
+      Expedierea returului trebuie făcută în cel mult
+      14 zile de la comunicarea retragerii.
+    </p>
+
+    <h2>2. Cum anunți returul</h2>
+    <p>
+      Trimite o declarație clară de retragere la
+      <a href="mailto:pomifructiferionline@yahoo.com">
+        pomifructiferionline@yahoo.com
+      </a>.
+      Pentru identificarea comenzii, indică numele,
+      numărul comenzii și produsele returnate.
+      Îți comunicăm prin e-mail instrucțiunile și adresa
+      de expediere. Contactarea noastră nu reprezintă
+      o cerere de aprobare a dreptului de retragere.
+    </p>
+
+    <h2>3. Costul transportului</h2>
+    <p>
+      La returul prin răzgândire, clientul suportă costul
+      direct al transportului returului, conform tarifului
+      curierului ales. Nu percepem taxă de restocare.
+      Pentru produse greșite, deteriorate la livrare sau
+      neconforme din motive imputabile nouă, suportăm
+      costurile necesare returnării.
+    </p>
+
+    <h2>4. Ambalarea produselor</h2>
+    <p>
+      Protejează plantele și rădăcinile pentru transport.
+      Manipularea peste ceea ce este necesar verificării
+      produselor poate determina diminuarea valorii acestora.
+      Orice diminuare se evaluează concret și se comunică
+      clientului; nu aplicăm o reținere automată.
+    </p>
+
+    <h2>5. Rambursarea</h2>
+    <p>
+      Rambursăm sumele datorate fără întârziere nejustificată,
+      în maximum 14 zile de la comunicarea retragerii.
+      Putem amâna rambursarea până primim produsele sau
+      dovada expedierii, luând în considerare primul
+      dintre aceste momente.
+    </p>
+    <p>
+      La retragerea din întreaga comandă rambursăm și costul
+      livrării standard inițiale. Suplimentele pentru o
+      livrare mai scumpă aleasă de client nu se rambursează.
+      Folosim aceeași metodă de plată, dacă nu convenim
+      expres altă metodă, fără comisioane pentru client.
+      Pentru plata ramburs, convenim cu clientul modalitatea
+      de restituire.
+    </p>
+
+    <h2>6. Produse greșite sau cu probleme</h2>
+    <p>
+      Contactează-ne la adresa de e-mail de mai sus.
+      Fotografiile ne pot ajuta să evaluăm situația.
+      Aplicăm remediile legale pentru neconformitate.
+      Termenul de retragere de 14 zile nu limitează
+      drepturile legale privind produsele neconforme.
+    </p>
+  </main>
+
+  ${createFooter()}
+</body>
+</html>`;
+}
+
 function createFooter() {
   return `
     <footer class="site-footer">
@@ -1570,6 +1671,11 @@ function createFooter() {
             și arbuști pentru grădina ta.
           </p>
           <a href="/produse/">Descoperă produsele →</a>
+          <p>
+  <a href="/politica-de-retur/">
+    Politica de retur și rambursare
+  </a>
+</p>
         </section>
 
         <section>
@@ -3117,6 +3223,21 @@ generateAdminOrdersPage(products);
   );
 
   console.log("Generat: /");
+
+    const returnPolicyFolder = path.join(
+    distPath,
+    "politica-de-retur"
+  );
+
+  fs.mkdirSync(returnPolicyFolder, { recursive: true });
+
+  fs.writeFileSync(
+    path.join(returnPolicyFolder, "index.html"),
+    createReturnPolicyPage(),
+    "utf8"
+  );
+
+  console.log("Generat: /politica-de-retur/");
 
   writeMerchantFeed(products);
 
