@@ -530,6 +530,72 @@ function createProductCard(product) {
 }
 
 function createProductPage(product) {
+  function createProductSchema(product) {
+  const productUrl =
+    `${SITE_URL}/produse/${product.slug}/`;
+
+  const firstVariant = String(product.variants || "")
+    .split("|")
+    .find(value => value.trim());
+
+  const price = firstVariant
+    ? Number(firstVariant.split(":")[1])
+    : Number(product.price);
+
+  if (!Number.isFinite(price) || price <= 0) {
+    throw new Error(
+      `Preț invalid pentru produsul: ${product.slug}`
+    );
+  }
+
+  const images = [
+    product.image_1,
+    product.image_2,
+    product.image_3
+  ]
+    .filter(Boolean)
+    .map(image => new URL(image, SITE_URL).href);
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "@id": `${productUrl}#product`,
+    name: product.name,
+    description:
+      product.description || product.short_description,
+    image: images,
+    url: productUrl,
+    ...(product.sku ? { sku: product.sku } : {}),
+    offers: {
+      "@type": "Offer",
+      url: productUrl,
+      priceCurrency: "RON",
+      price: price.toFixed(2),
+      availability: Number(product.stock) > 0
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      itemCondition: "https://schema.org/NewCondition",
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingRate: {
+          "@type": "MonetaryAmount",
+          value: 30,
+          currency: "RON"
+        },
+        shippingDestination: {
+          "@type": "DefinedRegion",
+          addressCountry: "RO"
+        }
+      }
+    }
+  };
+
+  const json = JSON.stringify(schema)
+    .replace(/</g, "\\u003c");
+
+  return `<script type="application/ld+json">${json}</script>`;
+}
+
   const categoryName = getCategoryName(product.subcategory);
 
   const images = [
@@ -567,6 +633,7 @@ function createProductPage(product) {
   <link rel="icon" type="image/png" href="/images/branding/logo-pomifructiferi.png">
 
   <title>${escapeHtml(product.seo_title)}</title>
+  ${createProductSchema(product)}
 
   <meta
     name="description"
@@ -3169,6 +3236,7 @@ if (fs.existsSync(dataSourceFolder)) {
       recursive: true
     });
 
+    
     fs.writeFileSync(
       path.join(productFolder, "index.html"),
       createProductPage(product),
