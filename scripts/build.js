@@ -2212,6 +2212,7 @@ function createCartPage(products) {
   <link rel="icon" type="image/png" href="/images/branding/logo-pomifructiferi.png">
 
   <title>Coș de cumpărături | Pomi Fructiferi Online</title>
+  <meta name="robots" content="noindex">
   <meta
     name="description"
     content="Vezi produsele adăugate în coș și modifică cantitățile."
@@ -2312,6 +2313,7 @@ function createCheckoutPage(products) {
   <link rel="icon" type="image/png" href="/images/branding/logo-pomifructiferi.png">
 
   <title>Finalizare comandă | Pomi Fructiferi Online</title>
+  <meta name="robots" content="noindex">
 
   <meta
     name="description"
@@ -2553,6 +2555,7 @@ function generateOrderSuccessPage() {
   <link rel="icon" type="image/png" href="/images/branding/logo-pomifructiferi.png">
 
   <title>Comandă trimisă | Pomi Fructiferi Online</title>
+  <meta name="robots" content="noindex">
 
   <link rel="stylesheet" href="/assets/css/style.css">
 ${GOOGLE_TAG}
@@ -2660,6 +2663,7 @@ function generateAdminOrdersPage(products) {
   >
 
   <title>Administrare comenzi | Pomi Fructiferi Online</title>
+  <meta name="robots" content="noindex">
 
   <link
     rel="stylesheet"
