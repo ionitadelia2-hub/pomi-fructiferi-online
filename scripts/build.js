@@ -576,7 +576,9 @@ function createProductPage(product) {
   <meta property="og:type" content="product">
   <meta property="og:title" content="${escapeHtml(product.seo_title)}">
   <meta property="og:description" content="${escapeHtml(product.seo_description)}">
-  <meta property="og:image" content="${SITE_URL}${escapeHtml(product.image_1)}">
+<meta property="og:image" content="${escapeHtml(
+  new URL(product.image_1, SITE_URL).href
+)}">
   <meta property="og:url" content="${SITE_URL}/produse/${escapeHtml(product.slug)}/">
 
   <link
