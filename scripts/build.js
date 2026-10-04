@@ -2958,6 +2958,97 @@ ${createFooter()}
 </html>`;
 }
 
+function writeSeoFiles() {
+  const urls = new Set();
+  const excludedPaths = [
+    "/cos/",
+    "/checkout/",
+    "/comanda-plasata/",
+    "/comanda-finalizata/",
+    "/admin-comenzi/"
+  ];
+
+  function scanFolder(folder) {
+    for (const entry of fs.readdirSync(folder, {
+      withFileTypes: true
+    })) {
+      const fullPath = path.join(folder, entry.name);
+
+      if (entry.isDirectory()) {
+        scanFolder(fullPath);
+        continue;
+      }
+
+      if (!entry.name.endsWith(".html")) continue;
+
+      const html = fs.readFileSync(fullPath, "utf8");
+
+      const tags = html.match(/<meta\b[^>]*>/gi) || [];
+      const noindex = tags.some(tag =>
+        /name\s*=\s*["']robots["']/i.test(tag) &&
+        /content\s*=\s*["'][^"']*\bnoindex\b/i.test(tag)
+      );
+
+      if (noindex) continue;
+
+      const links = html.match(/<link\b[^>]*>/gi) || [];
+      const canonical = links.find(tag =>
+        /rel\s*=\s*["']canonical["']/i.test(tag)
+      );
+
+      const href = canonical?.match(
+        /href\s*=\s*["']([^"']+)["']/i
+      );
+
+      if (!href) continue;
+
+      const url = new URL(
+        href[1].replace(/&amp;/g, "&"),
+        SITE_URL
+      );
+
+      if (url.origin !== new URL(SITE_URL).origin) continue;
+
+      if (excludedPaths.some(p =>
+        url.pathname === p.slice(0, -1) ||
+        url.pathname.startsWith(p)
+      )) continue;
+
+      url.search = "";
+      url.hash = "";
+      urls.add(url.href);
+    }
+  }
+
+  scanFolder(distPath);
+
+  const entries = [...urls].sort().map(url =>
+    `  <url><loc>${escapeHtml(url)}</loc></url>`
+  ).join("\n");
+
+  fs.writeFileSync(
+    path.join(distPath, "sitemap.xml"),
+    `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${entries}
+</urlset>
+`,
+    "utf8"
+  );
+
+  fs.writeFileSync(
+    path.join(distPath, "robots.txt"),
+    `User-agent: *
+Allow: /
+
+Sitemap: ${SITE_URL}/sitemap.xml
+`,
+    "utf8"
+  );
+
+  console.log(`Sitemap generat: ${urls.size} pagini`);
+}
+
 function build() {
    const products = readProducts();
 
@@ -3242,7 +3333,7 @@ generateAdminOrdersPage(products);
   console.log("Generat: /politica-de-retur/");
 
   writeMerchantFeed(products);
-
+writeSeoFiles();
 
   console.log("");
   console.log("Build finalizat.");
