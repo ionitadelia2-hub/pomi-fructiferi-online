@@ -1792,14 +1792,15 @@ function createFooter() {
 function createFamilyPage(familySlug, products) {
   const familyContent = {
     "pomi-fructiferi": {
-      title: "Pomi fructiferi",
-      eyebrow: "Catalog",
-      intro:
-        "Descoperă pomii fructiferi disponibili pentru grădină, livadă și plantații. Alege specia și soiul potrivit pentru spațiul tău.",
-      seoTitle: "Pomi fructiferi de vânzare | Pomi Fructiferi Online",
-      seoDescription:
-        "Descoperă pomi fructiferi de vânzare: meri, peri, pruni, cireși, vișini, caiși, piersici, nectarini, gutui și alte specii."
-    },
+  title: "Pomi fructiferi de vânzare",
+  eyebrow: "Pentru grădină și livadă",
+  intro:
+    "Alege dintre soiurile de meri, peri, pruni, cireși, vișini, caiși, piersici, nectarini și gutui disponibile. Compară prețurile, vârstele pomilor și caracteristicile fiecărui soi.",
+  seoTitle:
+    "Pomi fructiferi de vânzare – soiuri și prețuri | Pomi Fructiferi Online",
+  seoDescription:
+    "Pomi fructiferi pentru grădină și livadă: meri, peri, pruni, cireși și alte specii. Compară soiurile și prețurile. Livrare prin curier în România."
+},
 
     "pomi-columnari": {
       title: "Pomi columnari",
@@ -1981,6 +1982,54 @@ ${createHeader()}
     </div>
 
   </section>
+
+  ${familySlug === "pomi-fructiferi" ? `
+  <section class="home-section">
+    <h2>Cum alegi pomii fructiferi pentru grădina ta?</h2>
+    <p>
+      Începe cu spațiul disponibil, expunerea la soare și
+      condițiile de sol. Compară vigoarea pomului și portaltoiul,
+      deoarece acestea influențează dimensiunile la maturitate.
+      Distanțele de plantare se aleg în funcție de aceste
+      caracteristici și de forma coroanei.
+    </p>
+
+    <h2>Alege soiurile după fructe și perioada de recoltare</h2>
+    <p>
+      În categoria <a href="/categorii/mar/">meri</a> poți
+      compara gustul, perioada de recoltare și capacitatea
+      de păstrare a fructelor. Descoperă și soiurile de
+      <a href="/categorii/par/">peri</a>,
+      <a href="/categorii/prun/">pruni</a> și
+      <a href="/categorii/cires/">cireși</a>.
+      Combinarea soiurilor cu perioade diferite de maturare
+      poate prelungi sezonul de recoltare.
+    </p>
+
+    <h2>Verifică polenizarea înainte de comandă</h2>
+    <p>
+      Unele soiuri sunt autofertile, iar altele au nevoie
+      de un soi polenizator compatibil, cu înflorire în aceeași
+      perioadă. Consultă informațiile de pe pagina produsului
+      și cere recomandări dacă alegi pomi pentru o livadă nouă.
+    </p>
+
+    <h2>Vârste, prețuri și livrare</h2>
+    <p>
+      Pe pagina fiecărui produs găsești variantele de vârstă
+      disponibile, prețul și informațiile despre plantare.
+      Vârsta pomului nu garantează singură momentul primei
+      recolte: fructificarea depinde și de soi, portaltoi
+      și îngrijire.
+    </p>
+    <p>
+      Livrăm prin curier în România. Transportul costă
+      30 lei pe comandă, iar termenul estimativ este de
+      2–5 zile lucrătoare. Pentru ajutor în alegerea soiurilor,
+      sună la <a href="tel:+40774705738">0774 705 738</a>.
+    </p>
+  </section>
+` : ""}
 
 </main>
 ${createFooter()}
