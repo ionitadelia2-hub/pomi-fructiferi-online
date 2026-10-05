@@ -1381,16 +1381,18 @@ function createCategoryPage(categorySlug, products) {
 
   const categoryContent = {
     mar: {
-      title: "Meri de vânzare",
-      intro:
-        "Descoperă soiurile de meri disponibile pentru grădină și livadă. Compară caracteristicile, perioada de recoltare și alege mărul potrivit pentru spațiul tău.",
-      seoTitle: "Meri de vânzare | Pomi Fructiferi Online",
-      seoDescription:
-        "Descoperă meri de vânzare pentru grădină și livadă. Alege soiuri de măr atent selecționate și găsește pomul potrivit pentru plantare.",
-      seoHeading: "Cum alegi soiul de măr potrivit?",
-      seoText:
-        "Atunci când alegi un măr, ține cont de perioada de recoltare, rezistența la ger, tipul de sol, productivitate și caracteristicile fructelor. Pe pagina fiecărui soi găsești informații detaliate despre plantare și îngrijire."
-    },
+  title: "Meri de vânzare",
+  intro:
+    "Alege soiuri de măr pentru grădină și livadă. Compară gustul fructelor, perioada de recoltare, portaltoiul și variantele de vârstă disponibile.",
+  seoTitle:
+    "Meri de vânzare – soiuri de măr și prețuri | Pomi Fructiferi Online",
+  seoDescription:
+    "Descoperă meri de vânzare: Golden Delicious, Jonathan, Royal Gala, Generos și alte soiuri. Compară prețurile și caracteristicile. Livrare prin curier.",
+  seoHeading:
+    "Cum alegi soiul de măr pentru grădină sau livadă?",
+  seoText:
+    "Alege soiul după gustul merelor, perioada de recoltare și modul în care vrei să folosești fructele: consum proaspăt, păstrare sau preparate. Pentru spațiul de plantare, verifică vigoarea pomului și portaltoiul; acestea influențează dimensiunea coroanei și distanțele necesare. Consultă și cerințele de polenizare: multe soiuri beneficiază de un alt măr compatibil, care înflorește în aceeași perioadă. Pe pagina fiecărui produs găsești caracteristicile soiului, vârstele disponibile și prețurile. Combinând soiuri cu perioade diferite de maturare, poți prelungi sezonul de recoltare. Livrăm prin curier în România, cu transport de 30 lei pe comandă."
+},
 
     par: {
       title: "Peri de vânzare",
