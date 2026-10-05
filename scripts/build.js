@@ -1395,16 +1395,18 @@ function createCategoryPage(categorySlug, products) {
 },
 
     par: {
-      title: "Peri de vânzare",
-      intro:
-        "Descoperă soiurile de peri disponibile pentru grădină și livadă. Compară perioada de recoltare, caracteristicile fructelor și condițiile de plantare.",
-      seoTitle: "Peri de vânzare | Pomi Fructiferi Online",
-      seoDescription:
-        "Descoperă peri de vânzare pentru grădină și livadă. Compară soiurile disponibile și alege părul potrivit pentru plantare.",
-      seoHeading: "Cum alegi soiul de păr potrivit?",
-      seoText:
-        "Alegerea unui păr depinde de soi, perioada de recoltare, rezistența la temperaturi scăzute și condițiile din grădină sau livadă. Consultă caracteristicile fiecărui produs înainte de plantare."
-    },
+  title: "Peri de vânzare",
+  intro:
+    "Descoperă soiuri de păr pentru grădină și livadă. Compară gustul fructelor, perioada de recoltare, portaltoiul și variantele de vârstă disponibile.",
+  seoTitle:
+    "Peri de vânzare – soiuri de păr și prețuri | Pomi Fructiferi Online",
+  seoDescription:
+    "Alege peri pentru grădină și livadă. Compară soiurile, prețurile, perioada de recoltare și cerințele de polenizare. Livrare prin curier în România.",
+  seoHeading:
+    "Cum alegi soiul de păr pentru grădină sau livadă?",
+  seoText:
+    "Alege soiul de păr după gustul și textura fructelor, perioada de recoltare și modul în care vrei să le folosești: consum proaspăt, compot sau alte preparate. Dacă dorești fructe pentru păstrare, verifică recomandările specifice soiului privind recoltarea și depozitarea. Consultă cerințele de polenizare și alege, când este necesar, un alt soi compatibil, cu înflorire în aceeași perioadă. Vigoarea pomului și portaltoiul influențează dimensiunile la maturitate și spațiul necesar pentru plantare. Pe pagina fiecărui produs găsești caracteristicile soiului, variantele de vârstă și prețurile disponibile. Combinând soiuri cu perioade diferite de maturare, poți prelungi sezonul de recoltare. Livrăm prin curier în România, cu transport de 30 lei pe comandă."
+},
 
     prun: {
   title: "Pruni de vânzare",
