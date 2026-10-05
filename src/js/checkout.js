@@ -3,6 +3,15 @@ const CHECKOUT_API_URL =
 
 const CHECKOUT_CART_KEY = "pomi-fructiferi-cart";
 
+const MINIMUM_ORDER_LEI = 120;
+
+function getCheckoutSubtotalCents(items) {
+  return items.reduce((total, item) => {
+    return total +
+      Math.round(item.unitPrice * 100) * item.quantity;
+  }, 0);
+}
+
 function getCheckoutCart() {
   try {
     return JSON.parse(
@@ -136,6 +145,29 @@ if (shippingElement) {
 
 totalElement.textContent =
   checkoutPrice(grandTotal);
+  const subtotalCents = getCheckoutSubtotalCents(items);
+const minimumCents = MINIMUM_ORDER_LEI * 100;
+const belowMinimum = subtotalCents < minimumCents;
+
+const minimumMessage =
+  document.getElementById("checkout-minimum-message");
+
+const orderButton = document.querySelector(
+  '#checkout-form button[type="submit"]'
+);
+
+if (minimumMessage) {
+  minimumMessage.hidden = !belowMinimum;
+  minimumMessage.textContent = belowMinimum
+    ? `Mai adaugă produse de ${
+        checkoutPrice((minimumCents - subtotalCents) / 100)
+      } pentru a atinge comanda minimă de 120 lei.`
+    : "";
+}
+
+if (orderButton) {
+  orderButton.disabled = belowMinimum;
+}
 }
 
 function getFormValue(form, selectors) {
@@ -171,6 +203,19 @@ async function submitOrder(form) {
 
     return;
   }
+
+  const subtotalCents = getCheckoutSubtotalCents(items);
+
+if (subtotalCents < MINIMUM_ORDER_LEI * 100) {
+  if (error) {
+    error.hidden = false;
+    error.textContent =
+      "Comanda minimă este de 120 lei în produse, fără transport.";
+  }
+
+  renderCheckout();
+  return;
+}
 
   const customerName =
     getFormValue(form, [
