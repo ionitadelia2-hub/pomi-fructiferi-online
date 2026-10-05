@@ -1407,16 +1407,18 @@ function createCategoryPage(categorySlug, products) {
     },
 
     prun: {
-      title: "Pruni de vânzare",
-      intro:
-        "Descoperă soiurile de pruni disponibile pentru grădină și livadă. Compară productivitatea, perioada de recoltare și caracteristicile fructelor.",
-      seoTitle: "Pruni de vânzare | Pomi Fructiferi Online",
-      seoDescription:
-        "Descoperă pruni de vânzare pentru grădină și livadă. Alege dintre soiurile disponibile și găsește prunul potrivit pentru plantare.",
-      seoHeading: "Cum alegi soiul de prun potrivit?",
-      seoText:
-        "Pentru alegerea unui prun potrivit, verifică perioada de fructificare și recoltare, rezistența la ger, productivitatea și cerințele față de sol și expunere."
-    }
+  title: "Pruni de vânzare",
+  intro:
+    "Descoperă soiuri de prun pentru grădină și livadă. Compară perioada de recoltare, caracteristicile fructelor și variantele de vârstă disponibile.",
+  seoTitle:
+    "Pruni de vânzare – soiuri de prun și prețuri | Pomi Fructiferi Online",
+  seoDescription:
+    "Alege pruni pentru grădină și livadă. Compară soiurile, prețurile, perioada de recoltare și cerințele de polenizare. Livrare prin curier în România.",
+  seoHeading:
+    "Cum alegi soiul de prun pentru grădină sau livadă?",
+  seoText:
+    "Alege soiul de prun în funcție de modul în care vrei să folosești fructele: consum proaspăt, gem, compot sau uscare. Compară perioada de recoltare, mărimea fructelor, gustul și cât de ușor se desprinde sâmburele. Verifică cerințele de polenizare ale fiecărui soi; unele sunt autofertile, iar altele au nevoie de un polenizator compatibil în apropiere. Spațiul de plantare se stabilește după vigoarea pomului, portaltoi și forma coroanei. Pe pagina fiecărui produs găsești caracteristicile soiului, variantele de vârstă și prețurile disponibile. Alegând soiuri cu perioade diferite de maturare, poți prelungi sezonul de recoltare. Livrăm prin curier în România, cu transport de 30 lei pe comandă."
+}
   };
 
   const content = categoryContent[categorySlug] || {
