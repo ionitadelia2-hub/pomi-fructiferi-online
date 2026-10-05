@@ -2633,6 +2633,22 @@ ${GOOGLE_TAG}
        <aside class="checkout-summary">
   <h2>Comanda ta</h2>
 
+  <p>
+  <strong>Metoda de plată: ramburs</strong><br>
+  Plata se face la primirea coletului.
+</p>
+
+<p>
+  Comanda minimă este de <strong>120 lei în produse</strong>.
+  Transportul de 30 lei se adaugă separat.
+</p>
+
+<p
+  id="checkout-minimum-message"
+  role="status"
+  hidden
+></p>
+
   <div id="checkout-items"></div>
 
   <div class="checkout-summary-row">
