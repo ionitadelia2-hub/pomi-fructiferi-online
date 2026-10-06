@@ -3191,6 +3191,173 @@ Sitemap: ${SITE_URL}/sitemap.xml
   console.log(`Sitemap generat: ${urls.size} pagini`);
 }
 
+function generatePlantingGuides() {
+  const guides = [
+    {
+      slug: "ghid-plantare-pomi-fructiferi",
+      title: "Plantarea pomilor fructiferi",
+      description:
+        "Ghid pentru plantarea pomilor fructiferi: alegerea locului, pregătirea rădăcinilor, udarea și îngrijirea după plantare.",
+      catalog: "/pomi-fructiferi/",
+      catalogText: "Vezi pomii fructiferi disponibili",
+      sections: [
+        {
+          title: "Când se plantează pomii fructiferi?",
+          text:
+            "Pomii cu rădăcină nudă se plantează în perioada de repaus vegetativ, după căderea frunzelor sau primăvara înainte de pornirea în vegetație. Alege o zi în care solul nu este înghețat și nu este îmbibat cu apă."
+        },
+        {
+          title: "Alegerea locului și a distanțelor",
+          text:
+            "Alege un loc luminos, cu sol bine drenat. Distanțele dintre pomi și dintre rânduri depind de specie, portaltoi, vigoare și forma coroanei. Pomii columnari, pomii pe portaltoi de vigoare mică și nucii au cerințe diferite. Verifică recomandarea pentru produsul cumpărat înainte să stabilești schema de plantare."
+        },
+        {
+          title: "Pregătirea rădăcinilor",
+          text:
+            "Păstrează rădăcinile protejate de uscare până la plantare. Îndepărtează porțiunile rupte sau deteriorate. Dacă rădăcinile sunt uscate, hidratează-le înainte de plantare, conform instrucțiunilor primite pentru materialul săditor."
+        },
+        {
+          title: "Groapa și adâncimea de plantare",
+          text:
+            "Sapă o groapă suficient de largă pentru ca rădăcinile să stea răsfirate, fără îndoire sau înghesuire. Așază coletul, zona de trecere dintre rădăcini și trunchi, la nivelul solului. La pomii altoiți, punctul de altoire trebuie să rămână deasupra solului și după tasare."
+        },
+        {
+          title: "Acoperirea rădăcinilor și udarea",
+          text:
+            "Acoperă rădăcinile cu pământ mărunțit și tasează moderat. Udă bine după plantare pentru ca pământul să se așeze în jurul rădăcinilor. Adaptează cantitatea de apă la sol și umiditate, fără să menții apa băltită."
+        },
+        {
+          title: "Susținerea și îngrijirea",
+          text:
+            "Montează un tutore dacă pomul sau portaltoiul necesită susținere. Folosește o legătură care nu rănește scoarța. Urmărește umiditatea solului și îndepărtează buruienile din jurul pomului. Tăierile de plantare se stabilesc după specie și forma de conducere; nu aplica aceeași tăiere tuturor pomilor."
+        },
+        {
+          title: "Greșeli de evitat",
+          text:
+            "Nu îngropa punctul de altoire, nu lăsa rădăcinile să se usuce și nu planta într-un loc unde apa băltește. Nu pune gunoi de grajd proaspăt în contact direct cu rădăcinile."
+        }
+      ]
+    },
+    {
+      slug: "ghid-plantare-vita-de-vie",
+      title: "Plantarea viței de vie",
+      description:
+        "Ghid pentru plantarea viței de vie: alegerea locului, pregătirea plantei, adâncimea de plantare și îngrijirea după plantare.",
+      catalog: "/vita-de-vie/",
+      catalogText: "Vezi soiurile de viță de vie",
+      sections: [
+        {
+          title: "Alegerea locului",
+          text:
+            "Alege un loc însorit, cu sol bine drenat. Evită zonele în care apa băltește și locurile expuse acumulării de aer rece. Dacă plantezi lângă o clădire, verifică umiditatea solului: streașina poate împiedica apa de ploaie să ajungă la plantă."
+        },
+        {
+          title: "Distanțele și susținerea",
+          text:
+            "Stabilește distanțele înainte de plantare, în funcție de soi, vigoare și sistemul de conducere: spalier, araci sau pergolă. Prevede spațiu pentru dezvoltarea plantei și pentru lucrările de întreținere. Cere recomandări pentru soiul și sistemul ales."
+        },
+        {
+          title: "Pregătirea materialului săditor",
+          text:
+            "Desfă ambalajul cu grijă și protejează rădăcinile de uscare. Îndepărtează doar porțiunile deteriorate. Pentru plantele cu rădăcină nudă, respectă instrucțiunile furnizorului privind hidratarea. La plantele în ghiveci, udă balotul înainte de plantare."
+        },
+        {
+          title: "Groapa de plantare",
+          text:
+            "Sapă o groapă suficient de mare pentru a distribui rădăcinile natural, fără îndoire. Dimensiunea se adaptează rădăcinilor sau balotului plantei; nu este necesară o suprafață fixă de un metru pătrat pentru fiecare plantă."
+        },
+        {
+          title: "Așezarea plantei",
+          text:
+            "La vița altoită, păstrează punctul de altoire deasupra nivelului final al solului și ține cont de tasarea pământului. Pentru materialul nealtoit sau crescut în ghiveci, urmează indicațiile specifice produsului. Acoperă rădăcinile cu pământ mărunțit și tasează moderat."
+        },
+        {
+          title: "Udarea și îngrijirea",
+          text:
+            "Udă după plantare și urmărește umiditatea solului în perioada de prindere. Adaptează udarea la precipitații și tipul de sol. Montează susținerea necesară și păstrează zona din jurul plantei fără buruieni."
+        },
+        {
+          title: "Protecția în sezonul rece",
+          text:
+            "Protecția plantelor tinere se adaptează soiului, temperaturilor locale și momentului plantării. Cere instrucțiuni privind mușuroirea și îndepărtarea protecției primăvara, în special pentru vița altoită."
+        },
+        {
+          title: "Greșeli de evitat",
+          text:
+            "Nu lăsa rădăcinile expuse la soare sau vânt și nu planta în sol înghețat ori îmbibat cu apă. Nu pune gunoi de grajd proaspăt în contact direct cu rădăcinile."
+        }
+      ]
+    }
+  ];
+
+  for (const guide of guides) {
+    const sectionsHtml = guide.sections.map(section => `
+      <section class="product-section">
+        <h2>${escapeHtml(section.title)}</h2>
+        <p>${escapeHtml(section.text)}</p>
+      </section>
+    `).join("");
+
+    const pageHtml = `<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escapeHtml(guide.title)} | Pomi Fructiferi Online</title>
+  <meta name="description" content="${escapeHtml(guide.description)}">
+  <link rel="canonical" href="${SITE_URL}/${guide.slug}/">
+  <link rel="icon" type="image/png" href="/images/branding/logo-pomifructiferi.png">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  ${GOOGLE_TAG}
+</head>
+<body>
+  ${createHeader()}
+
+  <main class="catalog-main">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="/">Acasă</a>
+      <span>›</span>
+      <span>${escapeHtml(guide.title)}</span>
+    </nav>
+
+    <article>
+      <header class="catalog-hero">
+        <p class="catalog-eyebrow">Ghid de plantare</p>
+        <h1>${escapeHtml(guide.title)}</h1>
+        <p class="catalog-intro">${escapeHtml(guide.description)}</p>
+      </header>
+
+      ${sectionsHtml}
+
+      <section class="product-section">
+        <h2>Ai nevoie de ajutor pentru plantare?</h2>
+        <p>
+          Pentru recomandări despre produsul cumpărat,
+          sună la <a href="tel:+40774705738">0774 705 738</a>.
+        </p>
+        <a href="${guide.catalog}" class="home-primary-button">
+          ${escapeHtml(guide.catalogText)}
+        </a>
+      </section>
+    </article>
+  </main>
+
+  ${createFooter()}
+  <script src="/assets/js/cart.js"></script>
+</body>
+</html>`;
+
+    const folder = path.join(distPath, guide.slug);
+    fs.mkdirSync(folder, { recursive: true });
+    fs.writeFileSync(
+      path.join(folder, "index.html"),
+      pageHtml,
+      "utf8"
+    );
+    console.log(`Generat: /${guide.slug}/`);
+  }
+}
+
 function build() {
    const products = readProducts();
 
@@ -3475,7 +3642,8 @@ generateAdminOrdersPage(products);
 
   console.log("Generat: /politica-de-retur/");
 
-  writeMerchantFeed(products);
+  generatePlantingGuides();
+writeMerchantFeed(products);
 writeSeoFiles();
 
   console.log("");
