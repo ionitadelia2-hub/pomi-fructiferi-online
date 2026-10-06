@@ -1751,6 +1751,18 @@ function createFooter() {
     Politica de retur și rambursare
   </a>
 </p>
+
+<p>
+  <a href="/ghid-plantare-pomi-fructiferi/">
+    Ghid de plantare a pomilor fructiferi
+  </a>
+</p>
+
+<p>
+  <a href="/ghid-plantare-vita-de-vie/">
+    Ghid de plantare a viței de vie
+  </a>
+</p>
         </section>
 
         <section>
