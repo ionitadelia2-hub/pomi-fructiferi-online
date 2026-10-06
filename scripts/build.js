@@ -84,12 +84,12 @@ const GOOGLE_TAG = `
       if (allow && !loaded) {
         loaded = true;
         gtag('js', new Date());
-        gtag('config', 'AW-18482322523');
+        gtag('config', 'AW-18488960721');
 
         var script = document.createElement('script');
         script.async = true;
         script.src =
-          'https://www.googletagmanager.com/gtag/js?id=AW-18482322523';
+          'https://www.googletagmanager.com/gtag/js?id=AW-18488960721';
         document.head.appendChild(script);
       }
     }
