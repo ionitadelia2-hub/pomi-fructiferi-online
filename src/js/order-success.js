@@ -23,7 +23,7 @@ const total =
 
       if (typeof gtag === "function") {
         gtag("event", "conversion", {
-          send_to: "AW-18482322523/4ILXCIjOwoodENu4h-1E",
+          send_to: "AW-18488960721/X-ZLCPr5jZMdENHNnPBE",
           value: Number(confirmedOrder.total),
           currency: "RON",
           transaction_id: String(confirmedOrder.order_number)
