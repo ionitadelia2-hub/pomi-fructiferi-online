@@ -908,7 +908,27 @@ return `
         </section>
 
       </div>
-
+${["pomi-fructiferi", "pomi-columnari", "vita-de-vie"]
+  .includes(product.family) ? `
+  <section class="product-section">
+    <h2>Ghid de plantare</h2>
+    <p>
+      Consultă recomandările pentru pregătirea plantei,
+      plantare și îngrijirea după plantare.
+    </p>
+    <a href="${
+      product.family === "vita-de-vie"
+        ? "/ghid-plantare-vita-de-vie/"
+        : "/ghid-plantare-pomi-fructiferi/"
+    }" class="product-link">
+      ${
+        product.family === "vita-de-vie"
+          ? "Citește ghidul de plantare a viței de vie →"
+          : "Citește ghidul de plantare a pomilor fructiferi →"
+      }
+    </a>
+  </section>
+` : ""}
 
       <!-- DESCRIERE -->
       <section class="product-description product-section">
