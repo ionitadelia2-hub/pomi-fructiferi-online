@@ -224,9 +224,10 @@ function readProducts() {
 
 function writeMerchantFeed(products) {
   const columns = [
-    "id", "title", "description", "link", "image_link",
-    "availability", "price", "condition", "identifier_exists"
-  ];
+  "id", "title", "description", "link", "image_link",
+  "availability", "price", "condition", "identifier_exists",
+  "unit_pricing_measure", "unit_pricing_base_measure"
+];
   const clean = (value) => String(value ?? "")
     .replace(/<[^>]*>/g, " ")
     .replace(/[\t\r\n]+/g, " ")
@@ -252,7 +253,9 @@ function writeMerchantFeed(products) {
       Number(product.stock) > 0 ? "in_stock" : "out_of_stock",
       `${Number(product.price).toFixed(2)} RON`,
       "new",
-      "no"
+"no",
+"1ct",
+"1ct"
     ];
     lines.push(values.map(clean).join("\t"));
   }
