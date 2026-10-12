@@ -1,56 +1,82 @@
-const params =
-  new URLSearchParams(window.location.search);
+const params = new URLSearchParams(window.location.search);
+const orderNumber = params.get("order");
+const total = params.get("total");
 
-const orderNumber =
-  params.get("order");
+let conversionQueued = false;
 
-const total =
-  params.get("total");
+function sendConfirmedPurchase() {
+  if (
+    conversionQueued ||
+    typeof window.pomiAdsConsentGranted !== "function" ||
+    !window.pomiAdsConsentGranted() ||
+    typeof window.gtag !== "function"
+  ) {
+    return;
+  }
 
   try {
-  const savedOrder = sessionStorage.getItem(
-    "pomi-ads-confirmed-order"
-  );
+    const raw = sessionStorage.getItem(
+      "pomi-ads-confirmed-order"
+    );
 
-  if (savedOrder) {
-    const confirmedOrder = JSON.parse(savedOrder);
+    if (!raw) return;
+
+    const order = JSON.parse(raw);
+    const id = String(order.order_number || "");
+    const value = Number(order.total);
 
     if (
-      String(confirmedOrder.order_number) === orderNumber &&
-      Number.isFinite(Number(confirmedOrder.total))
+      !orderNumber ||
+      id !== orderNumber ||
+      order.total == null ||
+      order.total === "" ||
+      !Number.isFinite(value) ||
+      value <= 0
     ) {
-      sessionStorage.removeItem("pomi-ads-confirmed-order");
-
-      if (typeof gtag === "function") {
-        gtag("event", "conversion", {
-          send_to: "AW-18488960721/X-ZLCPr5jZMdENHNnPBE",
-          value: Number(confirmedOrder.total),
-          currency: "RON",
-          transaction_id: String(confirmedOrder.order_number)
-        });
-      }
+      return;
     }
+
+    window.gtag("event", "conversion", {
+      send_to: "AW-18488960721/X-ZLCPr5jZMdENHNnPBE",
+      value: value,
+      currency: "RON",
+      transaction_id: id
+    });
+
+    conversionQueued = true;
+    sessionStorage.removeItem("pomi-ads-confirmed-order");
+  } catch (error) {
+    console.warn(
+      "Conversia nu a putut fi pusă în coadă:",
+      error
+    );
   }
-} catch (conversionError) {
-  console.warn("Conversia nu a putut fi trimisă:", conversionError);
 }
 
-const orderNumberElement =
-  document.getElementById(
-    "success-order-number"
-  );
+window.addEventListener(
+  "pomi-ads-consent-changed",
+  sendConfirmedPurchase
+);
 
-const totalElement =
-  document.getElementById(
-    "success-order-total"
-  );
+sendConfirmedPurchase();
+
+const orderNumberElement = document.getElementById(
+  "success-order-number"
+);
+
+const totalElement = document.getElementById(
+  "success-order-total"
+);
 
 if (orderNumberElement && orderNumber) {
-  orderNumberElement.textContent =
-    orderNumber;
+  orderNumberElement.textContent = orderNumber;
 }
 
-if (totalElement && total) {
+if (
+  totalElement &&
+  total !== null &&
+  Number.isFinite(Number(total))
+) {
   totalElement.textContent =
     `${Number(total).toFixed(2)} lei`;
 }
