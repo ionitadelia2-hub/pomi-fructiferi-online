@@ -59,6 +59,10 @@ const GOOGLE_TAG = `
     var loaded = false;
     var saved = null;
 
+    window.pomiAdsConsentGranted = function () {
+  return accepted && loaded;
+};
+
     window.gtag = function () {
       if (arguments[0] === 'event' && !accepted) return;
       window.dataLayer.push(arguments);
@@ -90,8 +94,12 @@ const GOOGLE_TAG = `
         script.async = true;
         script.src =
           'https://www.googletagmanager.com/gtag/js?id=AW-18488960721';
-        document.head.appendChild(script);
+               document.head.appendChild(script);
       }
+
+            window.dispatchEvent(
+        new Event('pomi-ads-consent-changed')
+      );
     }
 
     try {
