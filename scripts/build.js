@@ -1835,6 +1835,21 @@ function createFooter() {
         © ${new Date().getFullYear()} Pomi Fructiferi Online
       </div>
     </footer>
+
+    <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+if (window.location.pathname.startsWith('/admin-comenzi')) return;
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6ad70f3a2627ff34c7d8e4ee/1k5c16vt1';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
   `;
 }
 
