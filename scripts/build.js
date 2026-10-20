@@ -2662,6 +2662,32 @@ ${GOOGLE_TAG}
 
           </div>
 
+          <section style="margin:24px 0;padding:18px;border:1px solid #cbdcca;border-radius:14px;background:#f3f8f1;">
+  <h2 style="margin:0 0 8px;font-size:20px;">
+    Doriți să plătiți cu cardul?
+  </h2>
+
+  <p style="line-height:1.6;">
+    Scrieți-ne pe WhatsApp sau prin SMS la
+    <a href="tel:+40774705738"><strong>0774 705 738</strong></a>
+    pentru detaliile de plată.
+  </p>
+
+  <div style="display:flex;flex-wrap:wrap;gap:12px;">
+    <a
+      href="https://wa.me/40774705738?text=Doresc%20sa%20platesc%20comanda%20cu%20cardul."
+      target="_blank"
+      rel="noopener noreferrer"
+      style="padding:12px 16px;background:#26733c;color:white;border-radius:8px;text-decoration:none;"
+    >Scrieți pe WhatsApp</a>
+
+    <a
+      href="sms:+40774705738"
+      style="padding:12px 16px;background:white;color:#26733c;border:1px solid #26733c;border-radius:8px;text-decoration:none;"
+    >Trimiteți SMS</a>
+  </div>
+</section>
+
           <label class="checkout-consent">
             <input
               type="checkbox"
