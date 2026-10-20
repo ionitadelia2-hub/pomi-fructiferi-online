@@ -1836,6 +1836,7 @@ function createFooter() {
       </div>
     </footer>
 
+    <script src="/assets/js/tawk-mobile.js"></script>
     <!--Start of Tawk.to Script-->
 <script type="text/javascript">
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
@@ -3460,6 +3461,11 @@ function build() {
 fs.mkdirSync(jsDistFolder, {
   recursive: true
 });
+
+fs.copyFileSync(
+  path.join(__dirname, "..", "src", "js", "tawk-mobile.js"),
+  path.join(jsDistFolder, "tawk-mobile.js")
+);
 
 fs.copyFileSync(
   path.join(__dirname, "..", "src", "js", "cart.js"),
