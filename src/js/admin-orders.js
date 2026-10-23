@@ -30,6 +30,176 @@ const logoutButton =
 
 let adminToken = "";
 
+const PAGE_SIZE = 25;
+let currentPage = 1;
+let currentQuery = "";
+let currentOrders = [];
+let totalPages = 1;
+let requestVersion = 0;
+let requestController;
+let searchTimer;
+
+// Controls live inside the authenticated panel, never on the public store search.
+const searchForm = document.createElement("form");
+searchForm.className = "admin-order-search";
+searchForm.setAttribute("role", "search");
+searchForm.innerHTML = `
+  <label for="admin-order-query">Caută o comandă</label>
+  <div class="admin-order-search-row">
+    <input id="admin-order-query" type="search" maxlength="120"
+      placeholder="Numele clientului sau numărul comenzii" autocomplete="off">
+    <button class="button" type="submit">Caută</button>
+    <button class="button" type="button" id="admin-order-clear">Șterge căutarea</button>
+  </div>
+  <small>Caută în toate comenzile, inclusiv în cele mai vechi.</small>`;
+const searchInput = searchForm.querySelector("input");
+const topPagination = document.createElement("nav");
+const bottomPagination = document.createElement("nav");
+for (const [index, nav] of [topPagination, bottomPagination].entries()) {
+  nav.className = "admin-order-pagination";
+  nav.setAttribute("aria-label", index ? "Paginile comenzilor, jos" : "Paginile comenzilor, sus");
+}
+if (ordersList && ordersStatus) {
+  ordersStatus.before(searchForm);
+  ordersList.before(topPagination);
+  ordersList.after(bottomPagination);
+  ordersStatus.setAttribute("role", "status");
+  ordersStatus.setAttribute("aria-live", "polite");
+  const style = document.createElement("style");
+  style.textContent = `
+    .admin-order-search{margin:20px 0;display:grid;gap:8px}
+    .admin-order-search label{font-weight:700}
+    .admin-order-search-row{display:flex;gap:10px;flex-wrap:wrap}
+    .admin-order-search input{flex:1 1 280px;min-width:0;padding:13px;border:1px solid #bacdbb;border-radius:10px;font:inherit;background:#fff}
+    .admin-order-search small{color:#526552}
+    .admin-order-pagination{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:18px 0}
+    .admin-order-pagination button{min-width:44px;min-height:44px;padding:9px 13px;border:1px solid #2d6838;border-radius:8px;background:#fff;color:#254f2b;font:inherit;cursor:pointer}
+    .admin-order-pagination button[aria-current="page"]{background:#2d6838;color:white;font-weight:700}
+    .admin-order-pagination button:disabled{opacity:.5;cursor:default}
+    .admin-order-pagination .admin-page-label{flex-basis:100%;text-align:center}
+    .admin-order-search button{min-height:44px}
+    @media(max-width:600px){.admin-order-search input{flex-basis:100%}.admin-order-search button{flex:1}.admin-order-pagination{gap:6px}}
+  `;
+  document.head.append(style);
+}
+
+function renderPagination() {
+  const pages = new Set([1, totalPages]);
+  for (let page = currentPage - 2; page <= currentPage + 2; page++) {
+    if (page >= 1 && page <= totalPages) pages.add(page);
+  }
+  let previous = 0;
+  const numbers = [...pages].sort((a, b) => a - b).map((page) => {
+    const gap = previous && page - previous > 1 ? '<span aria-hidden="true">…</span>' : "";
+    previous = page;
+    return `${gap}<button type="button" data-page="${page}" aria-label="Pagina ${page}"
+      ${page === currentPage ? 'aria-current="page"' : ""}>${page}</button>`;
+  }).join("");
+  for (const nav of [topPagination, bottomPagination]) {
+    nav.innerHTML = `<span class="admin-page-label">Pagina ${currentPage} din ${totalPages}</span>
+      <button type="button" data-page="${currentPage - 1}" ${currentPage <= 1 ? "disabled" : ""}>Înapoi</button>
+      ${numbers}
+      <button type="button" data-page="${currentPage + 1}" ${currentPage >= totalPages ? "disabled" : ""}>Înainte</button>`;
+  }
+}
+
+function acceptOrders(data) {
+  if (!data.pagination || data.pagination.page_size !== PAGE_SIZE) {
+    throw new Error("Actualizează și Worker-ul pentru paginare și căutare în toate comenzile.");
+  }
+  currentPage = data.pagination.page;
+  totalPages = data.pagination.total_pages;
+  currentOrders = data.orders || [];
+  renderOrders(currentOrders);
+  if (!currentOrders.length && currentQuery) {
+    ordersList.innerHTML = '<div class="admin-empty-state">Nu am găsit comenzi pentru această căutare.</div>';
+  }
+  const total = data.pagination.total;
+  const first = total ? (currentPage - 1) * PAGE_SIZE + 1 : 0;
+  const last = total ? first + currentOrders.length - 1 : 0;
+  ordersStatus.hidden = false;
+  ordersStatus.textContent = currentQuery
+    ? `${total} ${total === 1 ? "comandă găsită" : "comenzi găsite"} · Se afișează ${first}–${last}`
+    : `${total} comenzi în total · Se afișează ${first}–${last}`;
+  renderPagination();
+}
+
+async function requestOrders(page, query, token, signal) {
+  const url = new URL(API_URL);
+  url.searchParams.set("page", String(page));
+  url.searchParams.set("page_size", String(PAGE_SIZE));
+  if (query) url.searchParams.set("q", query);
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+    signal,
+  });
+  const data = await response.json();
+  if (!response.ok || !data.success) {
+    throw new Error(data.error || "Nu s-au putut încărca comenzile.");
+  }
+  return data;
+}
+
+async function loadOrders(page = currentPage, query = currentQuery) {
+  // An event passed by an existing refresh handler is not a page number.
+  if (!Number.isInteger(page)) page = currentPage;
+  const version = ++requestVersion;
+  requestController?.abort();
+  requestController = new AbortController();
+  ordersStatus.hidden = false;
+  ordersStatus.textContent = "Se încarcă comenzile...";
+  ordersList.setAttribute("aria-busy", "true");
+  for (const nav of [topPagination, bottomPagination]) {
+    nav.querySelectorAll("button").forEach((button) => { button.disabled = true; });
+  }
+  try {
+    const data = await requestOrders(page, query, adminToken, requestController.signal);
+    if (version !== requestVersion || !adminToken) return;
+    const previousQuery = currentQuery;
+    currentQuery = query;
+    try { acceptOrders(data); } catch (error) { currentQuery = previousQuery; throw error; }
+  } catch (error) {
+    if (version === requestVersion && error.name !== "AbortError") {
+      ordersStatus.textContent = error.message || "A apărut o eroare.";
+      renderPagination();
+    }
+  } finally {
+    if (version === requestVersion) ordersList.setAttribute("aria-busy", "false");
+  }
+}
+
+searchForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  clearTimeout(searchTimer);
+  loadOrders(1, searchInput.value.trim());
+});
+searchInput.addEventListener("input", () => {
+  clearTimeout(searchTimer);
+  // Invalidate any previous response immediately while the user is typing.
+  ++requestVersion;
+  requestController?.abort();
+  searchTimer = setTimeout(() => loadOrders(1, searchInput.value.trim()), 350);
+});
+searchForm.querySelector("#admin-order-clear").addEventListener("click", () => {
+  clearTimeout(searchTimer);
+  searchInput.value = "";
+  loadOrders(1, "");
+  searchInput.focus();
+});
+for (const nav of [topPagination, bottomPagination]) {
+  nav.addEventListener("click", async (event) => {
+    const button = event.target.closest("button[data-page]");
+    if (!button || button.disabled) return;
+    const page = Number(button.dataset.page);
+    if (page < 1 || page > totalPages || page === currentPage) return;
+    clearTimeout(searchTimer);
+    await loadOrders(page);
+    searchForm.scrollIntoView({ block: "start" });
+  });
+}
+
+
 function escapeHtml(value = "") {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -294,35 +464,6 @@ function renderOrders(orders) {
     .join("");
 }
 
-async function loadOrders() {
-  ordersStatus.hidden = false;
-  ordersStatus.textContent =
-    "Se încarcă comenzile...";
-
-  try {
-    const response = await fetch(API_URL, {
-      headers: {
-        Authorization: `Bearer ${adminToken}`,
-      },
-    });
-
-    const data = await response.json();
-
-    if (!response.ok || !data.success) {
-      throw new Error(
-        data.error || "Nu s-au putut încărca comenzile."
-      );
-    }
-
-    renderOrders(data.orders || []);
-
-    ordersStatus.textContent =
-      `${data.orders?.length || 0} comenzi încărcate`;
-  } catch (error) {
-    ordersStatus.textContent =
-      error.message || "A apărut o eroare.";
-  }
-}
 
 function printOrder(order) {
   const printableItems = (order.items || [])
@@ -579,22 +720,7 @@ if (printButton) {
   const orderId =
     Number(printButton.dataset.orderId);
 
-  const response =
-    await fetch(API_URL, {
-      headers: {
-        Authorization:
-          `Bearer ${adminToken}`,
-      },
-    });
-
-  const data =
-    await response.json();
-
-  const order =
-    (data.orders || []).find(
-      (item) =>
-        Number(item.id) === orderId
-    );
+  const order = currentOrders.find((item) => Number(item.id) === orderId);
 
   if (!order) {
     alert(
@@ -664,6 +790,8 @@ if (printButton) {
           );
         }
 
+        const cachedOrder = currentOrders.find((order) => String(order.id) === String(orderId));
+        if (cachedOrder) cachedOrder.awb_number = awbNumber;
         if (message) {
           message.textContent =
             "AWB salvat cu succes.";
@@ -890,27 +1018,16 @@ loginForm?.addEventListener(
     }
 
     try {
-      const response = await fetch(API_URL, {
-        headers: {
-          Authorization: `Bearer ${adminToken}`,
-        },
-      });
-
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(
-          data.error || "Parolă incorectă."
-        );
-      }
-
+      const version = ++requestVersion;
+      requestController?.abort();
+      requestController = new AbortController();
+      const data = await requestOrders(1, "", adminToken, requestController.signal);
+      if (version !== requestVersion) return;
+      currentQuery = "";
+      searchInput.value = "";
+      acceptOrders(data);
       loginCard.hidden = true;
       ordersPanel.hidden = false;
-
-      renderOrders(data.orders || []);
-
-      ordersStatus.textContent =
-        `${data.orders?.length || 0} comenzi încărcate`;
     } catch (error) {
       loginError.textContent =
         error.message || "Acces respins.";
@@ -928,6 +1045,16 @@ refreshButton?.addEventListener(
 logoutButton?.addEventListener(
   "click",
   () => {
+    ++requestVersion;
+    requestController?.abort();
+    clearTimeout(searchTimer);
+    currentOrders = [];
+    currentQuery = "";
+    currentPage = 1;
+    totalPages = 1;
+    searchInput.value = "";
+    topPagination.innerHTML = "";
+    bottomPagination.innerHTML = "";
     adminToken = "";
 
     tokenInput.value = "";
