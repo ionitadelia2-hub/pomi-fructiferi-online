@@ -309,6 +309,8 @@ function getCategoryName(slug = "") {
     "vita-de-vie": "Viță de vie",
     "butasi-vita-de-vie": "Butași de viță de vie",
     "arbusti-fructiferi": "Arbuști fructiferi",
+    "plante-aromatice": "Plante aromatice și ornamentale",
+    lavanda: "Lavandă",
 
     mar: "Meri",
     par: "Peri",
@@ -491,7 +493,7 @@ function createProductCard(product) {
             }
 
             <strong>
-              ${hasDifferentPrices ? "de la " : ""}${displayPrice.toFixed(2)} lei
+              ${hasDifferentPrices ? "de la " : ""}${displayPrice.toFixed(2)} lei${product.product_type === "butas-lavanda" ? " / butaș" : ""}
             </strong>
           </div>
 
@@ -777,6 +779,7 @@ ${createHeader()}
 
 </div>
 
+          ${product.product_type === "butas-lavanda" ? '<p class="product-unit-note">Preț pe butaș. Cantitatea aleasă reprezintă numărul de butași.</p>' : ""}
           <p class="product-stock ${
             Number(product.stock) > 0 ? "in-stock" : "out-of-stock"
           }">
@@ -913,7 +916,7 @@ return `
 </div>
 
           <p class="product-delivery-note">
-            Pom pregătit pentru plantare și livrare în condiții corespunzătoare.
+            ${product.product_type === "butas-lavanda" ? "Butaș de lavandă pentru plantare. Imaginea prezintă planta la înflorire." : "Pom pregătit pentru plantare și livrare în condiții corespunzătoare."}
           </p>
 
         </section>
@@ -1624,6 +1627,7 @@ function createHeader() {
               <a href="/pomi-columnari/">Pomi columnari</a>
               <a href="/vita-de-vie/">Viță de vie</a>
               <a href="/arbusti-fructiferi/">Arbuști fructiferi</a>
+              <a href="/plante-aromatice/">Plante aromatice și ornamentale</a>
             </div>
           </div>
 
@@ -1836,6 +1840,7 @@ function createFooter() {
       </div>
     </footer>
 
+    <script src="/assets/js/lavender-popup.js" defer></script>
     <script src="/assets/js/tawk-mobile.js"></script>
     <!--Start of Tawk.to Script-->
 <script type="text/javascript">
@@ -1887,6 +1892,13 @@ function createFamilyPage(familySlug, products) {
         "Descoperă soiuri de viță de vie de vânzare, altoite și atent selecționate pentru grădină și plantații."
     },
 
+    "plante-aromatice": {
+      title: "Plante aromatice și ornamentale",
+      eyebrow: "Catalog",
+      intro: "Descoperă lavanda Sevtopolis pentru grădini aromatice și borduri parfumate.",
+      seoTitle: "Lavandă și plante aromatice | Pomi Fructiferi Online",
+      seoDescription: "Butași de lavandă Sevtopolis, 25 lei/butaș. Descoperă plantele aromatice disponibile în catalog."
+    },
     "arbusti-fructiferi": {
       title: "Arbuști fructiferi",
       eyebrow: "Catalog",
@@ -2132,7 +2144,8 @@ function createHomePage(products) {
     slug: "arbusti-fructiferi",
     name: "Arbuști fructiferi",
     description: "Zmeur, afin, mur și alte specii pentru grădină."
-  }
+  },
+  { slug: "plante-aromatice", name: "Plante aromatice și ornamentale", description: "Lavandă Sevtopolis pentru grădini și borduri parfumate." }
 ];
 
 const familyCardsHtml = familyCards
@@ -3487,6 +3500,8 @@ function build() {
 fs.mkdirSync(jsDistFolder, {
   recursive: true
 });
+
+fs.copyFileSync(path.join(__dirname, "..", "src", "js", "lavender-popup.js"), path.join(jsDistFolder, "lavender-popup.js"));
 
 fs.copyFileSync(
   path.join(__dirname, "..", "src", "js", "tawk-mobile.js"),
