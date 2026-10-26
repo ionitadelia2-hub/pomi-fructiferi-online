@@ -2820,8 +2820,6 @@ ${GOOGLE_TAG}
 
         <p class="order-success-text">
           Comanda ta a fost înregistrată cu succes.
-          Te vom contacta pentru confirmarea și
-          pregătirea livrării.
         </p>
 
         <div class="order-success-details">
