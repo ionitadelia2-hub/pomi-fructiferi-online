@@ -83,6 +83,61 @@ if (ordersList && ordersStatus) {
   document.head.append(style);
 }
 
+
+
+// Independent of pagination and customer search: always totals for the whole day.
+const dailyCard = document.createElement("section");
+dailyCard.className = "admin-daily-summary";
+dailyCard.innerHTML = `<h2>Comenzile zilei</h2>
+  <label for="admin-summary-date">Alege ziua</label>
+  <input id="admin-summary-date" type="date">
+  <button type="button" class="button" id="admin-summary-today">Astăzi</button>
+  <button type="button" class="button" id="admin-summary-refresh">Actualizează totalurile</button>
+  <p>Ziua este calculată după ora României. Include toate comenzile plasate în acea zi, indiferent de status, pagină sau căutare. Valorile nu reprezintă încasări.</p>
+  <div id="admin-summary-result" role="status" aria-live="polite"></div>`;
+ordersStatus?.before(dailyCard);
+const dailyDate = dailyCard.querySelector("input");
+const dailyResult = dailyCard.querySelector("#admin-summary-result");
+const dailyStyle = document.createElement("style");
+dailyStyle.textContent = `.admin-daily-summary{padding:20px;margin:20px 0;background:#eff6ef;border:1px solid #c7dbc7;border-radius:14px}.admin-daily-summary h2{margin-top:0}.admin-daily-summary input{padding:10px;font:inherit;max-width:100%;margin:8px;border:1px solid #9ab59b;border-radius:8px}.admin-daily-summary p{font-size:.9rem}.admin-daily-values{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:16px}.admin-daily-values div{padding:14px;background:white;border-radius:10px}.admin-daily-values strong{display:block;font-size:1.3rem;margin-top:5px}.admin-daily-summary button{margin:4px}`;
+document.head.append(dailyStyle);
+function romanianToday() {
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Bucharest",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date()).map(p=>[p.type,p.value]));
+  return `${p.year}-${p.month}-${p.day}`;
+}
+dailyDate.value = romanianToday();
+let dailyVersion=0, dailyController;
+async function loadDailySummary() {
+  if (!adminToken) return;
+  const version=++dailyVersion;
+  dailyController?.abort();
+  dailyController=new AbortController();
+  dailyResult.textContent="Se calculează totalurile...";
+  if (!dailyDate.value) { dailyResult.textContent="Selectează o dată."; return; }
+  const date=dailyDate.value;
+  try {
+    const url=new URL(`${API_URL}/daily-summary`);
+    url.searchParams.set("date",date);
+    const response=await fetch(url,{headers:{Authorization:`Bearer ${adminToken}`},cache:"no-store",signal:dailyController.signal});
+    const data=await response.json();
+    if (version!==dailyVersion || !adminToken) return;
+    if (!response.ok || !data.success || !data.summary || data.summary.date!==date) throw new Error(data.error || "Actualizează Worker-ul pentru totalurile zilnice.");
+    const s=data.summary;
+    dailyResult.innerHTML=`<div class="admin-daily-values">
+      <div>Număr comenzi<strong>${escapeHtml(s.count)}</strong></div>
+      <div>Produse<strong>${formatPrice(s.products_total)}</strong></div>
+      <div>Transport<strong>${formatPrice(s.shipping_total)}</strong></div>
+      <div>Total comenzi<strong>${formatPrice(s.total)}</strong></div></div>`;
+  } catch(error) {
+    if(version===dailyVersion && error.name!=="AbortError") dailyResult.textContent=error.message || "Nu s-au putut încărca totalurile.";
+  }
+}
+dailyDate.addEventListener("change",loadDailySummary);
+dailyCard.querySelector("#admin-summary-today").addEventListener("click",()=>{dailyDate.value=romanianToday();loadDailySummary();});
+dailyCard.querySelector("#admin-summary-refresh").addEventListener("click",loadDailySummary);
+refreshButton?.addEventListener("click",loadDailySummary);
+logoutButton?.addEventListener("click",()=>{++dailyVersion;dailyController?.abort();dailyResult.textContent="";dailyDate.value=romanianToday();});
+
 function renderPagination() {
   const pages = new Set([1, totalPages]);
   for (let page = currentPage - 2; page <= currentPage + 2; page++) {
@@ -1028,6 +1083,8 @@ loginForm?.addEventListener(
       acceptOrders(data);
       loginCard.hidden = true;
       ordersPanel.hidden = false;
+      dailyDate.value = romanianToday();
+      loadDailySummary();
     } catch (error) {
       loginError.textContent =
         error.message || "Acces respins.";
