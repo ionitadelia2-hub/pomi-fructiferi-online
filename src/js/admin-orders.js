@@ -47,7 +47,7 @@ searchForm.innerHTML = `
   <label for="admin-order-query">Caută o comandă</label>
   <div class="admin-order-search-row">
     <input id="admin-order-query" type="search" maxlength="120"
-      placeholder="Numele clientului sau numărul comenzii" autocomplete="off">
+      placeholder="Numele clientului, numărul comenzii sau telefonul" autocomplete="off">
     <button class="button" type="submit">Caută</button>
     <button class="button" type="button" id="admin-order-clear">Șterge căutarea</button>
   </div>
