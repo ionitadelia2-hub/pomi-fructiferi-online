@@ -506,6 +506,8 @@ function renderOrders(orders) {
 
   </div>
 
+  ${awbContactButtons(order)}
+
   <div
     class="admin-awb-message"
     data-order-id="${order.id}"
@@ -518,6 +520,102 @@ function renderOrders(orders) {
     })
     .join("");
 }
+
+
+
+
+const POSTA_TRACKING_URL = "https://www.posta-romana.ro/track-trace.html";
+
+function normalizeAwb(value) {
+  return String(value || "").replace(/\s+/g, "").toUpperCase();
+}
+
+function whatsappPhone(value) {
+  const raw=String(value || "").trim();
+  if (!/^[+\d\s().-]+$/.test(raw)) return "";
+  let phone=raw.replace(/\D/g, "");
+  if (phone.startsWith("00")) phone=phone.slice(2);
+  if (/^0\d{9}$/.test(phone)) phone="40"+phone.slice(1);
+  if (/^40\d{9}$/.test(phone)) return phone;
+  if ((raw.startsWith("+") || raw.startsWith("00")) && /^[1-9]\d{7,14}$/.test(phone)) return phone;
+  return "";
+}
+
+function awbCustomerMessage(order, sms=false) {
+  const number=String(order.order_number || "");
+  const awb=normalizeAwb(order.awb_number);
+  if (sms) return `Pomi Fructiferi Online: codul de urmarire pentru comanda ${number} este ${awb}. Verificati statusul pe ${POSTA_TRACKING_URL} introducand codul in caseta de cautare.`;
+  return `Bună ziua! 🌳\nCodul de urmărire pentru comanda ${number} este: ${awb}.\n\nPuteți verifica statusul trimiterii pe pagina Poștei Române:\n${POSTA_TRACKING_URL}\nIntroduceți codul de mai sus în caseta de căutare.\n\nVă mulțumim!\nPomi Fructiferi Online`;
+}
+
+function awbContactButtons(order) {
+  const disabled=normalizeAwb(order.awb_number) ? "" : "disabled";
+  return `<div class="admin-awb-contact" data-order-id="${Number(order.id)}">
+    <div class="admin-awb-contact-buttons">
+      <button type="button" class="button" data-awb-action="whatsapp" data-order-id="${Number(order.id)}" ${disabled}>Trimite AWB pe WhatsApp</button>
+      <button type="button" class="button" data-awb-action="sms" data-order-id="${Number(order.id)}" ${disabled}>Copiază mesajul pentru SMS</button>
+      <button type="button" class="button" data-awb-action="track" data-order-id="${Number(order.id)}" ${disabled}>Urmărește coletul</button>
+    </div>
+    <small>Salvează mai întâi AWB-ul. Pe WhatsApp, verifici mesajul și apeși tu „Trimite”. Pentru urmărire, introduci codul pe pagina Poștei Române.</small>
+  </div>`;
+}
+
+const awbContactStyle=document.createElement("style");
+awbContactStyle.textContent=`.admin-awb-contact{margin-top:16px}.admin-awb-contact-buttons{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}.admin-awb-contact-buttons button{min-height:44px;white-space:normal}.admin-awb-contact-buttons button:disabled{opacity:.5;cursor:not-allowed}.admin-awb-contact small{display:block;color:#526552}.admin-awb-copy-text{display:block;width:100%;min-height:145px;padding:10px;font:inherit;margin-top:10px;box-sizing:border-box}@media(max-width:600px){.admin-awb-contact-buttons button{width:100%}}`;
+document.head.append(awbContactStyle);
+
+async function copyAwbMessage(text) {
+  if (globalThis.navigator?.clipboard?.writeText) {
+    try { await navigator.clipboard.writeText(text); return true; } catch {}
+  }
+  const area=document.createElement("textarea");
+  area.value=text;
+  area.style.cssText="position:fixed;left:-9999px;top:0";
+  document.body.append(area);
+  area.select();
+  try { return Boolean(document.execCommand?.("copy")); }
+  catch { return false; }
+  finally { area.remove(); }
+}
+
+ordersList?.addEventListener("click",async(event)=>{
+  const button=event.target.closest("button[data-awb-action]");
+  if (!button || button.disabled || !adminToken) return;
+  const id=Number(button.dataset.orderId);
+  const order=currentOrders.find(o=>Number(o.id)===id);
+  const card=button.closest(".admin-order-card");
+  const message=card?.querySelector(".admin-awb-message");
+  if (!order || !message) return;
+  // Never send a freshly typed code before its successful save.
+  const stored=normalizeAwb(order.awb_number);
+  const typed=normalizeAwb(card.querySelector(".admin-awb-input")?.value);
+  message.replaceChildren();
+  if (!stored || stored!==typed) {
+    message.textContent="Salvează AWB-ul înainte de a trimite mesajul sau de a urmări coletul.";
+    return;
+  }
+  if (button.dataset.awbAction==="whatsapp") {
+    const phone=whatsappPhone(order.phone);
+    if (!phone) {message.textContent="Numărul de telefon nu este valid. Verifică-l sau copiază mesajul pentru SMS.";return;}
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(awbCustomerMessage(order))}`,"_blank","noopener,noreferrer");
+    message.textContent="Verifică în WhatsApp destinatarul și mesajul, apoi apasă „Trimite”. Deschiderea conversației nu confirmă trimiterea.";
+  } else if (button.dataset.awbAction==="track") {
+    window.open(POSTA_TRACKING_URL,"_blank","noopener,noreferrer");
+    message.textContent=`Introdu codul ${stored} pe pagina Poștei Române.`;
+  } else if (button.dataset.awbAction==="sms") {
+    const text=awbCustomerMessage(order,true);
+    const token=adminToken;
+    const copied=await copyAwbMessage(text);
+    if (!adminToken || token!==adminToken || !message.isConnected) return;
+    message.textContent=copied ? "Mesaj copiat. Lipește-l în aplicația SMS și verifică destinatarul înainte de trimitere." : "Copiază manual mesajul de mai jos și trimite-l prin SMS:";
+    if (!copied) {
+      const area=document.createElement("textarea");
+      area.className="admin-awb-copy-text";area.readOnly=true;area.value=text;
+      area.setAttribute("aria-label","Mesaj pentru SMS");
+      message.append(area);area.focus();area.select();
+    }
+  }
+});
 
 
 function printOrder(order) {
@@ -846,7 +944,12 @@ if (printButton) {
         }
 
         const cachedOrder = currentOrders.find((order) => String(order.id) === String(orderId));
-        if (cachedOrder) cachedOrder.awb_number = awbNumber;
+        if (cachedOrder) {
+          cachedOrder.awb_number = data.awb_number ?? awbNumber;
+          const contact = saveButton.closest(".admin-order-card")?.querySelector(".admin-awb-contact");
+          if (contact) contact.outerHTML = awbContactButtons(cachedOrder);
+          if (input) input.value = cachedOrder.awb_number;
+        }
         if (message) {
           message.textContent =
             "AWB salvat cu succes.";
