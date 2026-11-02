@@ -322,6 +322,7 @@ function getCategoryName(slug = "") {
     nectarin: "Nectarini",
     gutui: "Gutui",
     nuc: "Nuci",
+    kaki: "Kaki",
 
     "mar-columnar": "Meri columnari",
     "par-columnar": "Peri columnari",
