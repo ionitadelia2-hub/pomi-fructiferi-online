@@ -193,8 +193,102 @@ async function requestOrders(page, query, token, signal) {
   if (!response.ok || !data.success) {
     throw new Error(data.error || "Nu s-au putut încărca comenzile.");
   }
+  await loadOrderPayments(data.orders || [], token, signal);
   return data;
 }
+
+// Payment confirmation is server-side and shared by every administrator.
+async function loadOrderPayments(orders, token, signal) {
+  if (!orders.length) return;
+  try {
+    const url = new URL(`${API_URL}/payment-status`);
+    url.searchParams.set("ids", orders.map(order => Number(order.id)).join(","));
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` }, cache: "no-store", signal,
+    });
+    const data = await response.json();
+    if (!response.ok || !data.success || data.payment_api_version !== 1 || !Array.isArray(data.payments)) {
+      throw new Error("Statusul plății nu este disponibil.");
+    }
+    for (const order of orders) {
+      order.payment = data.payments.find(p => p.order_id === Number(order.id)) || null;
+    }
+  } catch (error) {
+    if (error.name === "AbortError") throw error;
+    // An unavailable Worker must never be interpreted as an unpaid or paid order.
+    for (const order of orders) order.payment = null;
+  }
+}
+
+function paymentBanner(order) {
+  const payment = order.payment;
+  if (!payment) return `<div class="admin-payment-banner admin-payment-warning" style="border:2px solid #965d00;padding:14px;margin:12px 0;font-weight:700">
+    PLATĂ NEVERIFICATĂ — verifică înainte de emiterea AWB-ului.</div>`;
+  if (payment.total_changed || Math.round(Number(payment.total) * 100) !== Math.round(Number(order.total) * 100)) {
+    return `<div class="admin-payment-banner admin-payment-warning" style="border:2px solid #965d00;padding:14px;margin:12px 0;font-weight:700">
+      TOTAL MODIFICAT — verifică încasarea înainte de stabilirea rambursului.</div>`;
+  }
+  if (payment.paid_in_account) return `<div class="admin-payment-banner admin-payment-paid" style="border:3px solid #216631;padding:14px;margin:12px 0;font-weight:800">
+    PLATĂ ÎN CONT — ACHITAT INTEGRAL<br><span style="font-size:1.35em">RAMBURS: 0 LEI</span></div>`;
+  return `<div class="admin-payment-banner" style="border:2px solid #647365;padding:14px;margin:12px 0;font-weight:700">
+    RAMBURS DE ÎNCASAT: ${formatPrice(payment.cod_amount)}</div>`;
+}
+
+function renderPayment(order) {
+  const payment = order.payment;
+  return `${paymentBanner(order)}
+    <label class="admin-payment-label"><input type="checkbox" class="admin-payment-checkbox"
+      ${payment?.paid_in_account ? "checked" : ""} ${!payment ? "disabled" : ""}>
+      Plată în cont — achitat integral (inclusiv transportul)</label>
+    <p class="admin-payment-help">Bifează numai după verificarea încasării integrale. Nu modifică totalul comenzii sau un AWB deja emis.</p>
+    ${!payment ? '<p class="admin-payment-warning">Status indisponibil. Verifică instalarea Workerului actualizat și reîncarcă comenzile.</p>' : ""}
+    <button type="button" class="button admin-save-payment" data-order-id="${Number(order.id)}" ${!payment ? "disabled" : ""}>Salvează plata</button>
+    <div class="admin-payment-message" role="status" aria-live="polite"></div>
+    ${payment?.updated_at ? `<small>Ultima confirmare salvată: ${escapeHtml(formatDate(payment.updated_at))}</small>` : ""}`;
+}
+
+const paymentStyle = document.createElement("style");
+paymentStyle.textContent = `.admin-order-payment{padding:16px;margin:16px 0;background:#f6f8f5;border:1px solid #bbcdbb;border-radius:12px}.admin-payment-paid{background:#e5f4e7;color:#154e21}.admin-payment-warning{color:#744700;background:#fff6df}.admin-payment-label{display:flex;align-items:center;gap:10px;font-weight:700}.admin-payment-checkbox{width:22px;height:22px;flex-shrink:0}.admin-payment-help{font-size:.9rem}.admin-payment-message{margin:10px 0;font-weight:700}.admin-order-payment small{display:block}.admin-order-payment button{min-height:44px}.admin-order-payment button:disabled{opacity:.5;cursor:not-allowed}`;
+document.head.append(paymentStyle);
+
+ordersList?.addEventListener("click", async event => {
+  const button = event.target.closest(".admin-save-payment");
+  if (!button || button.disabled || !adminToken) return;
+  const section = button.closest(".admin-order-payment");
+  const order = currentOrders.find(o => Number(o.id) === Number(button.dataset.orderId));
+  if (!section || !order?.payment) return;
+  const checkbox = section.querySelector(".admin-payment-checkbox");
+  const message = section.querySelector(".admin-payment-message");
+  const paid = checkbox.checked;
+  if (paid && !window.confirm(`Confirmi că ai verificat încasarea integrală de ${formatPrice(order.total)}, inclusiv transportul, pentru comanda ${order.order_number}? Rambursul de trecut pe AWB va fi 0 lei.`)) return;
+  if (!paid && order.payment.paid_in_account && !window.confirm("Anulezi marcajul de plată în cont? Comanda va afișa din nou rambursul integral.")) return;
+  const token = adminToken;
+  button.disabled = true; checkbox.disabled = true;
+  message.textContent = "Se salvează plata...";
+  try {
+    const response = await fetch(`${API_URL}/${Number(order.id)}/payment-status`, {
+      method: "POST", cache: "no-store",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ paid_in_account: paid, expected_revision: order.payment.revision, confirmed_total: Number(order.total) }),
+    });
+    const data = await response.json();
+    if (!response.ok || !data.success || data.payment_api_version !== 1 || !data.payments?.[0]) {
+      throw new Error(data.error || "Plata nu a fost salvată. Reîncarcă și reîncearcă.");
+    }
+    if (adminToken !== token || !section.isConnected) return;
+    order.payment = data.payments[0];
+    section.innerHTML = renderPayment(order);
+    section.querySelector(".admin-payment-message").textContent = "Plata a fost salvată și este vizibilă pe toate calculatoarele după reîncărcarea comenzilor.";
+  } catch (error) {
+    if (adminToken === token && section.isConnected) {
+      // Leave the saved banner unchanged; a checked box alone is not confirmation.
+      checkbox.checked = Boolean(order.payment?.paid_in_account);
+      message.textContent = error.message || "Plata nu a fost salvată.";
+    }
+  } finally {
+    if (section.isConnected && section.contains(button)) { button.disabled = false; checkbox.disabled = false; }
+  }
+});
 
 async function loadOrders(page = currentPage, query = currentQuery) {
   // An event passed by an existing refresh handler is not a page number.
@@ -372,6 +466,10 @@ function renderOrders(orders) {
               ${formatPrice(order.total)}
             </div>
           </div>
+
+          <section class="admin-order-payment" aria-label="Plată și ramburs">
+            ${renderPayment(order)}
+          </section>
 
           <div class="admin-order-grid">
 
@@ -618,7 +716,7 @@ ordersList?.addEventListener("click",async(event)=>{
 });
 
 
-function printOrder(order) {
+function printOrder(order, existingWindow = null) {
   const printableItems = (order.items || [])
     .filter(
       (item) =>
@@ -664,7 +762,7 @@ function printOrder(order) {
     .join("");
 
   const printWindow =
-    window.open("", "_blank");
+    existingWindow || window.open("", "_blank");
 
   if (!printWindow) {
     alert(
@@ -767,6 +865,8 @@ function printOrder(order) {
         Comandă:
         ${escapeHtml(order.order_number)}
       </div>
+
+      ${paymentBanner(order)}
 
       <div class="print-section">
         <h2>Date comandă</h2>
@@ -882,7 +982,19 @@ if (printButton) {
     return;
   }
 
-  printOrder(order);
+  // Refresh the saved payment before printing, including changes from another PC.
+  const token = adminToken;
+  // Open synchronously on the click so browser popup protection permits printing.
+  const printWindow = window.open("", "_blank");
+  if (!printWindow) { alert("Permite ferestrele pop-up pentru a imprima comanda."); return; }
+  printButton.disabled = true;
+  try {
+    await loadOrderPayments([order], token);
+    if (adminToken !== token) { printWindow.close(); return; }
+    const section = printButton.closest(".admin-order-card")?.querySelector(".admin-order-payment");
+    if (section) section.innerHTML = renderPayment(order);
+    printOrder(order, printWindow);
+  } finally { printButton.disabled = false; }
   return;
 }
     const saveButton =
