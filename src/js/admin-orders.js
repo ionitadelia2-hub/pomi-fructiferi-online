@@ -646,15 +646,31 @@ function awbCustomerMessage(order, sms=false) {
   return `Bună ziua! 🌳\nCodul de urmărire pentru comanda ${number} este: ${awb}.\n\nPuteți verifica statusul trimiterii pe pagina Poștei Române:\n${POSTA_TRACKING_URL}\nIntroduceți codul de mai sus în caseta de căutare.\n\nVă mulțumim!\nPomi Fructiferi Online`;
 }
 
+function awbEmailAddress(order) {
+  const email=String(order.email || "").trim();
+  return email.length<=254 && /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,63}$/i.test(email) ? email : "";
+}
+
+function awbEmailDraft(order) {
+  const email=awbEmailAddress(order);
+  if (!email || !normalizeAwb(order.awb_number)) return "";
+  const subject=`AWB comanda ${String(order.order_number || "")} — Pomi Fructiferi Online`;
+  const body=awbCustomerMessage(order).replace(/\r?\n/g,"\r\n");
+  return `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
 function awbContactButtons(order) {
   const disabled=normalizeAwb(order.awb_number) ? "" : "disabled";
+  const email=awbEmailAddress(order);
   return `<div class="admin-awb-contact" data-order-id="${Number(order.id)}">
     <div class="admin-awb-contact-buttons">
       <button type="button" class="button" data-awb-action="whatsapp" data-order-id="${Number(order.id)}" ${disabled}>Trimite AWB pe WhatsApp</button>
+      <button type="button" class="button" data-awb-action="email" data-order-id="${Number(order.id)}" ${disabled || !email ? "disabled" : ""}>Trimite AWB pe e-mail</button>
       <button type="button" class="button" data-awb-action="sms" data-order-id="${Number(order.id)}" ${disabled}>Copiază mesajul pentru SMS</button>
       <button type="button" class="button" data-awb-action="track" data-order-id="${Number(order.id)}" ${disabled}>Urmărește coletul</button>
     </div>
-    <small>Salvează mai întâi AWB-ul. Pe WhatsApp, verifici mesajul și apeși tu „Trimite”. Pentru urmărire, introduci codul pe pagina Poștei Române.</small>
+    <small>Salvează mai întâi AWB-ul. Pe e-mail sau WhatsApp verifici destinatarul, mesajul și apeși tu „Trimite”. Deschiderea mesajului nu confirmă trimiterea. Pentru urmărire, introduci codul pe pagina Poștei Române.</small>
+    ${email ? "" : '<small>Clientul nu are o adresă de e-mail validă în comandă. Poți folosi mesajul pentru SMS.</small>'}
   </div>`;
 }
 
@@ -697,6 +713,11 @@ ordersList?.addEventListener("click",async(event)=>{
     if (!phone) {message.textContent="Numărul de telefon nu este valid. Verifică-l sau copiază mesajul pentru SMS.";return;}
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(awbCustomerMessage(order))}`,"_blank","noopener,noreferrer");
     message.textContent="Verifică în WhatsApp destinatarul și mesajul, apoi apasă „Trimite”. Deschiderea conversației nu confirmă trimiterea.";
+  } else if (button.dataset.awbAction==="email") {
+    const draft=awbEmailDraft(order);
+    if (!draft) {message.textContent="Verifică adresa de e-mail a clientului și AWB-ul salvat.";return;}
+    message.textContent="Se solicită deschiderea aplicației de e-mail. Verifică adresa clientului și contul de expediere, apoi apasă tu Trimite. Nu se atașează automat PDF-ul. Dacă nu se deschide nimic, configurează aplicația implicită pentru e-mail pe acest dispozitiv. Deschiderea nu confirmă trimiterea.";
+    window.location.href=draft;
   } else if (button.dataset.awbAction==="track") {
     window.open(POSTA_TRACKING_URL,"_blank","noopener,noreferrer");
     message.textContent=`Introdu codul ${stored} pe pagina Poștei Române.`;
@@ -1340,3 +1361,4 @@ logoutButton?.addEventListener(
     loginError.textContent = "";
   }
 );
+
