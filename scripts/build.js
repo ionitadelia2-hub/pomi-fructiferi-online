@@ -1007,7 +1007,7 @@ ${["pomi-fructiferi", "pomi-columnari", "vita-de-vie"]
             ["mar", "mar-columnar"].includes(product.subcategory)
               ? `
           <div>
-            <span>Portaltoi pentru meri (listă generală)</span>
+            <span>Portaltoi pentru meri</span>
             <strong>M27, M9, M9 T337, M26, M7, M4, M2, M25, MM111, MM104, MM109.</strong>
           </div>
               `
