@@ -1004,6 +1004,50 @@ ${["pomi-fructiferi", "pomi-columnari", "vita-de-vie"]
         <div class="product-specifications">
 
           ${
+            ["gutui","gutui-columnar"].includes(product.subcategory)
+              ? `
+          <div>
+            <span>Portaltoi pentru gutui</span>
+            <strong>Gutui franc (Cydonia oblonga), Gutui A, Gutui C, Gutui BA29.</strong>
+          </div>
+              `
+              : ""
+          }
+
+          ${
+            ["cires","cires-columnar"].includes(product.subcategory)
+              ? `
+          <div>
+            <span>Portaltoi pentru cireși</span>
+            <strong>Cireș sălbatic (Prunus avium), Mahaleb (Prunus mahaleb), Vișin (Prunus cerasus) – pentru anumite combinații, Gisela 3, Gisela 5, Gisela 6, Gisela 12, MaxMa 14, MaxMa 60.</strong>
+          </div>
+              `
+              : ""
+          }
+
+          ${
+            ["visin","visin-columnar"].includes(product.subcategory)
+              ? `
+          <div>
+            <span>Portaltoi pentru vișini</span>
+            <strong>Vișin franc (Prunus cerasus), Mahaleb (Prunus mahaleb), Cireș sălbatic (Prunus avium).</strong>
+          </div>
+              `
+              : ""
+          }
+
+          ${
+            ["piersic","piersic-columnar"].includes(product.subcategory)
+              ? `
+          <div>
+            <span>Portaltoi pentru piersici</span>
+            <strong>Piersic franc, Piersic sălbatic, Migdal franc (Prunus dulcis) – în condiții adecvate.</strong>
+          </div>
+              `
+              : ""
+          }
+
+          ${
             ["prun", "prun-columnar"].includes(product.subcategory)
               ? `
           <div>
