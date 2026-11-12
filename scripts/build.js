@@ -1004,6 +1004,17 @@ ${["pomi-fructiferi", "pomi-columnari", "vita-de-vie"]
         <div class="product-specifications">
 
           ${
+            ["par", "par-columnar"].includes(product.subcategory)
+              ? `
+          <div>
+            <span>Portaltoi pentru peri</span>
+            <strong>Păr franc (Pyrus communis), Păr sălbatic (Pyrus pyraster), Gutui A (Quince A), Gutui C (Quince C).</strong>
+          </div>
+              `
+              : ""
+          }
+
+          ${
             ["mar", "mar-columnar"].includes(product.subcategory)
               ? `
           <div>
