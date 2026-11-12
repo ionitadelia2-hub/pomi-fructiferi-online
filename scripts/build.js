@@ -1004,6 +1004,17 @@ ${["pomi-fructiferi", "pomi-columnari", "vita-de-vie"]
         <div class="product-specifications">
 
           ${
+            ["prun", "prun-columnar"].includes(product.subcategory)
+              ? `
+          <div>
+            <span>Portaltoi pentru pruni</span>
+            <strong>Corcoduș (Prunus cerasifera), Prun franc (Prunus domestica), Prun Saint Julien (Prunus insititia), Myrobalan 29C, Myrobalan B, Myrobalan GF 31, Saint Julien A, Saint Julien GF 655/2, Saint Julien 2.</strong>
+          </div>
+              `
+              : ""
+          }
+
+          ${
             ["par", "par-columnar"].includes(product.subcategory)
               ? `
           <div>
