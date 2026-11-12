@@ -1008,7 +1008,7 @@ ${["pomi-fructiferi", "pomi-columnari", "vita-de-vie"]
               ? `
           <div>
             <span>Portaltoi pentru meri (listă generală)</span>
-            <strong>M27, M9, M9 T337, M26, M7, M4, M2, M25, MM111, MM104, MM109. Lista nu identifică portaltoiul fiecărui exemplar; pentru pomul livrat, acesta trebuie confirmat.</strong>
+            <strong>M27, M9, M9 T337, M26, M7, M4, M2, M25, MM111, MM104, MM109.</strong>
           </div>
               `
               : ""
