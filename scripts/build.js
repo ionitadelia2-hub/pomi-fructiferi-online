@@ -311,6 +311,9 @@ function getCategoryName(slug = "") {
     "arbusti-fructiferi": "Arbuști fructiferi",
     "plante-aromatice": "Plante aromatice și ornamentale",
     lavanda: "Lavandă",
+    craciun: "Crăciun",
+    "brazi-artificiali": "Brazi artificiali",
+    "globuri-personalizate": "Globuri personalizate",
 
     mar: "Meri",
     par: "Peri",
@@ -1709,6 +1712,13 @@ function createHeader() {
             </div>
           </div>
 
+          <div class="nav-dropdown">
+            <a href="/craciun/" class="nav-dropdown-trigger">Crăciun</a>
+            <div class="nav-dropdown-menu">
+              <a href="/categorii/brazi-artificiali/">Brazi artificiali</a>
+              <a href="/categorii/globuri-personalizate/">Globuri personalizate</a>
+            </div>
+          </div>
           <a href="/servicii/">Servicii</a>
         </nav>
 
@@ -1734,7 +1744,7 @@ function createHeader() {
             id="product-search"
             name="q"
             type="search"
-            placeholder="Caută un pom sau un soi…"
+            placeholder="Caută un produs…"
             maxlength="120"
           >
           <button type="submit">Caută</button>
@@ -3500,6 +3510,74 @@ function generatePlantingGuides() {
   }
 }
 
+
+function generateChristmasPages(products) {
+  const categories = [
+    { slug: "brazi-artificiali", name: "Brazi artificiali",
+      intro: "Descoperă brazi artificiali pentru decorul de Crăciun. Compară dimensiunile, materialele și aspectul fiecărui model." },
+    { slug: "globuri-personalizate", name: "Globuri personalizate",
+      intro: "Globuri personalizate pentru brad și cadouri de Crăciun. Alege modelul preferat și consultă opțiunile de personalizare." }
+  ];
+  const christmasProducts = products.filter(product =>
+    categories.some(category => category.slug === product.subcategory)
+  );
+  function page(title, intro, route, body, isCategory) {
+    return `<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escapeHtml(title)} | Pomi Fructiferi Online</title>
+  <meta name="description" content="${escapeHtml(intro)}">
+  <link rel="canonical" href="${SITE_URL}${route}">
+  <link rel="icon" type="image/png" href="/images/branding/logo-pomifructiferi.png">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  ${GOOGLE_TAG}
+</head>
+<body>
+  ${createHeader()}
+  <main class="catalog-main">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="/">Acasă</a><span>›</span>
+      ${isCategory ? '<a href="/craciun/">Crăciun</a><span>›</span>' : ""}
+      <span>${escapeHtml(title)}</span>
+    </nav>
+    <section class="catalog-hero">
+      <p class="catalog-eyebrow">Sărbători de iarnă</p>
+      <h1>${escapeHtml(title)}</h1>
+      <p class="catalog-intro">${escapeHtml(intro)}</p>
+    </section>
+    ${body}
+  </main>
+  ${createFooter()}
+  <script src="/assets/js/cart.js"></script>
+</body>
+</html>`;
+  }
+  function write(route, html) {
+    const folder = path.join(distPath, route);
+    fs.mkdirSync(folder, { recursive: true });
+    fs.writeFileSync(path.join(folder, "index.html"), html, "utf8");
+  }
+  const cards = categories.map(category => `
+    <a class="home-category-card" href="/categorii/${category.slug}/">
+      <span class="home-category-name">${category.name}</span>
+      <span class="home-category-link">Descoperă categoria →</span>
+    </a>`).join("");
+  write("craciun", page("Crăciun",
+    "Pregătește sărbătorile cu brazi artificiali și globuri personalizate. Descoperă cele două categorii pentru decorul casei și cadouri.",
+    "/craciun/", `<section class="home-categories"><h2>Alege categoria</h2><div class="home-category-grid">${cards}</div></section>` +
+    (christmasProducts.length ? `<section><h2>Produse de Crăciun</h2><div class="products-grid">${christmasProducts.map(createProductCard).join("")}</div></section>` : ""), false));
+  for (const category of categories) {
+    const items = christmasProducts.filter(product => product.subcategory === category.slug);
+    const body = items.length
+      ? `<section><h2>${category.name}</h2><div class="products-grid">${items.map(createProductCard).join("")}</div></section>`
+      : '<section class="product-section"><p>Pregătim produsele pentru această categorie. Revino în curând pentru modele și prețuri.</p><a href="/craciun/">← Înapoi la Crăciun</a></section>';
+    write("categorii/" + category.slug, page(category.name, category.intro,
+      "/categorii/" + category.slug + "/", body, true));
+  }
+}
+
 function build() {
    const products = readProducts();
 
@@ -3791,6 +3869,7 @@ generateAdminOrdersPage(products);
 
   console.log("Generat: /politica-de-retur/");
 
+  generateChristmasPages(products);
   generatePlantingGuides();
 writeMerchantFeed(products);
 writeSeoFiles();
