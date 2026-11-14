@@ -863,7 +863,7 @@ return `
               product.variety
                 ? `
                   <div>
-                    <span>Soi</span>
+                    <span>${product.family === "craciun" ? "Model" : "Soi"}</span>
                     <strong>${escapeHtml(product.variety)}</strong>
                   </div>
                 `
@@ -920,7 +920,7 @@ return `
 </div>
 
           <p class="product-delivery-note">
-            ${product.product_type === "butas-lavanda" ? "Butaș de lavandă pentru plantare. Imaginea prezintă planta la înflorire." : "Pom pregătit pentru plantare și livrare în condiții corespunzătoare."}
+            ${product.family === "craciun" ? "Produs pentru decorul de Crăciun." : product.product_type === "butas-lavanda" ? "Butaș de lavandă pentru plantare. Imaginea prezintă planta la înflorire." : "Pom pregătit pentru plantare și livrare în condiții corespunzătoare."}
           </p>
 
         </section>
@@ -1214,7 +1214,7 @@ ${["pomi-fructiferi", "pomi-columnari", "vita-de-vie"]
         product.care_notes
           ? `
             <section class="product-section product-care">
-              <h2>Plantare și îngrijire</h2>
+              <h2>${product.family === "craciun" ? "Montare și întreținere" : "Plantare și îngrijire"}</h2>
 
               <p>
                 ${escapeHtml(product.care_notes)}
