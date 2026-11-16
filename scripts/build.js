@@ -314,6 +314,7 @@ function getCategoryName(slug = "") {
     craciun: "Crăciun",
     "brazi-artificiali": "Brazi artificiali",
     "globuri-personalizate": "Globuri personalizate",
+    "tavite-craciun": "Tăvițe de Crăciun",
 
     mar: "Meri",
     par: "Peri",
@@ -1222,7 +1223,7 @@ ${["pomi-fructiferi", "pomi-columnari", "vita-de-vie"]
         product.care_notes
           ? `
             <section class="product-section product-care">
-              <h2>${product.product_type === "glob-personalizat" ? "Întreținere" : product.family === "craciun" ? "Montare și întreținere" : "Plantare și îngrijire"}</h2>
+              <h2>${["glob-personalizat", "tavita-decorativa"].includes(product.product_type) ? "Întreținere" : product.family === "craciun" ? "Montare și întreținere" : "Plantare și îngrijire"}</h2>
 
               <p>
                 ${escapeHtml(product.care_notes)}
@@ -1741,6 +1742,7 @@ function createHeader() {
             <div class="nav-dropdown-menu">
               <a href="/categorii/brazi-artificiali/">Brazi artificiali</a>
               <a href="/categorii/globuri-personalizate/">Globuri personalizate</a>
+              <a href="/categorii/tavite-craciun/">Tăvițe de Crăciun</a>
             </div>
           </div>
           <a href="/servicii/">Servicii</a>
@@ -3542,7 +3544,8 @@ function generateChristmasPages(products) {
     { slug: "brazi-artificiali", name: "Brazi artificiali",
       intro: "Descoperă brazi artificiali pentru decorul de Crăciun. Compară dimensiunile, materialele și aspectul fiecărui model." },
     { slug: "globuri-personalizate", name: "Globuri personalizate",
-      intro: "Globuri personalizate pentru brad și cadouri de Crăciun. Alege modelul preferat și consultă opțiunile de personalizare." }
+      intro: "Globuri personalizate pentru brad și cadouri de Crăciun. Alege modelul preferat și consultă opțiunile de personalizare." },
+    { slug: "tavite-craciun", name: "Tăvițe de Crăciun", intro: "Tăvițe decorative din lemn pentru seara de Ajun, cu spații ilustrate pentru bunătățile Moșului și ale renilor." }
   ];
   const christmasProducts = products.filter(product =>
     categories.some(category => category.slug === product.subcategory)
@@ -3591,7 +3594,7 @@ function generateChristmasPages(products) {
       <span class="home-category-link">Descoperă categoria →</span>
     </a>`).join("");
   write("craciun", page("Crăciun",
-    "Pregătește sărbătorile cu brazi artificiali și globuri personalizate. Descoperă cele două categorii pentru decorul casei și cadouri.",
+    "Pregătește sărbătorile cu brazi artificiali, globuri personalizate și tăvițe de Crăciun pentru seara de Ajun.",
     "/craciun/", `<section class="home-categories"><h2>Alege categoria</h2><div class="home-category-grid">${cards}</div></section>` +
     (christmasProducts.length ? `<section><h2>Produse de Crăciun</h2><div class="products-grid">${christmasProducts.map(createProductCard).join("")}</div></section>` : ""), false));
   for (const category of categories) {
