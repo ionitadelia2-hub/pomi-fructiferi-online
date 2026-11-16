@@ -812,12 +812,12 @@ ${createHeader()}
   product.variants
     ? `
       <div class="product-age-option">
-        <span>Vârstă</span>
+        <span>${product.product_type === "glob-personalizat" ? "Inițială și personalizare" : "Vârstă"}</span>
 
         <select
           class="product-variant-select"
           data-product-variant
-          aria-label="Alege vârsta"
+          aria-label="${product.product_type === "glob-personalizat" ? "Alege inițiala și personalizarea" : "Alege vârsta"}"
         >
           ${product.variants
             .split("|")
@@ -830,7 +830,7 @@ return `
     data-price="${escapeHtml(price)}"
     data-old-price="${escapeHtml(oldPrice || "")}"
   >
-    ${escapeHtml(age)} ani — ${Number(price).toFixed(2)} lei
+    ${product.product_type === "glob-personalizat" ? escapeHtml(age.replace("-fara-text", " – fără text jos").replace("-cu-text", " – cu text jos")) : escapeHtml(age) + " ani"} — ${Number(price).toFixed(2)} lei
   </option>
 `;
             })
@@ -1214,7 +1214,7 @@ ${["pomi-fructiferi", "pomi-columnari", "vita-de-vie"]
         product.care_notes
           ? `
             <section class="product-section product-care">
-              <h2>${product.family === "craciun" ? "Montare și întreținere" : "Plantare și îngrijire"}</h2>
+              <h2>${product.product_type === "glob-personalizat" ? "Întreținere" : product.family === "craciun" ? "Montare și întreținere" : "Plantare și îngrijire"}</h2>
 
               <p>
                 ${escapeHtml(product.care_notes)}
@@ -2479,6 +2479,7 @@ function createCartPage(products) {
       name: product.name,
       price: Number(product.price),
       image_1: product.image_1,
+      product_type: product.product_type,
       stock: Number(product.stock),
     }))
   ).replace(/</g, "\\u003c");
@@ -2580,6 +2581,7 @@ function createCheckoutPage(products) {
       name: product.name,
       price: Number(product.price),
       image_1: product.image_1,
+      product_type: product.product_type,
       stock: Number(product.stock),
     }))
   ).replace(/</g, "\\u003c");

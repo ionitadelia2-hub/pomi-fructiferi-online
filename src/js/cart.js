@@ -249,7 +249,7 @@ const subtotal =
   cartItem.variant
     ? `
       <span class="cart-item-variant">
-        Vârstă: ${escapeHtml(cartItem.variant)} ani
+        ${product.product_type === "glob-personalizat" ? "Personalizare: " + escapeHtml(cartItem.variant.replace("-fara-text", " – fără text jos").replace("-cu-text", " – cu text jos")) : "Vârstă: " + escapeHtml(cartItem.variant) + " ani"}
       </span>
     `
     : ""

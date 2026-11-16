@@ -118,7 +118,7 @@ function renderCheckout() {
             </strong>
 
             <span>
-              ${variant ? `Vârstă: ${variant} ani<br>` : ""}
+              ${variant ? (product.product_type === "glob-personalizat" ? `Personalizare: ${variant.replace("-fara-text", " – fără text jos").replace("-cu-text", " – cu text jos")}<br>` : `Vârstă: ${variant} ani<br>`) : ""}
 ${quantity} × ${checkoutPrice(unitPrice)}
             </span>
           </div>
