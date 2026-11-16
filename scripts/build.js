@@ -873,6 +873,14 @@ return `
           </div>
 
 
+          ${product.product_type === "glob-personalizat" ? `
+          <div data-personalization-field hidden style="margin:16px 0">
+            <label for="ornament-name">Numele sau textul de gravat</label>
+            <input id="ornament-name" data-personalization-name type="text" maxlength="80" disabled placeholder="Ex.: Eva" style="display:block;width:100%;max-width:420px;padding:12px;margin-top:8px;border:1px solid #ccd7ce;border-radius:8px">
+            <p style="font-size:14px">Scrie textul exact cum dorești să apară pe glob. Pentru nume diferite, adaugă fiecare glob separat în coș.</p>
+          </div>
+          ` : ""}
+
           <div class="product-buy-row">
 
   <div class="product-quantity-selector">
@@ -1296,6 +1304,22 @@ ${createFooter()}
 
     });
 
+
+
+    const personalizationField = document.querySelector("[data-personalization-field]");
+    const personalizationName = document.querySelector("[data-personalization-name]");
+    function syncPersonalizationField() {
+      if (!personalizationField || !personalizationName) return;
+      const selected = document.querySelector("[data-product-variant]");
+      const withText = Boolean(selected && selected.value.endsWith("-cu-text"));
+      personalizationField.hidden = !withText;
+      personalizationName.disabled = !withText;
+      personalizationName.required = withText;
+      if (!withText) { personalizationName.value = ""; personalizationName.setCustomValidity(""); }
+    }
+    document.querySelector("[data-product-variant]")?.addEventListener("change", syncPersonalizationField);
+    personalizationName?.addEventListener("input", function() { this.setCustomValidity(""); });
+    syncPersonalizationField();
 
     const variantSelect =
   document.querySelector("[data-product-variant]");

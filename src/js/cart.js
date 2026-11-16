@@ -28,7 +28,8 @@ function addToCart(
   slug,
   quantity = 1,
   variant = "",
-  unitPrice = null
+  unitPrice = null,
+  personalization = ""
 ) {
   const cart = getCart();
 
@@ -43,7 +44,8 @@ function addToCart(
   const existingItem = cart.find((item) => {
   return (
     item.slug === slug &&
-    (item.variant || "") === (variant || "")
+    (item.variant || "") === (variant || "") &&
+    (item.personalization || "") === (personalization || "")
   );
 });
 
@@ -57,6 +59,7 @@ function addToCart(
   cart.push({
     slug,
     variant: variant || "",
+    personalization,
     quantity: amount,
     unit_price:
       unitPrice !== null
@@ -73,13 +76,14 @@ function addToCart(
   }
 }
 
-function setQuantity(slug, variant, quantity) {
+function setQuantity(slug, variant, quantity, personalization = "") {
   const cart = getCart();
 
   const item = cart.find((item) => {
     return (
       item.slug === slug &&
-      (item.variant || "") === (variant || "")
+      (item.variant || "") === (variant || "") &&
+    (item.personalization || "") === (personalization || "")
     );
   });
 
@@ -96,7 +100,7 @@ function setQuantity(slug, variant, quantity) {
   newQuantity = Math.floor(newQuantity);
 
   if (newQuantity <= 0) {
-    removeFromCart(slug, variant);
+    removeFromCart(slug, variant, personalization);
     return;
   }
 
@@ -108,13 +112,14 @@ function setQuantity(slug, variant, quantity) {
 }
 
 
-function changeQuantity(slug, variant, change) {
+function changeQuantity(slug, variant, change, personalization = "") {
   const cart = getCart();
 
   const item = cart.find((item) => {
     return (
       item.slug === slug &&
-      (item.variant || "") === (variant || "")
+      (item.variant || "") === (variant || "") &&
+    (item.personalization || "") === (personalization || "")
     );
   });
 
@@ -125,15 +130,17 @@ function changeQuantity(slug, variant, change) {
   setQuantity(
     slug,
     variant,
-    Number(item.quantity) + change
+    Number(item.quantity) + change,
+    personalization
   );
 }
 
-function removeFromCart(slug, variant = "") {
+function removeFromCart(slug, variant = "", personalization = "") {
   const cart = getCart().filter((item) => {
     return !(
       item.slug === slug &&
-      (item.variant || "") === (variant || "")
+      (item.variant || "") === (variant || "") &&
+    (item.personalization || "") === (personalization || "")
     );
   });
 
@@ -255,6 +262,7 @@ const subtotal =
     : ""
 }
 
+${cartItem.personalization ? `<span class="cart-item-personalization">Text: ${escapeHtml(cartItem.personalization)}</span>` : ""}
 <span class="cart-item-unit-price">
   ${formatPrice(unitPrice)} / buc.
 </span>
@@ -264,6 +272,7 @@ const subtotal =
               class="cart-remove-button"
               data-cart-remove="${escapeHtml(product.slug)}"
 data-cart-variant="${escapeHtml(cartItem.variant || "")}"
+data-cart-personalization="${escapeHtml(cartItem.personalization || "")}"
             >
               Elimină
             </button>
@@ -275,6 +284,7 @@ data-cart-variant="${escapeHtml(cartItem.variant || "")}"
               class="cart-quantity-button"
               data-cart-minus="${escapeHtml(product.slug)}"
 data-cart-variant="${escapeHtml(cartItem.variant || "")}"
+data-cart-personalization="${escapeHtml(cartItem.personalization || "")}"
               aria-label="Scade cantitatea"
             >
               −
@@ -287,6 +297,7 @@ data-cart-variant="${escapeHtml(cartItem.variant || "")}"
   min="1"
   data-cart-quantity="${escapeHtml(product.slug)}"
 data-cart-variant="${escapeHtml(cartItem.variant || "")}"
+data-cart-personalization="${escapeHtml(cartItem.personalization || "")}"
   aria-label="Cantitate ${escapeHtml(product.name)}"
 >
 
@@ -295,6 +306,7 @@ data-cart-variant="${escapeHtml(cartItem.variant || "")}"
               class="cart-quantity-button"
               data-cart-plus="${escapeHtml(product.slug)}"
 data-cart-variant="${escapeHtml(cartItem.variant || "")}"
+data-cart-personalization="${escapeHtml(cartItem.personalization || "")}"
               aria-label="Crește cantitatea"
             >
               +
@@ -456,11 +468,24 @@ if (variantSelect) {
     selectedOption.dataset.price || null;
 }
 
+const personalizationInput = document.querySelector("[data-personalization-name]");
+let personalization = "";
+if (personalizationInput && !personalizationInput.disabled) {
+  personalization = personalizationInput.value.trim();
+  if (!personalization) {
+    personalizationInput.setCustomValidity("Completează numele sau textul de gravat.");
+    personalizationInput.reportValidity();
+    personalizationInput.focus();
+    return;
+  }
+  if (!personalizationInput.checkValidity()) { personalizationInput.reportValidity(); return; }
+}
 addToCart(
   slug,
   quantity,
   selectedVariant,
-  selectedPrice
+  selectedPrice,
+  personalization
 );
 
 if (quantityInput) {
@@ -488,7 +513,8 @@ if (quantityInput) {
   changeQuantity(
     plusButton.dataset.cartPlus,
     plusButton.dataset.cartVariant || "",
-    1
+    1,
+    plusButton.dataset.cartPersonalization || ""
   );
 
   return;
@@ -501,7 +527,8 @@ if (quantityInput) {
   changeQuantity(
     minusButton.dataset.cartMinus,
     minusButton.dataset.cartVariant || "",
-    -1
+    -1,
+    minusButton.dataset.cartPersonalization || ""
   );
 
   return;
@@ -513,7 +540,8 @@ if (quantityInput) {
   if (removeButton) {
     removeFromCart(
       removeButton.dataset.cartRemove,
-      removeButton.dataset.cartVariant || ""
+      removeButton.dataset.cartVariant || "",
+    removeButton.dataset.cartPersonalization || ""
     );
   }
 });
@@ -529,7 +557,8 @@ document.addEventListener("change", (event) => {
   setQuantity(
   input.dataset.cartQuantity,
   input.dataset.cartVariant || "",
-  input.value
+  input.value,
+  input.dataset.cartPersonalization || ""
 );
 });
 

@@ -1,3 +1,7 @@
+function escapeCheckoutText(value) {
+  return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+}
+
 const CHECKOUT_API_URL =
   "https://api.pomifructiferionline.ro/api/orders";
 
@@ -98,7 +102,7 @@ function renderCheckout() {
   let productsTotal = 0;
 
   container.innerHTML = items
-    .map(({ product, quantity, variant, unitPrice }) => {
+    .map(({ product, quantity, variant, unitPrice, personalization }) => {
   const subtotal =
     unitPrice * quantity;
 
@@ -119,6 +123,7 @@ function renderCheckout() {
 
             <span>
               ${variant ? (product.product_type === "glob-personalizat" ? `Personalizare: ${variant.replace("-fara-text", " – fără text jos").replace("-cu-text", " – cu text jos")}<br>` : `Vârstă: ${variant} ani<br>`) : ""}
+${personalization ? `Text: ${escapeCheckoutText(personalization)}<br>` : ""}
 ${quantity} × ${checkoutPrice(unitPrice)}
             </span>
           </div>
@@ -266,6 +271,17 @@ const address =
       '[name="notes"]',
     ]);
 
+  const missingName = items.some(({ product, variant, personalization }) =>
+    product.product_type === "glob-personalizat" && variant.endsWith("-cu-text") && !personalization);
+  if (missingName) {
+    if (error) { error.hidden = false; error.textContent = "Lipsește textul pentru un glob. Elimină-l din coș și adaugă-l din nou cu numele dorit."; }
+    return;
+  }
+  const personalizationNotes = items.filter(item => item.personalization).map(item =>
+    item.product.name + " | " + item.variant + " | " + item.quantity + " buc. | Text: " + item.personalization
+  ).join("\n");
+  const orderNotes = [notes, personalizationNotes ? "Personalizări globuri:\n" + personalizationNotes : ""].filter(Boolean).join("\n\n");
+
   const payload = {
     customer: {
   name: customerName,
@@ -275,7 +291,7 @@ const address =
   city,
   postal_code: postalCode,
   address,
-  notes,
+  notes: orderNotes,
 },
 
     items: items.map(
