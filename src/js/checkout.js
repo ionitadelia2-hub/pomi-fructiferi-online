@@ -273,7 +273,7 @@ const address =
     ]);
 
   const missingName = items.some(({ product, variant, personalization }) =>
-    product.product_type === "glob-personalizat" && variant.endsWith("-cu-text") && !personalization);
+    product.product_type === "glob-personalizat" && (!variant || variant.endsWith("-cu-text")) && !personalization);
   if (missingName) {
     if (error) { error.hidden = false; error.textContent = "Lipsește textul pentru un glob. Elimină-l din coș și adaugă-l din nou cu numele dorit."; }
     return;

@@ -1312,7 +1312,7 @@ ${createFooter()}
     function syncPersonalizationField() {
       if (!personalizationField || !personalizationName) return;
       const selected = document.querySelector("[data-product-variant]");
-      const withText = Boolean(selected && selected.value.endsWith("-cu-text"));
+      const withText = !selected || selected.value.endsWith("-cu-text");
       personalizationField.hidden = !withText;
       personalizationName.disabled = !withText;
       personalizationName.required = withText;
