@@ -72,6 +72,7 @@ return {
   product,
   quantity,
   variant: cartItem.variant || "",
+  personalization: String(cartItem.personalization || "").trim(),
   unitPrice,
 };
     })
